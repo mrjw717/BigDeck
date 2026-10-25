@@ -321,4 +321,56 @@ describe("DeviceManager", () => {
     expect(deck.writes).toHaveLength(2);
     expect(deck.writes[1].head).toBe("ZZ\0\0");
   });
+
+  it("should retry failed writes through the control lane, not around the pump", async () => {
+    // Arrange: key 0 animation frames gate after frame 0 (pump parks in the
+    // animation lane); key 5 throws once (transient USB failure) so its write
+    // lands in the retry queue.
+    const recorded: Array<{ keyIndex: number; head: string }> = [];
+    let releasePump: () => void = () => {};
+    const pumpGate = new Promise<void>((resolve) => {
+      releasePump = resolve;
+    });
+    let key0Calls = 0;
+    let key5Throws = true;
+    const gatedDeck = new FakeStreamDeck();
+    gatedDeck.fillKeyBuffer = async (keyIndex: number, buffer: Buffer) => {
+      if (keyIndex === 0 && ++key0Calls > 1) await pumpGate;
+      if (keyIndex === 5 && key5Throws) {
+        key5Throws = false;
+        throw new Error("transient usb failure");
+      }
+      recorded.push({
+        keyIndex,
+        head: buffer.subarray(0, 4).toString("utf8"),
+      });
+    };
+    internals.devices.set(DEVICE_ID, {
+      info: deviceInfo(),
+      deck: gatedDeck as unknown as StreamDeck,
+    });
+
+    const frames = [makeFrame("AA"), makeFrame("BB")];
+    await manager.setKeyImage(DEVICE_ID, 0, frames, false, [60, 60]);
+    manager.setKeyImage(DEVICE_ID, 5, makeFrame("RR")).catch(() => {});
+    expect(recorded.map((r) => r.keyIndex)).toEqual([0]); // frame 0 only
+
+    // Act: +60ms the next animation frame blocks the pump; at +1000ms the
+    // retry interval fires. The retry must WAIT in the control lane instead
+    // of writing raw USB around the busy pump.
+    await vi.advanceTimersByTimeAsync(60);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(recorded.map((r) => r.keyIndex)).toEqual([0]); // still parked
+
+    // Release the pump: in-flight frame drains, then the queued retry runs
+    // (control lane drains before further animation frames).
+    releasePump();
+    await vi.advanceTimersByTimeAsync(0);
+
+    // Assert: retry runs after the in-flight frame but BEFORE the backlog of
+    // pending animation frames (control lane drains first). The trailing 0 is
+    // the latest-wins animation frame left in pendingAnimFrames.
+    expect(recorded.map((r) => r.keyIndex)).toEqual([0, 0, 5, 0]);
+    expect(recorded[2].head).toBe("RR\0\0");
+  });
 });

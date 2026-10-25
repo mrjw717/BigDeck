@@ -11,9 +11,10 @@
 //   time-based catch-up (late frames are skipped, keeping real-time sync).
 // - Re-applying identical frames is a no-op (content hash), so key presses and
 //   profile re-applies don't restart running animations.
-// - Writes that arrive while a device is momentarily missing (USB flap) are
-//   queued for retry at this boundary instead of being lost, so renders
-//   scheduled during the flap land once the device returns.
+// - Failed key writes are retried through the CONTROL lane (never raw USB
+//   writes), so retries serialize with animation frames instead of tearing
+//   them; writes that arrive while a device is momentarily missing (USB flap)
+//   are queued at the boundary and land once the device returns.
 // ============================================================================
 
 import { EventEmitter } from "events";
@@ -679,6 +680,12 @@ export class DeviceManager extends EventEmitter {
     this.startRetryQueue();
   }
 
+  /**
+   * Retry failed key writes once per RETRY_DELAY_MS. Retries re-enter the
+   * device's CONTROL lane (enqueueControl) rather than writing raw USB, so
+   * they can never interleave with animation-lane frames. A write whose
+   * device is still missing is re-queued (retries++) until MAX_RETRIES.
+   */
   private startRetryQueue(): void {
     if (this.retryInterval) return;
 
@@ -702,9 +709,15 @@ export class DeviceManager extends EventEmitter {
             continue;
           }
 
-          await device.deck.fillKeyBuffer(write.keyIndex, write.buffer, {
-            format: "rgb",
-          });
+          // Retry through the control lane like any other op. Writing via
+          // deck.fillKeyBuffer directly here interleaved raw retries with
+          // animation-lane frames on the same device -> torn/stale frames
+          // while retries were in flight. The single pump serializes this
+          // behind pending control ops and animation frames.
+          await this.enqueueControl(
+            write.deviceId,
+            () => this.doFillKey(write.deviceId, write.keyIndex, write.buffer),
+          );
           this.logger.info(
             `Retry successful for key ${write.keyIndex} on ${write.deviceId}`,
           );
