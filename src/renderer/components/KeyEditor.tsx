@@ -174,16 +174,6 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
   const [assets, setAssets] = useState<string[]>([]);
   const [isRecordingMacro, setIsRecordingMacro] = useState(false);
   const [showActionPicker, setShowActionPicker] = useState(false);
-  // Script source mode for run-script actions: "file" points at a script on
-  // disk, "inline" pastes code. Explicit UI state — deriving the view from
-  // `scriptFile` emptiness made the toggle dead (empty string = inline view).
-  const [scriptSourceMode, setScriptSourceMode] = useState<"file" | "inline">(
-    () => (keyConfig.action?.scriptFile ? "file" : "inline"),
-  );
-  // Re-sync when a different action is loaded into this editor.
-  useEffect(() => {
-    setScriptSourceMode(keyConfig.action?.scriptFile ? "file" : "inline");
-  }, [keyConfig.action?.id]);
   const [isEditingPressed, setIsEditingPressed] = useState(false);
 
   // Get live keyConfig from store, not from stale profile prop
@@ -201,6 +191,19 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
       loadAssets();
     }
   }, [activeTab]);
+
+  // Script source mode for run-script actions: "file" points at a script on
+  // disk, "inline" pastes code. Explicit UI state — deriving the view from
+  // `scriptFile` emptiness made the toggle dead (empty string = inline view).
+  // Re-syncs when a different action is loaded into this editor.
+  const [scriptSourceMode, setScriptSourceMode] = useState<"file" | "inline">(
+    () => ((keyConfig?.action as any)?.scriptFile ? "file" : "inline"),
+  );
+  useEffect(() => {
+    setScriptSourceMode(
+      (keyConfig?.action as any)?.scriptFile ? "file" : "inline",
+    );
+  }, [keyConfig?.action?.id]);
 
   // Escape key handler to close editor
   useEffect(() => {
