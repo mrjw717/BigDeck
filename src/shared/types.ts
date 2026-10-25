@@ -118,7 +118,14 @@ export interface OpenFolderAction extends BaseAction {
 export interface RunScriptAction extends BaseAction {
   type: "run-script";
   scriptType: "shell" | "python" | "node";
+  /** Inline script body (mutually exclusive with scriptFile at execution). */
   script: string;
+  /**
+   * Path to a script file on disk (~ is expanded). When set, the interpreter
+   * runs THIS file instead of the inline `script` body — e.g. a repo of
+   * tested bash/python/node tools triggered by deck keys.
+   */
+  scriptFile?: string;
   timeout?: number;
 }
 

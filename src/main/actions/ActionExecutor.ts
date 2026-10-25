@@ -14,6 +14,7 @@
 import { exec, execFile, spawn } from "child_process";
 import { promisify } from "util";
 import { access, constants as fsConstants } from "fs/promises";
+import os from "os";
 import path from "path";
 import { uIOhook, UiohookKeyboardEvent } from "uiohook-napi";
 import {
@@ -1100,12 +1101,6 @@ export class ActionExecutor {
   // ------------------------------------------------------------------
 
   private async executeScript(action: RunScriptAction): Promise<boolean> {
-    const script = action.script;
-    if (!script) {
-      this.logger.warn("No script provided for run-script action");
-      return false;
-    }
-
     const interpreter = action.scriptType || "shell";
     const cmd =
       interpreter === "python"
@@ -1117,6 +1112,52 @@ export class ActionExecutor {
     if (!(await this.isToolAvailable(cmd))) {
       this.logger.error(
         `Cannot run script: interpreter "${cmd}" is not installed.`,
+      );
+      return false;
+    }
+
+    // ---- File mode: run a script on disk (~ expanded, must exist) ----
+    if (action.scriptFile) {
+      const resolved = action.scriptFile.startsWith("~")
+        ? path.join(os.homedir(), action.scriptFile.slice(1))
+        : action.scriptFile;
+      try {
+        await access(resolved, fsConstants.F_OK);
+      } catch {
+        this.logger.error(
+          `Cannot run script file: not found at "${resolved}" (configured: "${action.scriptFile}").`,
+        );
+        return false;
+      }
+
+      try {
+        // Detached on purpose (same rationale as inline mode): the deck must
+        // never wait on a script. The interpreter opens the file itself, so
+        // the execute bit is not required.
+        const child = spawn(cmd, [resolved], {
+          detached: true,
+          stdio: "ignore",
+        });
+        child.on("error", (err) => {
+          this.logger.error(
+            `Failed to execute script file "${resolved}" with ${cmd}:`,
+            err,
+          );
+        });
+        child.unref();
+        this.logger.info(`Executed script file with ${cmd}: ${resolved}`);
+        return true;
+      } catch (error) {
+        this.logger.error(`Failed to execute script file:`, error);
+        return false;
+      }
+    }
+
+    // ---- Inline mode ----
+    const script = action.script;
+    if (!script) {
+      this.logger.warn(
+        "No script provided for run-script action (paste code or point to a script file).",
       );
       return false;
     }

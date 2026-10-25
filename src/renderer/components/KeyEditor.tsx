@@ -642,17 +642,69 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
-              <textarea
-                value={(keyConfig.action as any).script || ""}
-                onChange={(e) =>
-                  setKeyAction(keyIndex, {
-                    ...keyConfig.action,
-                    script: e.target.value,
-                  } as Action)
-                }
-                placeholder="#!/bin/bash\n# Write your code here"
-                className="w-full h-40 p-4 bg-muted/40 border-2 border-border rounded-xl text-xs font-mono focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none resize-none"
-              />
+              {/* Source mode: point at a script file OR paste inline code.
+                  Mode is derived from which field is populated; switching
+                  clears the other so the executor never sees both. */}
+              <div className="flex gap-2">
+                {(
+                  [
+                    ["file", "Script file"],
+                    ["inline", "Paste code"],
+                  ] as const
+                ).map(([mode, label]) => {
+                  const active =
+                    mode === "file"
+                      ? !!((keyConfig.action as any).scriptFile)
+                      : !((keyConfig.action as any).scriptFile);
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() =>
+                        setKeyAction(keyIndex, {
+                          ...keyConfig.action,
+                          ...(mode === "file"
+                            ? { script: "", scriptFile: "" }
+                            : { scriptFile: undefined }),
+                        } as Action)
+                      }
+                      className={`px-3 h-8 rounded-lg text-xs font-medium border transition-all ${
+                        active
+                          ? "bg-primary/15 text-primary border-primary/40"
+                          : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/60"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+              {(keyConfig.action as any).scriptFile !== undefined &&
+              (keyConfig.action as any).scriptFile !== "" ? (
+                <PathPicker
+                  type="file"
+                  value={(keyConfig.action as any).scriptFile || ""}
+                  onChange={(scriptFile: string) =>
+                    setKeyAction(keyIndex, {
+                      ...keyConfig.action,
+                      scriptFile,
+                    } as Action)
+                  }
+                />
+              ) : (
+                <textarea
+                  value={(keyConfig.action as any).script || ""}
+                  onChange={(e) =>
+                    setKeyAction(keyIndex, {
+                      ...keyConfig.action,
+                      script: e.target.value,
+                      scriptFile: undefined,
+                    } as Action)
+                  }
+                  placeholder="#!/bin/bash\n# Write your code here"
+                  className="w-full h-40 p-4 bg-muted/40 border-2 border-border rounded-xl text-xs font-mono focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none resize-none"
+                />
+              )}
             </div>
           )}
 
