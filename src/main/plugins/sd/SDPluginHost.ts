@@ -1248,7 +1248,12 @@ export class SDPluginHost extends EventEmitter {
 
     switch (event) {
       case "setImage": {
-        void this.handleSetImage(sender, context!, payload);
+        // Fire-and-forget, but never an unhandled rejection: async throws
+        // bypass routePluginMessage's synchronous catch, so this .catch is
+        // the backstop for anything handleSetImage's own try misses.
+        void this.handleSetImage(sender, context!, payload).catch((err) => {
+          this.logger.error(`[sd] ${sender.uuid}: setImage failed:`, err);
+        });
         break;
       }
 
@@ -1395,9 +1400,14 @@ export class SDPluginHost extends EventEmitter {
       return;
     }
 
-    const device = this.devicePort.getDevice(context.deviceId);
-    const specs = DEVICE_SPECS[device?.type ?? "original"];
     try {
+      // The device/size lookups belong INSIDE the try: a device port that
+      // throws (DeviceManager teardown races) or an unmapped device type
+      // (specs lookup → undefined → .keyWidth TypeError) must surface as a
+      // logged failure, not as an unhandled rejection escaping the
+      // fire-and-forget call in routePluginMessage.
+      const device = this.devicePort.getDevice(context.deviceId);
+      const specs = DEVICE_SPECS[device?.type ?? "original"];
       const rgb = await sharp(bytes)
         .resize(specs.keyWidth, specs.keyHeight, {
           fit: "contain",

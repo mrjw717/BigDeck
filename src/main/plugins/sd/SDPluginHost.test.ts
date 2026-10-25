@@ -296,6 +296,62 @@ describe("SDPluginHost end-to-end (spawned fixture plugin)", () => {
     expect(cache.entries.get("dev1:0")!.idle).toBeInstanceOf(Buffer);
   });
 
+  it("logs and drops a garbage image instead of failing (spec tolerance)", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    host.registerActionInstance({
+      pluginUUID: PLUGIN_UUID,
+      actionUUID: ACTION_UUID,
+      deviceId: "dev1",
+      controller: "Keypad",
+      index: 6,
+    });
+
+    // Fixture answers keyUp with an image payload that base64-decodes to
+    // zero bytes; the host must log-and-drop it, never throw.
+    device.emit("key:up", { deviceId: "dev1", keyIndex: 6 });
+    await waitFor(() => records.find((r) => r.msg.includes("unparseable image data")));
+
+    expect(device.writes).toHaveLength(0);
+    // Nothing escaped as an unhandled rejection (vitest fails the run on
+    // those) and the plugin connection is still healthy.
+    expect(host.getPlugins().find((p) => p.uuid === PLUGIN_UUID)?.status).toBe("running");
+  });
+
+  it("contains setImage failures for a device-less context (no unhandled rejection)", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    host.registerActionInstance({
+      pluginUUID: PLUGIN_UUID,
+      actionUUID: ACTION_UUID,
+      deviceId: "ghost",
+      controller: "Keypad",
+      index: 0,
+    });
+
+    // Simulate a device port that throws mid-teardown (the real
+    // DeviceManager can): the getDevice/DEVICE_SPECS lookups inside
+    // handleSetImage sit inside its try, so this surfaces as a logged
+    // failure. If they leaked out, the fire-and-forget call in
+    // routePluginMessage would produce an unhandled rejection — which fails
+    // the run — and the error log below would never appear.
+    device.getDevice = () => {
+      throw new Error("device registry torn down");
+    };
+
+    // The fixture replies to keyDown with a well-formed image, driving the
+    // handler all the way into the lookups.
+    device.emit("key:down", { deviceId: "ghost", keyIndex: 0 });
+    await waitFor(() =>
+      records.find((r) => r.level === "error" && r.msg.includes("setImage failed")),
+    );
+
+    expect(device.writes).toHaveLength(0);
+    expect(host.getPlugins().find((p) => p.uuid === PLUGIN_UUID)?.status).toBe("running");
+  });
+
   it("routes dial events to Encoder contexts", async () => {
     host = await makeHost();
     await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));

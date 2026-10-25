@@ -110,6 +110,19 @@ ws.on("message", (data) => {
       break;
     }
 
+    case "keyUp": {
+      // Regression probe: GARBAGE image data — only characters the base64
+      // decoder drops, so the host must log-and-drop ("unparseable image
+      // data"), never throw.
+      send({
+        event: "setImage",
+        context: msg.context,
+        payload: { image: "data:image/png;base64,!!! @@@ ###", target: 0 },
+      });
+      echo(event, msg);
+      break;
+    }
+
     default:
       echo(event, msg);
       break;
