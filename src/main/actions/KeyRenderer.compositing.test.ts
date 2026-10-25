@@ -15,6 +15,7 @@ import os from "os";
 import fs from "fs/promises";
 import sharp from "sharp";
 import { KeyRenderer } from "./KeyRenderer";
+import { cssGradientEndpoints, parseHexColor } from "../../shared/color";
 import type { KeyConfig, KeyLayer } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 
@@ -273,7 +274,102 @@ describe("KeyRenderer compositing (pixel assertions)", () => {
   });
 
   // ------------------------------------------------------------------------
-  // 2. Resilience — one bad layer must not kill the key render
+  // 2. Gradients — CSS-equivalent endpoints + compositing under layers
+  // ------------------------------------------------------------------------
+
+  describe("gradient backgrounds", () => {
+    it("reaches the pure start/end colors at the edges (90deg, horizontal)", async () => {
+      // Regression pin: the old SVG placed its endpoints a full width outside
+      // the canvas, so edges showed the washed-out middle band
+      // ([187,0,68] instead of [255,0,0]) that never matched the preview.
+      const img = (await renderer.renderKeyImageEx(
+        key(
+          bgLayer({
+            backgroundGradientStart: "#ff0000",
+            backgroundGradientEnd: "#0000ff",
+            backgroundGradientDirection: 90,
+          }),
+        ),
+        "original",
+      )).image as Buffer;
+      expectNear(px(img, 0, 36), [255, 0, 0], 4);
+      expectNear(px(img, 71, 36), [0, 0, 255], 4);
+      expectNear(px(img, 36, 36), [128, 0, 128], 4);
+    });
+
+    it("renders at XL key resolution (96x96) with correct endpoints", async () => {
+      const img = (await renderer.renderKeyImageEx(
+        key(
+          bgLayer({
+            backgroundGradientStart: "#ff0000",
+            backgroundGradientEnd: "#0000ff",
+            backgroundGradientDirection: 90,
+          }),
+        ),
+        "xl",
+      )).image as Buffer;
+      expect(img.length).toBe(96 * 96 * 3);
+      const pxl = (x: number, y: number): [number, number, number] => {
+        const i = (y * 96 + x) * 3;
+        return [img[i], img[i + 1], img[i + 2]];
+      };
+      expectNear(pxl(0, 48), [255, 0, 0], 4);
+      expectNear(pxl(95, 48), [0, 0, 255], 4);
+      expectNear(pxl(48, 48), [128, 0, 128], 4);
+    });
+
+    it("direction 0 (to top) puts start at bottom, end at top", async () => {
+      const img = (await renderer.renderKeyImageEx(
+        key(
+          bgLayer({
+            backgroundGradientStart: "#ff0000",
+            backgroundGradientEnd: "#0000ff",
+            backgroundGradientDirection: 0,
+          }),
+        ),
+        "original",
+      )).image as Buffer;
+      expectNear(px(img, 36, 71), [255, 0, 0], 4);
+      expectNear(px(img, 36, 0), [0, 0, 255], 4);
+    });
+
+    it("composites an image layer on top of a gradient", async () => {
+      const img = (await renderer.renderKeyImageEx(
+        key(
+          bgLayer({
+            backgroundGradientStart: "#ff0000",
+            backgroundGradientEnd: "#0000ff",
+            backgroundGradientDirection: 90,
+          }),
+          layer({ id: "i", type: "image", source: markedBar, fit: "contain", order: 1 }),
+        ),
+        "original",
+      )).image as Buffer;
+      // Bar strip center is red/blue; corners show the gradient endpoints.
+      expectNear(px(img, 8, 36), [255, 0, 0]); // bar red quarter
+      expectNear(px(img, 40, 36), [0, 0, 255]); // bar blue part (== end color here)
+      expectNear(px(img, 0, 2), [253, 0, 2], 4); // top-left ≈ start
+      expectNear(px(img, 0, 69), [253, 0, 2], 4); // bottom-left: x≈0 → still start color
+    });
+
+    it("shared endpoint math matches the CSS gradient geometry", () => {
+      // The preview (LayerStack canvas + CSS linear-gradient) and the
+      // hardware SVG must use the same cssGradientEndpoints numbers.
+      const { x1, y1, x2, y2 } = cssGradientEndpoints(72, 72, 90);
+      expect(Math.round(x1)).toBe(0);
+      expect(Math.round(x2)).toBe(72);
+      expect(y1).toBe(36);
+      expect(y2).toBe(36);
+      const vertical = cssGradientEndpoints(72, 72, 0);
+      expect(Math.round(vertical.y1)).toBe(72); // start at bottom (to top)
+      expect(Math.round(vertical.y2)).toBe(0);
+      expect(parseHexColor("#abc")).toEqual({ r: 170, g: 187, b: 204 });
+      expect(parseHexColor("nope")).toBeNull();
+    });
+  });
+
+  // ------------------------------------------------------------------------
+  // 3. Resilience — one bad layer must not kill the key render
   // ------------------------------------------------------------------------
 
   describe("resilience", () => {

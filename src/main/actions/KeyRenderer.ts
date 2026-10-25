@@ -24,6 +24,8 @@ import type {
   MediaPlayerInfo,
 } from "../../shared/types";
 import {
+  cssGradientEndpoints,
+  normalizeGradientDirection,
   normalizeLayerOpacity,
   parseHexColor,
   rgbToHex,
@@ -298,7 +300,7 @@ export class KeyRenderer {
         return `text:${applyTextTokens(layer.text)}:${layer.textColor || ""}:${layer.fontSize || 14}:${base}`;
       }
       if (layer.type === "background") {
-        return `bg:${layer.backgroundColor || ""}:${layer.backgroundGradientStart || ""}:${layer.backgroundGradientEnd || ""}:${layer.backgroundGradientDirection || 135}:${base}`;
+        return `bg:${layer.backgroundColor || ""}:${layer.backgroundGradientStart || ""}:${layer.backgroundGradientEnd || ""}:${normalizeGradientDirection(layer.backgroundGradientDirection)}:${base}`;
       }
     } catch {
       return null;
@@ -328,7 +330,7 @@ export class KeyRenderer {
           height,
           layer.backgroundGradientStart,
           layer.backgroundGradientEnd,
-          layer.backgroundGradientDirection || 135,
+          layer.backgroundGradientDirection,
         );
         buf = await sharp(Buffer.from(gradientSvg))
           .resize(width, height, { fit: "fill" })
@@ -657,14 +659,16 @@ export class KeyRenderer {
       gradientStart = img.pressedBackgroundGradientStart;
       gradientEnd = img.pressedBackgroundGradientEnd;
       gradientDirection =
-        img.pressedBackgroundGradientDirection ||
-        img.backgroundGradientDirection ||
-        135;
+        img.pressedBackgroundGradientDirection !== undefined
+          ? normalizeGradientDirection(img.pressedBackgroundGradientDirection)
+          : normalizeGradientDirection(img.backgroundGradientDirection);
     } else if (img) {
       baseBackground = img.backgroundColor || "#000000";
       gradientStart = img.backgroundGradientStart;
       gradientEnd = img.backgroundGradientEnd;
-      gradientDirection = img.backgroundGradientDirection || 135;
+      gradientDirection = normalizeGradientDirection(
+        img.backgroundGradientDirection,
+      );
     }
 
     const processImage = async (imgToProcess: sharp.Sharp): Promise<Buffer> => {
@@ -843,23 +847,29 @@ export class KeyRenderer {
     });
   }
 
+  /**
+   * SVG for a gradient background. Uses the exact CSS `linear-gradient`
+   * endpoint geometry (cssGradientEndpoints, shared with the LayerStack
+   * preview) with userSpaceOnUse coordinates. The previous implementation
+   * placed endpoints a full width/height OUTSIDE the canvas (±50%
+   * percentages), so hardware only ever displayed the middle 50% band of the
+   * gradient — washed-out colors that never matched the preview, and the
+   * start/end colors were unreachable at any pixel.
+   */
   private createGradientSvg(
     width: number,
     height: number,
     startColor: string,
     endColor: string,
-    direction: number,
+    direction: number | undefined,
   ): string {
-    const angle = direction;
-    const rad = (angle - 90) * (Math.PI / 180);
-    const x1 = width / 2 - Math.cos(rad) * width;
-    const y1 = height / 2 - Math.sin(rad) * height;
-    const x2 = width / 2 + Math.cos(rad) * width;
-    const y2 = height / 2 + Math.sin(rad) * height;
+    const dir = normalizeGradientDirection(direction);
+    const { x1, y1, x2, y2 } = cssGradientEndpoints(width, height, dir);
+    const r = (n: number) => Math.round(n * 1000) / 1000;
 
     return `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="grad" x1="${(x1 / width) * 100}%" y1="${(y1 / height) * 100}%" x2="${(x2 / width) * 100}%" y2="${(y2 / height) * 100}%">
+        <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}">
           <stop offset="0%" stop-color="${startColor}"/>
           <stop offset="100%" stop-color="${endColor}"/>
         </linearGradient>

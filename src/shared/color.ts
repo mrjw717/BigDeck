@@ -56,3 +56,50 @@ export function normalizeLayerOpacity(
   }
   return Math.max(0, opacity);
 }
+
+/** CSS linear-gradient default angle when a direction is absent/invalid. */
+export const DEFAULT_GRADIENT_DIRECTION = 135;
+
+/**
+ * Sanitize a gradient direction coming from JSON profiles. 0 is a VALID CSS
+ * angle (to top) but falsy — `||` fallbacks would silently turn it into 135.
+ */
+export function normalizeGradientDirection(
+  direction: number | undefined,
+): number {
+  return typeof direction === "number" && Number.isFinite(direction)
+    ? direction
+    : DEFAULT_GRADIENT_DIRECTION;
+}
+
+/**
+ * Gradient line endpoints for a CSS `linear-gradient(<dir>deg, A, B)` inside
+ * a width×height box, in pixel coordinates. This is the exact CSS Images spec
+ * geometry: the line passes through the center, runs along `<dir>` (0deg = to
+ * top, 90deg = to right), and its endpoints land ON the box edges — so the
+ * start/end colors are visible at the edges (unlike the previous SVG here,
+ * whose endpoints overshot by a full width/height and washed the gradient
+ * out to only its middle 50% band on hardware).
+ *
+ * Used by KeyRenderer.createGradientSvg (as SVG userSpaceOnUse coords) and by
+ * the LayerStack preview canvas — identical numbers on both sides.
+ */
+export function cssGradientEndpoints(
+  width: number,
+  height: number,
+  directionDeg: number,
+): { x1: number; y1: number; x2: number; y2: number } {
+  const rad = (directionDeg * Math.PI) / 180;
+  const dx = Math.sin(rad);
+  const dy = -Math.cos(rad); // screen y grows downward
+  const length = Math.abs(width * dx) + Math.abs(height * dy);
+  const cx = width / 2;
+  const cy = height / 2;
+  const half = length / 2;
+  return {
+    x1: cx - dx * half,
+    y1: cy - dy * half,
+    x2: cx + dx * half,
+    y2: cy + dy * half,
+  };
+}
