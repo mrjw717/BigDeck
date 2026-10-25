@@ -222,10 +222,20 @@ describe("SDPluginProcess", () => {
     });
 
     proc.start();
-    // base 30ms doubling: several crash→respawn cycles within ~400ms
-    await new Promise((r) => setTimeout(r, 400));
-    const stopped = new Promise<void>((resolve) => proc.on("exit", () => resolve()));
+    // base 30ms doubling: wait (bounded) for several crash→respawn cycles
+    // instead of a fixed sleep — process starts take variable time under load.
+    const deadline = Date.now() + 8000;
+    while (exits < 3 && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 25));
+    }
+    // stop() early-returns when the process is in the crash→respawn gap
+    // (no live child), in which case there will be no further exit event —
+    // only wait for one if a child is actually running.
     proc.stop();
+    const stopped =
+      proc.getStatus() === "stopped"
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => proc.on("exit", () => resolve()));
     await stopped;
     expect(exits).toBeGreaterThanOrEqual(3);
     expect(proc.getStatus()).toBe("stopped");
