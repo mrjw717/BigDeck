@@ -1,0 +1,25 @@
+{
+  "Name": "Fake SD Plugin",
+  "UUID": "com.bigdeck.test.fake",
+  "Version": "1.0.0",
+  "Author": "BigDeck Test",
+  "Description": "Minimal fake Stream Deck plugin used by SDPluginHost integration tests",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.0"
+  },
+  "OS": [
+    { "Platform": "mac", "MinimumVersion": "12" }
+  ],
+  "CodePathMac": "plugin.js",
+  "Actions": [
+    {
+      "UUID": "com.bigdeck.test.fake.action",
+      "Name": "Fake Action",
+      "Icon": "imgs/action",
+      "Controllers": ["Keypad"],
+      "States": [{ "Image": "imgs/action" }],
+      "Tooltip": "Echoes host events back as logMessage"
+    }
+  ]
+}

@@ -48,7 +48,8 @@ export type ActionType =
   | "toggle-folder"
   | "obs-action"
   | "system-command"
-  | "plugin";
+  | "plugin"
+  | "sdplugin";
 
 export interface BaseAction {
   type: ActionType;
@@ -147,6 +148,28 @@ export interface PluginAction extends BaseAction {
   pluginConfig?: Record<string, unknown>;
 }
 
+/**
+ * Where an executed action came from when the caller knows it (hardware key
+ * press). Lets the SD plugin host resolve/mint the right action-instance
+ * context; flows without device context (network API) omit it.
+ */
+export interface ActionOrigin {
+  deviceId: string;
+  keyIndex: number;
+}
+
+/**
+ * Dispatch into an Elgato .sdPlugin action instance. See
+ * src/main/plugins/sd/SDPluginHost.ts — the plugin receives a keyDown on the
+ * resolved context (per docs/SDPLUGIN-COMPAT.md).
+ */
+export interface SdPluginAction extends BaseAction {
+  type: "sdplugin";
+  pluginUUID: string;
+  actionUUID: string;
+  settings?: Record<string, unknown>;
+}
+
 export type Action =
   | KeyboardShortcutAction
   | LaunchAppAction
@@ -157,7 +180,8 @@ export type Action =
   | MacroAction
   | SwitchProfileAction
   | SwitchPageAction
-  | PluginAction;
+  | PluginAction
+  | SdPluginAction;
 
 // Layer-based key appearance
 export type LayerType = "background" | "text" | "icon" | "image";
