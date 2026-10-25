@@ -426,6 +426,39 @@ describe("SDPluginHost settings", () => {
     const file = path.join(stateDir, "global-com.bigdeck.test.fake.json");
     expect(JSON.parse(fs.readFileSync(file, "utf-8")).settings).toEqual({ token: "abc" });
   });
+
+  it("recovers from a corrupt settings file instead of throwing (atomic-write regression)", async () => {
+    await fsp.rm(path.join(pluginsDir, "fake.sdPlugin"), { recursive: true, force: true });
+    fs.mkdirSync(stateDir, { recursive: true });
+    // Simulate a crash mid-write: truncated garbage where instances.json
+    // should be (the pre-atomic-write failure mode reset every context's
+    // settings to {} on next read).
+    fs.writeFileSync(path.join(stateDir, "instances.json"), "{corrupt, never parsed");
+
+    host = await makeHost();
+
+    // Start must succeed; the corrupt registry behaved as empty and the
+    // damage is surfaced in the log, not swallowed silently.
+    expect(host.getPlugins()).toEqual([]);
+    expect(records.find((r) => r.msg.includes("corrupt or unreadable"))).toBeTruthy();
+
+    // A subsequent placement rewrites the file via temp+rename: valid JSON
+    // lands on disk and no `.tmp-` droppings are left behind.
+    host.registerActionInstance({
+      pluginUUID: PLUGIN_UUID,
+      actionUUID: ACTION_UUID,
+      deviceId: "dev1",
+      controller: "Keypad" as SDController,
+      index: 2,
+    });
+    await host.stop();
+
+    const rewritten = JSON.parse(
+      fs.readFileSync(path.join(stateDir, "instances.json"), "utf-8"),
+    );
+    expect(Object.keys(rewritten)).toHaveLength(1);
+    expect(fs.readdirSync(stateDir).some((f) => f.includes(".tmp-"))).toBe(false);
+  });
 });
 
 describe("SDPluginHost instance registry", () => {

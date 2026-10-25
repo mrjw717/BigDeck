@@ -241,9 +241,12 @@ export function deviceTypeToSdkNumber(type: DeviceType): number {
  * In-memory authoritative JSON file store with ProfileManager's write
  * discipline: reads are synchronous through-cache, mutations are visible
  * immediately, disk writes are trailing-debounced, and flush() persists
- * synchronously for shutdown. Unlike electron-store (which ProfileManager
- * uses for its single profiles.json), this writes N small files — one per
- * context/global — which is what the SD settings model needs.
+ * synchronously for shutdown. Writes are atomic (temp file + rename in the
+ * same directory — electron-store's durability model), so a crash mid-write
+ * leaves the previous settings intact instead of a truncated file that reads
+ * back as `{}`. Unlike electron-store (which ProfileManager uses for its
+ * single profiles.json), this writes N small files — one per context/global —
+ * which is what the SD settings model needs.
  */
 class SDJsonStore {
   private readonly cache = new Map<string, Record<string, unknown>>();
@@ -256,7 +259,13 @@ class SDJsonStore {
     private readonly debounceMs = 300,
   ) {}
 
-  /** Read-through cache; missing/invalid files behave as empty objects. */
+  /**
+   * Read-through cache. A missing file is the normal first-run shape and
+   * behaves as an empty object; a CORRUPT one is recovered the same way but
+   * surfaced in the log — a damaged file must never throw out of a read
+   * (that would take the whole host down) nor silently look like a fresh
+   * install.
+   */
   get(file: string): Record<string, unknown> {
     const cached = this.cache.get(file);
     if (cached) return cached;
@@ -266,9 +275,16 @@ class SDJsonStore {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
         loaded = parsed as Record<string, unknown>;
+      } else {
+        this.logger.warn(`[sd] settings file ${file} is not a JSON object; starting empty`);
       }
-    } catch {
-      // Missing or unreadable — start empty.
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+        this.logger.warn(
+          `[sd] settings file ${file} is corrupt or unreadable; starting empty:`,
+          err,
+        );
+      }
     }
     this.cache.set(file, loaded);
     return loaded;
@@ -296,7 +312,7 @@ class SDJsonStore {
       const value = this.cache.get(file);
       if (!value) continue;
       try {
-        await fsp.writeFile(path.join(this.dir, file), JSON.stringify(value, null, 2));
+        await this.writeAtomic(file, value);
       } catch (err) {
         this.logger.error(`[sd] failed to persist ${file}:`, err);
       }
@@ -313,12 +329,32 @@ class SDJsonStore {
       const value = this.cache.get(file);
       if (!value) continue;
       try {
-        fs.writeFileSync(path.join(this.dir, file), JSON.stringify(value, null, 2));
+        this.writeAtomicSync(file, value);
       } catch (err) {
         this.logger.error(`[sd] failed to flush ${file}:`, err);
       }
     }
     this.dirty.clear();
+  }
+
+  /**
+   * Temp file + rename in the SAME directory (same filesystem → rename is
+   * atomic): a crash mid-write leaves the previous file intact and at worst
+   * an orphaned `.tmp-` file behind, instead of resetting a context's
+   * settings to `{}` on next read. Matches electron-store's durability.
+   */
+  private async writeAtomic(file: string, value: Record<string, unknown>): Promise<void> {
+    const target = path.join(this.dir, file);
+    const temp = `${target}.tmp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    await fsp.writeFile(temp, JSON.stringify(value, null, 2));
+    await fsp.rename(temp, target);
+  }
+
+  private writeAtomicSync(file: string, value: Record<string, unknown>): void {
+    const target = path.join(this.dir, file);
+    const temp = `${target}.tmp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    fs.writeFileSync(temp, JSON.stringify(value, null, 2));
+    fs.renameSync(temp, target);
   }
 }
 
