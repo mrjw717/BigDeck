@@ -29,6 +29,8 @@ import {
   type SDKeyImageCachePort,
   type SDController,
 } from "./SDPluginHost";
+import { wireSdPlacements, type SdPlacementSource } from "./SdBridge";
+import type { SdPluginPlacementChange } from "../../actions/HardwareSync";
 import type { Logger } from "../../utils/Logger";
 
 // These tests spawn real child processes and wait on real WebSocket I/O;
@@ -650,5 +652,218 @@ describe("SDPluginHost discovery robustness", () => {
     expect(host.getPlugins()).toEqual([]);
     expect(records.find((r) => r.msg.includes("broken.sdPlugin"))).toBeTruthy();
     expect(records.find((r) => r.msg.includes("PrivateAPI"))).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Placement-driven contexts: HardwareSync (the placement authority) publishes
+// a `placementsChanged` diff; wireSdPlacements forwards it to the host, which
+// must deliver willAppear/willDisappear over the real WS to the fixture
+// plugin. These tests drive the seam exactly like index.ts wires it.
+// ---------------------------------------------------------------------------
+
+/** EventEmitter stand-in for HardwareSync's placement seam. */
+class FakePlacementSource extends EventEmitter implements SdPlacementSource {}
+
+function placementsChange(
+  partial: Partial<SdPluginPlacementChange>,
+): SdPluginPlacementChange {
+  return { deviceId: "dev1", added: [], removed: [], changed: [], ...partial };
+}
+
+describe("SDPluginHost placement-driven contexts (SdBridge)", () => {
+  it("delivers exactly one willAppear when a placement is added, and none on re-apply", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    const sync = new FakePlacementSource();
+    wireSdPlacements(sync, host);
+    const outbound: Array<Record<string, unknown> & { event: string }> = [];
+    host.on("outbound", (m) => outbound.push(m as Record<string, unknown> & { event: string }));
+
+    const added = [
+      {
+        keyIndex: 7,
+        pluginUUID: PLUGIN_UUID,
+        actionUUID: ACTION_UUID,
+        settings: { volume: 3 },
+      },
+    ];
+    sync.emit("placementsChanged", placementsChange({ added }));
+
+    const willAppear = await waitFor(
+      () => outbound.find((m) => m.event === "willAppear"),
+    );
+    expect(willAppear!.action).toBe(ACTION_UUID);
+    expect(willAppear!.device).toBe("dev1");
+    const payload = willAppear!.payload as Record<string, unknown>;
+    expect(payload.coordinates).toEqual({ row: 1, column: 2 }); // key 7 on a 3x5 grid
+    expect(payload.settings).toEqual({ volume: 3 });
+
+    // Exactly ONE willAppear, and a redundant re-apply of the same placement
+    // (device:connected after boot) must not re-announce the visible context.
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(outbound.filter((m) => m.event === "willAppear")).toHaveLength(1);
+    sync.emit("placementsChanged", placementsChange({ added: [...added] }));
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(outbound.filter((m) => m.event === "willAppear")).toHaveLength(1);
+  });
+
+  it("replacing the action delivers willDisappear, then a fresh willAppear", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    const sync = new FakePlacementSource();
+    wireSdPlacements(sync, host);
+    const outbound: Array<Record<string, unknown> & { event: string }> = [];
+    host.on("outbound", (m) => outbound.push(m as Record<string, unknown> & { event: string }));
+
+    sync.emit("placementsChanged", placementsChange({
+      added: [{ keyIndex: 5, pluginUUID: PLUGIN_UUID, actionUUID: "com.bigdeck.test.fake.a" }],
+    }));
+    const first = await waitFor(() => outbound.find((m) => m.event === "willAppear"));
+    const firstContext = first!.context as string;
+    outbound.length = 0;
+
+    sync.emit("placementsChanged", placementsChange({
+      changed: [{
+        keyIndex: 5,
+        from: { pluginUUID: PLUGIN_UUID, actionUUID: "com.bigdeck.test.fake.a" },
+        to: { keyIndex: 5, pluginUUID: PLUGIN_UUID, actionUUID: "com.bigdeck.test.fake.b" },
+      }],
+    }));
+
+    await waitFor(() =>
+      outbound.find((m) => m.event === "willDisappear") &&
+      outbound.find((m) => m.event === "willAppear"),
+    );
+    const disappear = outbound.find((m) => m.event === "willDisappear")!;
+    const appear = outbound.find((m) => m.event === "willAppear")!;
+    expect(disappear.context).toBe(firstContext);
+    expect(disappear.action).toBe("com.bigdeck.test.fake.a");
+    expect(appear.context).not.toBe(firstContext);
+    expect(appear.action).toBe("com.bigdeck.test.fake.b");
+    // SDK ordering: the old instance is gone before the new one appears.
+    expect(outbound.indexOf(disappear)).toBeLessThan(outbound.indexOf(appear));
+  });
+
+  it("device disconnect delivers willDisappear and clears the registry", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    const sync = new FakePlacementSource();
+    wireSdPlacements(sync, host);
+    const outbound: Array<Record<string, unknown> & { event: string }> = [];
+    host.on("outbound", (m) => outbound.push(m as Record<string, unknown> & { event: string }));
+
+    sync.emit("placementsChanged", placementsChange({
+      added: [{ keyIndex: 7, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }],
+    }));
+    const willAppear = await waitFor(() => outbound.find((m) => m.event === "willAppear"));
+    const context = willAppear!.context as string;
+    expect(host.hasInstanceFor("dev1", "Keypad", 7)).toBe(true);
+
+    // What HardwareSync.clearDevice produces on device:disconnected.
+    sync.emit("placementsChanged", placementsChange({
+      removed: [{ keyIndex: 7, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }],
+    }));
+
+    const willDisappear = await waitFor(() => outbound.find((m) => m.event === "willDisappear"));
+    expect(willDisappear!.context).toBe(context);
+    expect(willDisappear!.action).toBe(ACTION_UUID);
+    expect(host.hasInstanceFor("dev1", "Keypad", 7)).toBe(false);
+    expect(host.getContext(context)).toBeNull();
+
+    // Registry removal persisted (flushed by stop).
+    await host.stop();
+    const registry = JSON.parse(
+      fs.readFileSync(path.join(stateDir, "instances.json"), "utf-8"),
+    );
+    expect(registry).toEqual({});
+  });
+
+  it("re-apply after reconnect re-registers: fresh context, willAppear again", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    const sync = new FakePlacementSource();
+    wireSdPlacements(sync, host);
+    const outbound: Array<Record<string, unknown> & { event: string }> = [];
+    host.on("outbound", (m) => outbound.push(m as Record<string, unknown> & { event: string }));
+
+    const added = [{ keyIndex: 3, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }];
+    sync.emit("placementsChanged", placementsChange({ added }));
+    const first = await waitFor(() => outbound.find((m) => m.event === "willAppear"));
+    const firstContext = first!.context as string;
+
+    sync.emit("placementsChanged", placementsChange({
+      removed: [{ keyIndex: 3, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }],
+    }));
+    await waitFor(() => outbound.find((m) => m.event === "willDisappear"));
+
+    outbound.length = 0;
+    sync.emit("placementsChanged", placementsChange({ added: [...added] }));
+    const again = await waitFor(() => outbound.find((m) => m.event === "willAppear"));
+    expect(outbound.filter((m) => m.event === "willAppear")).toHaveLength(1);
+    expect(again!.context).toBeTruthy();
+    expect(again!.context).not.toBe(firstContext);
+  });
+
+  it("page switch retires old-page placements and announces new-page ones", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    const sync = new FakePlacementSource();
+    wireSdPlacements(sync, host);
+    const outbound: Array<Record<string, unknown> & { event: string }> = [];
+    host.on("outbound", (m) => outbound.push(m as Record<string, unknown> & { event: string }));
+
+    sync.emit("placementsChanged", placementsChange({
+      added: [
+        { keyIndex: 1, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID },
+        { keyIndex: 2, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID },
+      ],
+    }));
+    await waitFor(() => outbound.filter((m) => m.event === "willAppear").length === 2);
+    const key1Context = outbound.find(
+      (m) => m.event === "willAppear" && (m.payload as Record<string, unknown>).coordinates,
+    );
+    outbound.length = 0;
+
+    // Page B: key 1 blank, key 2 unchanged (same action identity), key 8 new.
+    sync.emit("placementsChanged", placementsChange({
+      removed: [{ keyIndex: 1, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }],
+      added: [{ keyIndex: 8, pluginUUID: PLUGIN_UUID, actionUUID: ACTION_UUID }],
+    }));
+
+    await waitFor(() =>
+      outbound.find((m) => m.event === "willDisappear") &&
+      outbound.find((m) => m.event === "willAppear"),
+    );
+    expect(outbound.filter((m) => m.event === "willDisappear")).toHaveLength(1);
+    expect(outbound.filter((m) => m.event === "willAppear")).toHaveLength(1);
+    const disappear = outbound.find((m) => m.event === "willDisappear")!;
+    expect(disappear.context).toBe(key1Context!.context);
+    const appear = outbound.find((m) => m.event === "willAppear")!;
+    expect((appear.payload as Record<string, unknown>).coordinates).toEqual({ row: 1, column: 3 });
+  });
+
+  it("delivers dialUp for a registered Encoder placement (Stream Deck + path)", async () => {
+    host = await makeHost();
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    host.registerActionInstance({
+      pluginUUID: PLUGIN_UUID,
+      actionUUID: ACTION_UUID,
+      deviceId: "dev1",
+      controller: "Encoder",
+      index: 0,
+    });
+
+    // The host routes whatever DeviceManager emits; only "plus" hardware
+    // produces dial events, so no gating is needed host-side.
+    device.emit("dial:up", { deviceId: "dev1", dialIndex: 0 });
+    const dialUp = await waitFor(() => echoFrame("dialUp"));
+    expect(dialUp!.payload).toMatchObject({ controller: "Encoder", pressed: false });
   });
 });

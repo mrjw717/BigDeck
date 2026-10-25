@@ -22,6 +22,7 @@ import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
 import { SDPluginHost } from "./plugins/sd/SDPluginHost";
+import { wireSdPlacements } from "./plugins/sd/SdBridge";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
 import { Logger } from "./utils/Logger";
@@ -736,6 +737,17 @@ if (!gotTheLock) {
         await sdPluginHost.start();
       } else {
         logger.info("SD plugin host not started (no sdplugins dir, no SD actions)");
+      }
+
+      // Placement authority → SD host bridge: HardwareSync diffs sdplugin
+      // action placements (profile applied / edited / device cleared) and the
+      // bridge turns each diff into registerActionInstance /
+      // unregisterActionInstance, i.e. willAppear/willDisappear. Wired here —
+      // before setupDeviceEvents() — so the listener exists before any
+      // device:connected can trigger an apply. HardwareSync never imports the
+      // host; this is the only meeting point.
+      if (sdPluginHost) {
+        wireSdPlacements(hardwareSync, sdPluginHost);
       }
 
       // Setup event handlers

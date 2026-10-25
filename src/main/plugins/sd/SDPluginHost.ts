@@ -22,9 +22,11 @@
 // - Event routing: the host subscribes to DeviceManager's public events
 //   (key:down/key:up/dial:rotate/dial:down/dial:up/touch:tap) and delivers
 //   the matching SDK event to the plugin that owns the placed context.
-//   Delivery requires a REGISTERED instance; registrations come from
-//   registerActionInstance() (UI/profile-sync phase) or lazily from
-//   dispatchAction() (ActionExecutor integration).
+//   Delivery requires a REGISTERED instance; registrations come from the
+//   placement bridge (HardwareSync's placementsChanged diff — the profile
+//   sync that drives willAppear/willDisappear, see SdBridge.ts) or lazily
+//   from dispatchAction() (ActionExecutor integration). Appearance events
+//   are delivered exactly once per transition, tracked by SDContext.visible.
 // - Dispatch rule (single-delivery guarantee): a hardware press emits
 //   keyDown exactly once. If the pressed slot has no instance yet, the
 //   ActionExecutor path creates one and sends keyDown at creation time;
@@ -157,6 +159,15 @@ export interface SDContext extends SDPlacement {
   coordinates: { row: number; column: number } | null;
   /** Last sendToPropertyInspector payload (PI host phase will forward it). */
   lastPropertyInspectorMessage: unknown;
+  /**
+   * Whether the plugin currently sees this instance — a willAppear was
+   * DELIVERED and no willDisappear yet. Guards against duplicate appearance
+   * events when two legitimate sources race (boot-time registerPlugin replay
+   * vs device:connected re-announce; disconnect announce vs placement
+   * authority unregister). Not persisted: a restarting plugin has lost its
+   * state and the registerPlugin replay forces willAppear regardless.
+   */
+  visible: boolean;
 }
 
 export type SDPluginStatus =
@@ -710,25 +721,38 @@ export class SDPluginHost extends EventEmitter {
   /**
    * Register (or return the existing) context for a placement. Context ids
    * are minted once per slot and persisted, so plugin settings keyed by
-   * context survive restarts. `willAppear` is delivered when the plugin is
-   * (or becomes) connected.
+   * context survive restarts. `willAppear` is delivered once, when the
+   * plugin is (or becomes) connected — an already-registered slot never
+   * re-receives it.
+   *
+   * With `{ replace: true }` (used by the placement bridge, which speaks for
+   * the profile as the placement authority) a slot occupied by a DIFFERENT
+   * plugin/action identity is retired (willDisappear) and re-minted instead
+   * of ignored — e.g. the action on a key changed while the device was
+   * disconnected and the stale registry entry must not win.
    */
   registerActionInstance(
     placement: SDPlacement & { settings?: Record<string, unknown>; title?: string; state?: number },
+    opts?: { replace?: boolean },
   ): { context: string; created: boolean } {
     const key = slotKey(placement.deviceId, placement.controller, placement.index);
     const existing = this.slots.get(key);
     if (existing) {
-      if (
-        existing.pluginUUID !== placement.pluginUUID ||
-        existing.actionUUID !== placement.actionUUID
-      ) {
+      const sameOwner =
+        existing.pluginUUID === placement.pluginUUID &&
+        existing.actionUUID === placement.actionUUID;
+      if (sameOwner) {
+        return { context: existing.context, created: false };
+      }
+      if (!opts?.replace) {
         this.logger.warn(
           `[sd] slot ${key} already owned by ${existing.pluginUUID}/${existing.actionUUID}; ignoring request for ${placement.pluginUUID}/${placement.actionUUID}`,
         );
         return { context: existing.context, created: false };
       }
-      return { context: existing.context, created: false };
+      // Authority replaced the instance in this slot: retire the old context
+      // (willDisappear), then fall through and mint its replacement.
+      this.unregisterActionInstance(placement.deviceId, placement.controller, placement.index);
     }
 
     const context: SDContext = {
@@ -739,6 +763,7 @@ export class SDPluginHost extends EventEmitter {
       state: placement.state ?? 0,
       coordinates: this.coordinatesFor(placement),
       lastPropertyInspectorMessage: undefined,
+      visible: false,
     };
 
     this.contexts.set(context.context, context);
@@ -765,18 +790,13 @@ export class SDPluginHost extends EventEmitter {
     return { context: context.context, created: true };
   }
 
-  /** Remove a placement; delivers willDisappear. */
+  /** Remove a placement; delivers willDisappear (once — see SDContext.visible). */
   unregisterActionInstance(deviceId: string, controller: SDController, index: number): boolean {
     const key = slotKey(deviceId, controller, index);
     const context = this.slots.get(key);
     if (!context) return false;
 
-    this.sendToContext(
-      context,
-      "willDisappear",
-      this.appearancePayload(context),
-      { action: context.actionUUID, device: context.deviceId },
-    );
+    this.sendWillDisappear(context);
     this.contexts.delete(context.context);
     this.slots.delete(key);
 
@@ -824,6 +844,7 @@ export class SDPluginHost extends EventEmitter {
         state: 0,
         coordinates: this.coordinatesFor(record as SDPlacement),
         lastPropertyInspectorMessage: undefined,
+        visible: false,
       };
       this.contexts.set(context.context, context);
       this.slots.set(key, context);
@@ -1035,7 +1056,12 @@ export class SDPluginHost extends EventEmitter {
     });
 
     // Re-appearance across connect/disconnect: the device came back, so
-    // every placement on it re-announces; on loss, plugins see the keys go.
+    // every placement on it re-announces — but only for contexts the plugin
+    // does NOT already see (context.visible), so the boot-time registerPlugin
+    // replay racing an early device:connected can never double-deliver
+    // willAppear. On loss, willDisappear goes out once per context: whichever
+    // of this announce or the placement bridge's unregister runs second is
+    // suppressed by the same flag.
     on("device:connected", (payload) => {
       const { id } = payload as { id: string };
       for (const context of this.contexts.values()) {
@@ -1045,9 +1071,7 @@ export class SDPluginHost extends EventEmitter {
     on("device:disconnected", (payload) => {
       const deviceId = payload as string;
       for (const context of this.contexts.values()) {
-        if (context.deviceId === deviceId) {
-          this.sendToContext(context, "willDisappear", this.appearancePayload(context));
-        }
+        if (context.deviceId === deviceId) this.sendWillDisappear(context);
       }
     });
   }
@@ -1068,13 +1092,30 @@ export class SDPluginHost extends EventEmitter {
     };
   }
 
-  private sendWillAppear(context: SDContext): void {
-    this.sendToContext(
+  private sendWillAppear(context: SDContext, force = false): void {
+    // Already-visible contexts are not re-announced unless forced (the
+    // registerPlugin replay forces: a freshly (re)started plugin has lost
+    // all instance state and needs willAppear for every placement).
+    if (context.visible && !force) return;
+    const delivered = this.sendToContext(
       context,
       "willAppear",
       this.appearancePayload(context),
       { action: context.actionUUID, device: context.deviceId },
     );
+    if (delivered) context.visible = true;
+  }
+
+  /** willDisappear, exactly once per delivered willAppear (visible flag). */
+  private sendWillDisappear(context: SDContext): void {
+    if (!context.visible) return;
+    const delivered = this.sendToContext(
+      context,
+      "willDisappear",
+      this.appearancePayload(context),
+      { action: context.actionUUID, device: context.deviceId },
+    );
+    if (delivered) context.visible = false;
   }
 
   private sendKeyDown(context: SDContext): void {
@@ -1217,9 +1258,12 @@ export class SDPluginHost extends EventEmitter {
       payload: entry.globalSettings,
     });
 
-    // Re-announce every placed instance of this plugin.
+    // Re-announce every placed instance of this plugin. Forced: the plugin
+    // process was (re)started, so its in-memory instance state is gone and
+    // every placement needs willAppear again even if the flag still says
+    // visible (e.g. the socket died without a willDisappear round-trip).
     for (const context of this.contexts.values()) {
-      if (context.pluginUUID === entry.uuid) this.sendWillAppear(context);
+      if (context.pluginUUID === entry.uuid) this.sendWillAppear(context, true);
     }
 
     this.emit("plugin-registered", entry.uuid);
@@ -1519,21 +1563,24 @@ export class SDPluginHost extends EventEmitter {
   /**
    * Send an SDK event scoped to a context. Extra top-level fields (action,
    * device, context) follow the SDK frame shape; `body` becomes `payload`.
+   * Returns false when the plugin has no live socket (nothing hit the wire) —
+   * appearance tracking uses that to keep retrying via the register replay.
    */
   private sendToContext(
     context: SDContext,
     event: string,
     body: Record<string, unknown>,
     topLevel?: Record<string, unknown>,
-  ): void {
+  ): boolean {
     const entry = this.plugins.get(context.pluginUUID);
-    if (!entry?.socket) return; // Not connected — willAppear replays on register.
+    if (!entry?.socket) return false; // Not connected — willAppear replays on register.
     this.send(entry.socket, {
       event,
       context: context.context,
       ...topLevel,
       payload: body,
     });
+    return true;
   }
 
   private send(ws: WebSocket, message: Record<string, unknown>): void {
