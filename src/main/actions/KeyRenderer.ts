@@ -25,8 +25,10 @@ import type {
 } from "../../shared/types";
 import {
   cssGradientEndpoints,
+  isWithinTolerance,
   normalizeGradientDirection,
   normalizeLayerOpacity,
+  normalizeTolerance,
   parseHexColor,
   rgbToHex,
 } from "../../shared/color";
@@ -300,7 +302,7 @@ export class KeyRenderer {
         return `text:${applyTextTokens(layer.text)}:${layer.textColor || ""}:${layer.fontSize || 14}:${base}`;
       }
       if (layer.type === "background") {
-        return `bg:${layer.backgroundColor || ""}:${layer.backgroundGradientStart || ""}:${layer.backgroundGradientEnd || ""}:${normalizeGradientDirection(layer.backgroundGradientDirection)}:${base}`;
+        return `bg:${layer.backgroundColor || ""}:${layer.backgroundGradientStart || ""}:${layer.backgroundGradientEnd || ""}:${normalizeGradientDirection(layer.backgroundGradientDirection)}:${layer.transparentColor || ""}:${normalizeTolerance(layer.transparentColorTolerance)}:${base}`;
       }
     } catch {
       return null;
@@ -349,11 +351,53 @@ export class KeyRenderer {
           .png()
           .toBuffer();
       }
+      if (layer.transparentColor) {
+        buf = await this.applyTransparentColorKnockout(
+          buf,
+          layer.transparentColor,
+          normalizeTolerance(layer.transparentColorTolerance),
+        );
+      }
       return await this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
     } catch (err) {
       this.logger.warn(`[renderBackgroundLayer] failed for layer ${layer.id}: ${err}`);
       return null;
     }
+  }
+
+  /**
+   * Chroma-key knockout: zero the alpha of every pixel whose RGB is within
+   * `tolerance` (per channel, inclusive) of `hex`. Runs on the raw RGBA
+   * buffer, BEFORE per-layer opacity so the two compose multiplicatively
+   * (keyed pixels stay fully transparent regardless of opacity).
+   */
+  private async applyTransparentColorKnockout(
+    buf: Buffer,
+    hex: string,
+    tolerance: number,
+  ): Promise<Buffer> {
+    const key = parseHexColor(hex);
+    if (!key) return buf;
+    const { data, info } = await sharp(buf)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    for (let i = 0; i < data.length; i += info.channels) {
+      if (
+        isWithinTolerance(
+          { r: data[i], g: data[i + 1], b: data[i + 2] },
+          key,
+          tolerance,
+        )
+      ) {
+        data[i + 3] = 0;
+      }
+    }
+    return sharp(data, {
+      raw: { width: info.width, height: info.height, channels: info.channels },
+    })
+      .png()
+      .toBuffer();
   }
 
   /**

@@ -232,6 +232,14 @@ export interface KeyLayer {
   backgroundGradientStart?: string;
   backgroundGradientEnd?: string;
   backgroundGradientDirection?: number;
+  /**
+   * Chroma-key knockout (background layers): every pixel whose RGB is within
+   * `transparentColorTolerance` (per channel) of this hex color renders at
+   * alpha 0 — lets artwork sit on a keyed-out background instead of an
+   * opaque rectangle.
+   */
+  transparentColor?: string;
+  transparentColorTolerance?: number;
 
   // Text layer properties
   text?: string;

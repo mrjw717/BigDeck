@@ -31,7 +31,20 @@ export function LayerStack({ layers }: { layers: KeyLayer[] }) {
           const style: React.CSSProperties = { opacity: l.opacity };
           if (l.backgroundGradientStart && l.backgroundGradientEnd) {
             style.background = `linear-gradient(${l.backgroundGradientDirection || 135}deg, ${l.backgroundGradientStart}, ${l.backgroundGradientEnd})`;
+            // NOTE: hardware additionally chroma-keys l.transparentColor
+            // out of gradient pixels (KeyRenderer.applyTransparentColorKnockout);
+            // per-pixel keying isn't expressible in CSS, so the preview shows
+            // the un-keyed gradient for gradients. Solid colors match exactly.
           } else {
+            // Preview parity with the hardware chroma-key: a solid background
+            // whose color IS the keyed color renders fully transparent.
+            if (
+              l.transparentColor &&
+              l.backgroundColor &&
+              l.backgroundColor.toLowerCase() === l.transparentColor.toLowerCase()
+            ) {
+              return null;
+            }
             style.background = l.backgroundColor || "#000000";
           }
           return <div key={l.id} className="absolute inset-0" style={style} />;
@@ -60,6 +73,14 @@ export function LayerStack({ layers }: { layers: KeyLayer[] }) {
 
         // image / icon layer
         if (!l.source) return null;
+        // Full literal classes: Tailwind's JIT needs contiguous candidates.
+        // This mirrors KeyRenderer's per-layer `fit` (contain/cover/fill).
+        const fitClass =
+          l.fit === "cover"
+            ? "object-cover"
+            : l.fit === "fill"
+              ? "object-fill"
+              : "object-contain";
         return (
           <div
             key={l.id}
@@ -71,7 +92,7 @@ export function LayerStack({ layers }: { layers: KeyLayer[] }) {
               className={
                 l.type === "icon"
                   ? "w-10 h-10 object-contain drop-shadow-md"
-                  : "w-full h-full object-contain"
+                  : `w-full h-full ${fitClass}`
               }
             />
           </div>

@@ -136,6 +136,56 @@ function SortableLayer({
                 />
               </div>
             </div>
+            <div className="space-y-2 pt-1 border-t border-border/40">
+              <div className="flex items-center justify-between">
+                <label className="text-xs text-muted-foreground">
+                  Transparent color (knock out)
+                </label>
+                {layer.transparentColor && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onUpdate({
+                        transparentColor: undefined,
+                        transparentColorTolerance: undefined,
+                      })
+                    }
+                    className="text-[11px] text-muted-foreground hover:text-foreground underline"
+                  >
+                    disable
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={layer.transparentColor || "#000000"}
+                  onChange={(e) =>
+                    onUpdate({ transparentColor: e.target.value })
+                  }
+                  className="h-9 w-14 rounded-lg bg-muted/40 border-2 border-border overflow-hidden cursor-pointer"
+                />
+                <input
+                  type="range"
+                  min={0}
+                  max={128}
+                  step={1}
+                  value={layer.transparentColorTolerance ?? 0}
+                  onChange={(e) =>
+                    onUpdate({
+                      transparentColorTolerance: Number(e.target.value),
+                    })
+                  }
+                  className="flex-1"
+                />
+                <span className="text-xs text-muted-foreground w-8 text-right tabular-nums">
+                  {layer.transparentColorTolerance ?? 0}
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground/70">
+                Pixels matching this color (± tolerance) become see-through.
+              </p>
+            </div>
           </div>
         );
 

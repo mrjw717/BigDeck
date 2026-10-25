@@ -42,6 +42,28 @@ export function rgbToHex({ r, g, b }: Rgb): string {
 }
 
 /**
+ * Chroma-key match: per-channel RGB distance, ALL channels within tolerance.
+ * Tolerance is inclusive (a difference of exactly `tolerance` still matches).
+ */
+export function isWithinTolerance(a: Rgb, b: Rgb, tolerance: number): boolean {
+  return (
+    Math.abs(a.r - b.r) <= tolerance &&
+    Math.abs(a.g - b.g) <= tolerance &&
+    Math.abs(a.b - b.b) <= tolerance
+  );
+}
+
+/**
+ * Sanitize a chroma-key tolerance coming from JSON profiles: non-finite or
+ * negative values degrade to 0 (exact match).
+ */
+export function normalizeTolerance(tolerance: number | undefined): number {
+  return typeof tolerance === "number" && Number.isFinite(tolerance)
+    ? Math.max(0, tolerance)
+    : 0;
+}
+
+/**
  * Sanitize a per-layer opacity coming from JSON profiles. Returns undefined
  * (= "render at full opacity", the shared default) for absent, non-finite or
  * >= 1 values; otherwise clamps to [0, 1). This matches how the preview's CSS
