@@ -174,6 +174,16 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
   const [assets, setAssets] = useState<string[]>([]);
   const [isRecordingMacro, setIsRecordingMacro] = useState(false);
   const [showActionPicker, setShowActionPicker] = useState(false);
+  // Script source mode for run-script actions: "file" points at a script on
+  // disk, "inline" pastes code. Explicit UI state — deriving the view from
+  // `scriptFile` emptiness made the toggle dead (empty string = inline view).
+  const [scriptSourceMode, setScriptSourceMode] = useState<"file" | "inline">(
+    () => (keyConfig.action?.scriptFile ? "file" : "inline"),
+  );
+  // Re-sync when a different action is loaded into this editor.
+  useEffect(() => {
+    setScriptSourceMode(keyConfig.action?.scriptFile ? "file" : "inline");
+  }, [keyConfig.action?.id]);
   const [isEditingPressed, setIsEditingPressed] = useState(false);
 
   // Get live keyConfig from store, not from stale profile prop
@@ -643,8 +653,8 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
               {/* Source mode: point at a script file OR paste inline code.
-                  Mode is derived from which field is populated; switching
-                  clears the other so the executor never sees both. */}
+                  Explicit state (scriptSourceMode) drives the view; switching
+                  modes clears the other field so the executor never sees both. */}
               <div className="flex gap-2">
                 {(
                   [
@@ -652,22 +662,27 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                     ["inline", "Paste code"],
                   ] as const
                 ).map(([mode, label]) => {
-                  const active =
-                    mode === "file"
-                      ? !!((keyConfig.action as any).scriptFile)
-                      : !((keyConfig.action as any).scriptFile);
+                  const active = scriptSourceMode === mode;
                   return (
                     <button
                       key={mode}
                       type="button"
-                      onClick={() =>
-                        setKeyAction(keyIndex, {
-                          ...keyConfig.action,
-                          ...(mode === "file"
-                            ? { script: "", scriptFile: "" }
-                            : { scriptFile: undefined }),
-                        } as Action)
-                      }
+                      onClick={() => {
+                        setScriptSourceMode(mode);
+                        if (mode === "file") {
+                          // Fresh file mode starts with an empty path.
+                          setKeyAction(keyIndex, {
+                            ...keyConfig.action,
+                            script: "",
+                            scriptFile: "",
+                          } as Action);
+                        } else {
+                          setKeyAction(keyIndex, {
+                            ...keyConfig.action,
+                            scriptFile: undefined,
+                          } as Action);
+                        }
+                      }}
                       className={`px-3 h-8 rounded-lg text-xs font-medium border transition-all ${
                         active
                           ? "bg-primary/15 text-primary border-primary/40"
@@ -679,8 +694,7 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                   );
                 })}
               </div>
-              {(keyConfig.action as any).scriptFile !== undefined &&
-              (keyConfig.action as any).scriptFile !== "" ? (
+              {scriptSourceMode === "file" ? (
                 <PathPicker
                   type="file"
                   value={(keyConfig.action as any).scriptFile || ""}
