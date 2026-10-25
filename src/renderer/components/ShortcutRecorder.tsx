@@ -1,43 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Keyboard, X, RotateCcw, Monitor } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Keyboard, RotateCcw, Monitor } from "lucide-react";
 import { VirtualKeyboard } from "./VirtualKeyboard";
+import { captureShortcut } from "../../shared/shortcutCapture";
 
 interface ShortcutRecorderProps {
   keys: string[];
   modifiers: string[];
   onChange: (keys: string[], modifiers: string[]) => void;
 }
-
-// Map special key names to xdotool-compatible format
-const specialKeyMap: Record<string, string> = {
-  Enter: "Return",
-  Return: "Return",
-  Delete: "Delete",
-  Del: "Delete",
-  Backspace: "BackSpace",
-  Tab: "Tab",
-  Escape: "Escape",
-  Esc: "Escape",
-  " ": "Space",
-  Spacebar: "Space",
-  ArrowUp: "Up",
-  ArrowDown: "Down",
-  ArrowLeft: "Left",
-  ArrowRight: "Right",
-  Up: "Up",
-  Down: "Down",
-  Left: "Left",
-  Right: "Right",
-  Home: "Home",
-  End: "End",
-  PageUp: "PageUp",
-  PageDown: "PageDown",
-  Insert: "Insert",
-  Ins: "Insert",
-};
-
-// Modifier keys to filter out
-const MODIFIER_KEYS = ["Control", "Alt", "Shift", "Meta"];
 
 export function ShortcutRecorder({
   keys,
@@ -46,72 +16,80 @@ export function ShortcutRecorder({
 }: ShortcutRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
+  // Incomplete state while only modifiers are held ("CTRL+…"); never saved.
+  const [liveModifiers, setLiveModifiers] = useState<string[]>([]);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isRecording) return;
+  // Keep the latest callback without re-registering the capture listeners
+  // on every parent render (onChange is an inline arrow in KeyEditor).
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
+  useEffect(() => {
+    if (!isRecording) return;
+
+    // Electron matches application-menu accelerators (the auto-created
+    // default Edit menu: Copy=Ctrl+C, Paste=Ctrl+V, Reload=Ctrl+R, ...) in
+    // the main process BEFORE the page sees any keydown, so paste-style
+    // combos never reached this component. Ask main to ignore menu
+    // shortcuts for the duration of the recording; the cleanup below (stop,
+    // cancel, toggle off, or unmount) always restores them.
+    window.bigdeck?.shortcut?.setRecordMode?.(true)?.catch(() => {});
+
+    // Capture phase on window: this component must see every key FIRST, so
+    // the app default never fires and bubble-phase handlers (StreamdeckView's
+    // Ctrl+V deck-paste, KeyEditor's Escape-close) cannot act mid-recording.
+    const onKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
-      const newModifiers: string[] = [];
-      if (e.ctrlKey) newModifiers.push("ctrl");
-      if (e.altKey) newModifiers.push("alt");
-      if (e.shiftKey) newModifiers.push("shift");
-      if (e.metaKey) newModifiers.push("super");
-
-      // Check if it's a modifier-only key press (Control, Alt, Shift, Meta)
-      const isModifier = MODIFIER_KEYS.includes(e.key);
-
-      // Map special keys to xdotool format
-      let key: string | null = null;
-
-      if (!isModifier) {
-        // Check for special keys first
-        if (specialKeyMap[e.key]) {
-          key = specialKeyMap[e.key];
-        } else if (e.key.length === 1) {
-          // Regular character key - keep as uppercase
-          key = e.key.toUpperCase();
-        } else {
-          // Other special keys (F1-F12, etc.)
-          key = e.key;
-        }
+      const result = captureShortcut(e);
+      switch (result.action) {
+        case "none":
+          break;
+        case "live":
+          setLiveModifiers(result.modifiers);
+          break;
+        case "complete":
+          // Record immediately on the non-modifier keydown.
+          setLiveModifiers([]);
+          onChangeRef.current(result.keys, result.modifiers);
+          setIsRecording(false);
+          break;
+        case "cancel":
+          setLiveModifiers([]);
+          setIsRecording(false);
+          break;
+        case "clear":
+          setLiveModifiers([]);
+          onChangeRef.current([], []);
+          break;
       }
-
-      const newKeys = key ? [key] : [];
-
-      // Log for debugging
-      console.log("Recorder:", {
-        key: e.key,
-        code: e.code,
-        mappedKey: key,
-        newKeys,
-        newModifiers,
-      });
-
-      onChange(newKeys, newModifiers);
-
-      if (key) {
-        setIsRecording(false);
-      }
-    },
-    [isRecording, onChange],
-  );
-
-  useEffect(() => {
-    if (isRecording) {
-      window.addEventListener("keydown", handleKeyDown);
-      window.addEventListener("keyup", (e) => e.preventDefault()); // Prevent defaults on up too
-    }
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", (e) => e.preventDefault());
     };
-  }, [isRecording, handleKeyDown]);
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    window.addEventListener("keydown", onKeyDown, true);
+    window.addEventListener("keyup", onKeyUp, true);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown, true);
+      window.removeEventListener("keyup", onKeyUp, true);
+      window.bigdeck?.shortcut?.setRecordMode?.(false)?.catch(() => {});
+    };
+  }, [isRecording]);
+
+  const toggleRecording = () => {
+    setLiveModifiers([]);
+    setIsRecording(!isRecording);
+  };
 
   const clearShortcut = () => {
     onChange([], []);
+    setLiveModifiers([]);
     setIsRecording(false);
   };
 
@@ -132,7 +110,7 @@ export function ShortcutRecorder({
       <div className="flex gap-2">
         <button
           id="shortcut-recorder"
-          onClick={() => setIsRecording(!isRecording)}
+          onClick={toggleRecording}
           aria-label={
             isRecording ? "Stop recording" : "Start recording keyboard shortcut"
           }
@@ -147,17 +125,13 @@ export function ShortcutRecorder({
               <span className="text-xs font-bold text-primary uppercase tracking-wider mr-2">
                 Recording:
               </span>
-              {modifiers.length > 0 || keys.length > 0 ? (
-                <span className="text-sm font-black bg-background/50 px-2 py-1 rounded border border-primary/30">
-                  {[...modifiers, ...keys]
-                    .map((k) => k.toUpperCase())
-                    .join(" + ")}
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  Waiting for input...
-                </span>
-              )}
+              <span className="text-sm font-black bg-background/50 px-2 py-1 rounded border border-primary/30">
+                {liveModifiers.length > 0
+                  ? `${liveModifiers
+                      .map((m) => m.toUpperCase())
+                      .join(" + ")} + …`
+                  : "Press any key…"}
+              </span>
             </div>
           ) : (
             <>
@@ -184,7 +158,7 @@ export function ShortcutRecorder({
       </div>
       <p className="text-[10px] text-muted-foreground italic">
         {isRecording
-          ? "Press any key combination..."
+          ? "Press any key combination — Esc cancels, Backspace clears."
           : "Supports Ctrl, Alt, Shift, and Super keys."}
       </p>
 

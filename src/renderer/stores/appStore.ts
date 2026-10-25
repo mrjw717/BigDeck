@@ -96,6 +96,10 @@ declare global {
         startMacroRecording: () => Promise<void>;
         stopMacroRecording: () => Promise<{ type: string; value: string }[]>;
       };
+      shortcut: {
+        /** Ignore/restore application-menu shortcuts while recording. */
+        setRecordMode: (active: boolean) => Promise<void>;
+      };
       settings: {
         get: () => Promise<any>;
         update: (settings: any) => Promise<any>;
