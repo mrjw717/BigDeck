@@ -44,7 +44,9 @@
 //   N small per-context files, not one app database.
 // - Unknown events and malformed messages are logged and ignored — the
 //   compat spec REQUIRES tolerance here (the official app ships events
-//   BigDeck does not implement: getTile, didReceiveSecrets, ...).
+//   BigDeck does not implement: didReceiveSecrets, ...). getTile is the one
+//   exception: it gets an explicit empty-reply stub, because plugins await
+//   that reply and hang on silence.
 //
 // Deliberately out of scope for the backend phase:
 // - switchToProfile: emitted as an event for observability; wiring it to
@@ -1299,10 +1301,28 @@ export class SDPluginHost extends EventEmitter {
         break;
       }
 
+      case "getTile": {
+        // SD+ tile fetch (compat spec: v2 private op — plugins await the
+        // reply, so staying silent hangs them). The official reply shape is
+        // not recovered yet (pending RE pass), so this is a documented
+        // assumption: `didReceiveTile` with an EMPTY payload, correlated
+        // with the requesting context when one was supplied. Revisit after
+        // the next device-traffic RE pass.
+        if (!sender.socket) break;
+        this.send(sender.socket, {
+          event: "didReceiveTile",
+          ...(contextId ? { context: contextId } : {}),
+          payload: {},
+        });
+        break;
+      }
+
       default:
         // Spec requirement: unknown events are logged and ignored, never
-        // fatal (the official app speaks events BigDeck doesn't implement:
-        // getTile, didReceiveSecrets, didReceiveResources, ...).
+        // fatal. This also intentionally covers INBOUND `didReceiveSecrets`
+        // / `didReceiveResources` — those names are app→plugin events in
+        // the official app, so a plugin sending them is bogus traffic
+        // (getTile has its own stub reply above).
         this.logger.warn(`[sd] ${sender.uuid}: unknown event "${event}" ignored`);
         break;
     }

@@ -77,6 +77,9 @@ ws.on("message", (data) => {
         },
       });
       send({ event: "getGlobalSettings", context: "" });
+      // getTile probe: the host must answer didReceiveTile (empty stub
+      // payload) instead of going silent — plugins await that reply.
+      send({ event: "getTile", context: "" });
       // Spec-tolerance probe: an event BigDeck does not implement. The host
       // must log and ignore it (never crash or close).
       send({ event: "someFutureElgatoEvent", payload: { hello: true } });

@@ -338,6 +338,21 @@ describe("SDPluginHost end-to-end (spawned fixture plugin)", () => {
     // The host is still alive and the plugin still connected.
     expect(host.getPlugins().find((p) => p.uuid === PLUGIN_UUID)?.status).toBe("running");
   });
+
+  it("answers getTile with an empty didReceiveTile so awaiting plugins don't hang", async () => {
+    host = await makeHost();
+
+    // The fixture probes getTile right after registering; the reply frame
+    // comes back echoed like any other inbound frame (documented stub
+    // assumption: `didReceiveTile` with an empty payload).
+    const reply = await waitFor(() => echoFrame("didReceiveTile"));
+    expect(reply!.payload).toEqual({});
+
+    // And the request itself was NOT treated as an unknown event.
+    expect(
+      records.find((r) => r.msg.includes('unknown event "getTile"')),
+    ).toBeUndefined();
+  });
 });
 
 describe("SDPluginHost settings", () => {
