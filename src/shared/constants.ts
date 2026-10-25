@@ -178,6 +178,9 @@ export const IPC_CHANNELS = {
   MACRO_RECORD_STOP: "action:macro-record-stop",
   MEDIA_PLAYERS_LIST: "media:players-list",
 
+  // Shortcut recorder
+  SHORTCUT_RECORD_MODE: "shortcut:record-mode",
+
   // Asset
   ASSET_UPLOAD: "asset:upload",
   ASSET_LIST: "asset:list",

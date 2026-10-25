@@ -158,6 +158,13 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.MEDIA_PLAYERS_LIST),
   },
 
+  // Shortcut recorder APIs
+  shortcut: {
+    /** Ask main to ignore app-menu shortcuts while recording (or restore). */
+    setRecordMode: (active: boolean): Promise<void> =>
+      ipcRenderer.invoke(IPC_CHANNELS.SHORTCUT_RECORD_MODE, active),
+  },
+
   // Asset APIs
   asset: {
     upload: (filePath: string): Promise<string> =>

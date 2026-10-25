@@ -316,6 +316,22 @@ if (!gotTheLock) {
       return actionEngine.getMediaPlayers();
     });
 
+    // Shortcut recorder: while the in-app recorder listens for keys, the
+    // renderer asks main to ignore application-menu shortcuts for its
+    // webContents. The app never calls Menu.setApplicationMenu, so Electron
+    // auto-creates its default menu whose Edit roles register OS-level
+    // accelerators (Copy=Ctrl+C, Paste=Ctrl+V, Reload=Ctrl+R, ...). Those
+    // accelerators consume the key event in the main process before any page
+    // keydown listener runs, which silently blocked recording paste-style
+    // combos. `setIgnoreMenuShortcuts` is scoped to the focused webContents
+    // and is always paired with a reset in the recorder's effect cleanup.
+    ipcMain.handle(
+      IPC_CHANNELS.SHORTCUT_RECORD_MODE,
+      (event, active: boolean) => {
+        event.sender.setIgnoreMenuShortcuts(Boolean(active));
+      },
+    );
+
     // Settings IPC handlers
     ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, () => {
       return settingsManager.getSettings();
