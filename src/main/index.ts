@@ -938,6 +938,7 @@ if (!gotTheLock) {
       // anyway, and Promise.race keeps every member's rejection handled.
       quitCleanup = (async () => {
         profileManager?.flush();
+        hardwareSync?.dispose();
         await Promise.race([
           (async () => {
             await sdPluginHost?.stop();
