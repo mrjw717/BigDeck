@@ -19,6 +19,7 @@ import fs from "fs/promises";
 import { DeviceManager } from "./device/DeviceManager";
 import { ProfileManager } from "./profiles/ProfileManager";
 import { ActionEngine } from "./actions/ActionEngine";
+import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
@@ -27,7 +28,6 @@ import { IconFetcher } from "./utils/IconFetcher";
 import {
   IPC_CHANNELS,
   DEFAULT_SETTINGS,
-  DEVICE_SPECS,
 } from "../shared/constants";
 import type { Action, AppSettings, Profile, KeyConfig } from "../shared/types";
 
@@ -37,6 +37,7 @@ let tray: Tray | null = null;
 let deviceManager: DeviceManager;
 let profileManager: ProfileManager;
 let actionEngine: ActionEngine;
+let hardwareSync: HardwareSync;
 let pluginManager: PluginManager;
 let networkServer: NetworkServer;
 let settingsManager: SettingsManager;
@@ -47,10 +48,6 @@ const isDev = process.env.NODE_ENV === "development";
 
 // Track if app is quitting (for minimize to tray feature)
 let isQuitting = false;
-
-// Cache of pre-rendered key images: keyId -> { idle: Buffer|Buffer[], pressed: Buffer|Buffer[] }
-// Populated at startup and on key config changes. Makes key down/up responses instant.
-const keyImageCache = new Map<string, { idle: Buffer | Buffer[]; pressed: Buffer | Buffer[] }>();
 
 // Single Instance Lock
 protocol.registerSchemesAsPrivileged([
@@ -216,8 +213,10 @@ if (!gotTheLock) {
 
         // Update cache with idle state; pressed will be lazily rendered on first press
         if (keyConfig) {
-          const keyId = `${deviceId}:${keyIndex}`;
-          keyImageCache.set(keyId, { idle: imageOrFrames, pressed: imageOrFrames });
+          hardwareSync.setCachedImages(deviceId, keyIndex, {
+            idle: imageOrFrames,
+            pressed: imageOrFrames,
+          });
         }
       },
     );
@@ -473,12 +472,16 @@ if (!gotTheLock) {
       }
 
       if (activeProfile && activeProfile.deviceType === device.type) {
-        applyProfileToDevice(device.id, activeProfile);
+        hardwareSync.applyProfileToDevice(device.id, activeProfile);
       }
     });
 
     deviceManager.on("device:disconnected", (deviceId) => {
       logger.info(`Device disconnected: ${deviceId}`);
+      // The single owner must forget the departed device's key state, or a
+      // reconnect would skip re-applying keys whose last-rendered hash still
+      // matches while the hardware panel is actually blank.
+      hardwareSync.clearDevice(deviceId);
       mainWindow?.webContents.send(IPC_CHANNELS.DEVICE_DISCONNECTED, deviceId);
     });
 
@@ -486,10 +489,9 @@ if (!gotTheLock) {
      * Render and cache idle state for a key (cache miss fallback).
      */
     const renderAndCacheIdle = async (deviceId: string, keyIndex: number, keyConfig: KeyConfig, deviceType: string) => {
-      const keyId = `${deviceId}:${keyIndex}`;
       try {
         const rendered = await actionEngine.renderKeyImageEx(keyConfig, deviceType as any, false);
-        keyImageCache.set(keyId, { idle: rendered.image, pressed: rendered.image });
+        hardwareSync.setCachedImages(deviceId, keyIndex, { idle: rendered.image, pressed: rendered.image });
         await deviceManager.setKeyImage(deviceId, keyIndex, rendered.image, false, rendered.delays);
       } catch (err) {
         logger.warn(`Failed to render key ${keyIndex}: ${err}`);
@@ -505,13 +507,13 @@ if (!gotTheLock) {
      */
     const ensurePressedCached = async (deviceId: string, keyIndex: number) => {
       const keyId = `${deviceId}:${keyIndex}`;
-      const cached = keyImageCache.get(keyId);
+      const cached = hardwareSync.getCachedImages(deviceId, keyIndex);
       if (!cached) return;
       const info = getActiveKeyConfig(keyIndex);
       if (!info) return;
       try {
         const rendered = await actionEngine.renderKeyImageEx(info.keyConfig, info.deviceType as any, true);
-        keyImageCache.set(keyId, { idle: cached.idle, pressed: rendered.image });
+        hardwareSync.setCachedImages(deviceId, keyIndex, { idle: cached.idle, pressed: rendered.image });
         // Key still held — the initial press showed the idle image (nothing
         // better was cached yet), so upgrade to the real pressed image now.
         if (heldKeys.has(keyId)) {
@@ -544,7 +546,7 @@ if (!gotTheLock) {
       // Instantly apply cached pressed image. If it's identical to what's
       // already on the key (synced state), DeviceManager no-ops the write,
       // so running animations don't restart.
-      const cached = keyImageCache.get(keyId);
+      const cached = hardwareSync.getCachedImages(deviceId, keyIndex);
       if (cached) {
         deviceManager.setKeyImage(deviceId, keyIndex, cached.pressed).catch(() => {});
       }
@@ -574,7 +576,7 @@ if (!gotTheLock) {
       heldKeys.delete(keyId);
 
       // Instantly apply cached idle image (no render delay)
-      const cached = keyImageCache.get(keyId);
+      const cached = hardwareSync.getCachedImages(deviceId, keyIndex);
       if (cached) {
         deviceManager.setKeyImage(deviceId, keyIndex, cached.idle).catch(() => {});
       } else {
@@ -590,7 +592,7 @@ if (!gotTheLock) {
       const devices = deviceManager.getDevices();
       for (const device of devices) {
         if (device.type === profile.deviceType) {
-          applyProfileToDevice(device.id, profile);
+          hardwareSync.applyProfileToDevice(device.id, profile);
         }
       }
     });
@@ -606,129 +608,13 @@ if (!gotTheLock) {
       for (const device of devices) {
         if (device.type !== profile.deviceType) continue;
 
-        const page = profile.pages[profile.activePage];
-        if (!page) continue;
-
-        const deviceCache = getDeviceCache(device.id);
-        const keyCount = DEVICE_SPECS[profile.deviceType]?.keyCount || page.keys.length;
-
-        for (let keyIndex = 0; keyIndex < keyCount; keyIndex++) {
-          const keyConfig = page.keys.find((k) => k.keyIndex === keyIndex) ?? {
-            id: `blank-${keyIndex}`,
-            keyIndex,
-          };
-          const configHash = hashKeyConfig(keyConfig as KeyConfig);
-          if (deviceCache.get(keyIndex) === configHash) continue;
-
-          scheduleKeyRender(device.id, keyIndex, keyConfig as KeyConfig, profile.deviceType);
-        }
+        // Diff against last-rendered state and re-render only changed keys,
+        // each with its own trailing debounce (single owner: HardwareSync).
+        hardwareSync.syncChangedKeys(device.id, profile);
       }
     });
 
     areDeviceEventsSetup = true;
-  }
-
-  // Cache previous key states to avoid redundant renders/writes
-  const lastDeviceState = new Map<string, Map<number, string>>();
-
-  function getDeviceCache(deviceId: string): Map<number, string> {
-    let cache = lastDeviceState.get(deviceId);
-    if (!cache) {
-      cache = new Map();
-      lastDeviceState.set(deviceId, cache);
-    }
-    return cache;
-  }
-
-  /** Appearance-relevant config fingerprint (actions don't affect pixels). */
-  function hashKeyConfig(keyConfig: KeyConfig): string {
-    return JSON.stringify({
-      img: keyConfig.image,
-      lbl: keyConfig.label,
-      lp: keyConfig.labelPosition,
-      lc: keyConfig.labelColor,
-      act: keyConfig.action?.type,
-      aname: keyConfig.action?.name,
-      layers: keyConfig.layers,
-      pressedLayers: keyConfig.pressedLayers,
-    });
-  }
-
-  // ---- Per-key render scheduler -------------------------------------------
-  // Main is the ONLY writer to hardware. The renderer never pushes images;
-  // it saves config, we diff, and only changed keys are re-rendered — each
-  // with a trailing debounce so rapid edits coalesce. Latest-write-wins via
-  // per-key generation counters.
-  const keyRenderTimers = new Map<string, NodeJS.Timeout>();
-  const keyRenderGen = new Map<string, number>();
-  /** Trailing debounce per key — feels instant for single edits, coalesces drags. */
-  const KEY_RENDER_DEBOUNCE_MS = 120;
-
-  function scheduleKeyRender(
-    deviceId: string,
-    keyIndex: number,
-    keyConfig: KeyConfig,
-    deviceType: Profile["deviceType"],
-    opts?: { immediate?: boolean },
-  ): void {
-    const id = `${deviceId}:${keyIndex}`;
-    const gen = (keyRenderGen.get(id) || 0) + 1;
-    keyRenderGen.set(id, gen);
-
-    const existing = keyRenderTimers.get(id);
-    if (existing) clearTimeout(existing);
-
-    const delay = opts?.immediate ? 0 : KEY_RENDER_DEBOUNCE_MS;
-    keyRenderTimers.set(
-      id,
-      setTimeout(async () => {
-        keyRenderTimers.delete(id);
-        if (keyRenderGen.get(id) !== gen) return; // superseded
-
-        try {
-          const rendered = await actionEngine.renderKeyImageEx(keyConfig, deviceType, false);
-          if (keyRenderGen.get(id) !== gen) return; // superseded while rendering
-
-          keyImageCache.set(id, { idle: rendered.image, pressed: rendered.image });
-          await deviceManager.setKeyImage(deviceId, keyIndex, rendered.image, false, rendered.delays);
-          getDeviceCache(deviceId).set(keyIndex, hashKeyConfig(keyConfig));
-        } catch (error) {
-          logger.error(`Failed to render key ${keyIndex}: ${error}`);
-        }
-      }, delay),
-    );
-  }
-
-  /**
-   * Applies all changed key images from a profile to a connected device.
-   * Used on connect/activate/page-switch: renders are scheduled immediately
-   * and writes flow through the per-device control lane (serialized, so the
-   * device can't be flooded).
-   */
-  async function applyProfileToDevice(
-    deviceId: string,
-    profile: Profile,
-  ): Promise<void> {
-    const page = profile.pages[profile.activePage];
-    if (!page) return;
-
-    const deviceSpecs = DEVICE_SPECS[profile.deviceType];
-    const keyCount = deviceSpecs?.keyCount || page.keys.length;
-    const deviceCache = getDeviceCache(deviceId);
-
-    for (let keyIndex = 0; keyIndex < keyCount; keyIndex++) {
-      const keyConfig = page.keys.find((k) => k.keyIndex === keyIndex) ?? {
-        id: `blank-${keyIndex}`,
-        keyIndex,
-      };
-
-      const configHash = hashKeyConfig(keyConfig as KeyConfig);
-      if (deviceCache.get(keyIndex) === configHash) continue;
-
-      scheduleKeyRender(deviceId, keyIndex, keyConfig as KeyConfig, profile.deviceType, {
-        immediate: true,
-      });
-    }
   }
 
   async function initializeApp(): Promise<void> {
@@ -750,6 +636,13 @@ if (!gotTheLock) {
       profileManager = new ProfileManager(logger);
       actionEngine = new ActionEngine(logger, app.getPath("userData"));
 
+      // Single owner of per-key rendered-image state ("what is on the key").
+      // The IPC set-image handler, the press/release visual path, and the
+      // profile render path all go through this one cache — a second cache
+      // here caused stale pressed images depending on which path wrote last
+      // (audit #1).
+      hardwareSync = new HardwareSync(deviceManager, actionEngine, logger);
+
       actionEngine.setOnSwitchProfile(async (profileId: string) => {
         try {
           const newProfile = profileManager.activateProfile(profileId);
@@ -760,7 +653,7 @@ if (!gotTheLock) {
           const devices = deviceManager.getDevices();
           for (const device of devices) {
             if (device.type === newProfile.deviceType) {
-              await applyProfileToDevice(device.id, newProfile);
+              await hardwareSync.applyProfileToDevice(device.id, newProfile);
             }
           }
         } catch (err) {
@@ -780,7 +673,7 @@ if (!gotTheLock) {
           const devices = deviceManager.getDevices();
           for (const device of devices) {
             if (device.type === updated.deviceType) {
-              await applyProfileToDevice(device.id, updated);
+              await hardwareSync.applyProfileToDevice(device.id, updated);
             }
           }
         } catch (err) {

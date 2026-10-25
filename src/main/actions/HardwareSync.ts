@@ -1,12 +1,19 @@
 // ============================================================================
 // BigDeck - Hardware Sync
-// The ONLY writer of profile-driven key images to hardware.
+// The ONLY writer of profile-driven key images to hardware, and the SINGLE
+// OWNER of per-key rendered-image state ({ idle, pressed } per device:key).
 //
 // The renderer never pushes images; it saves profile config. This module
 // diffs each key's appearance config against what was last rendered for the
 // device, re-renders ONLY changed keys (each with a trailing debounce so
 // slider drags/typing coalesce), and writes the result. Latest-write-wins via
 // per-key generation counters.
+//
+// Every other consumer of key-image state (the IPC set-image handler and the
+// hardware press/release visual path in the main entry point) reads and
+// writes through getCachedImages/setCachedImages here. There must be no
+// second copy of this cache — split-brain caches caused stale pressed images
+// depending on which write path ran last (audit #1).
 // ============================================================================
 
 import { DEVICE_SPECS } from "../../shared/constants";
