@@ -159,3 +159,100 @@ describe("ProfileManager", () => {
     );
   });
 });
+
+// ============================================================================
+// getActiveKeyConfig — hardware press → KeyConfig dispatch lookup
+//
+// Regression guard for the "assigned actions never execute" investigation:
+// this lookup is the single source of truth for hardware key presses, so an
+// out-of-range activePage (stale persisted value) or a missing key entry must
+// yield null (which callers log) instead of throwing or silently misreading
+// another page.
+// ============================================================================
+
+describe("ProfileManager.getActiveKeyConfig", () => {
+  let manager: ProfileManager;
+
+  function makeKeyedProfileInput(): Omit<
+    Profile,
+    "id" | "createdAt" | "updatedAt"
+  > {
+    return {
+      name: "Keyed",
+      deviceType: "xl",
+      pages: [
+        {
+          id: "page-0",
+          name: "Page 0",
+          keys: [
+            { id: "k0", keyIndex: 0 },
+            {
+              id: "k1",
+              keyIndex: 1,
+              action: {
+                id: "a1",
+                name: "Mute",
+                type: "multimedia",
+                mediaCommand: "mute",
+              } as Profile["pages"][number]["keys"][number]["action"],
+            },
+          ],
+        },
+        { id: "page-1", name: "Page 1", keys: [{ id: "k32", keyIndex: 0 }] },
+      ],
+      activePage: 0,
+    };
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    manager = new ProfileManager(silentLogger);
+  });
+
+  afterEach(() => {
+    manager.flush();
+    vi.useRealTimers();
+  });
+
+  it("resolves a key (with its action) on the active page of the active profile", () => {
+    const created = manager.createProfile(makeKeyedProfileInput());
+    manager.activateProfile(created.id);
+
+    const info = manager.getActiveKeyConfig(1);
+
+    expect(info).not.toBeNull();
+    expect(info?.keyConfig.id).toBe("k1");
+    expect(info?.keyConfig.action?.type).toBe("multimedia");
+    expect(info?.deviceType).toBe("xl");
+  });
+
+  it("reads from the ACTIVE page, not always page 0", () => {
+    const created = manager.createProfile(makeKeyedProfileInput());
+    manager.activateProfile(created.id);
+    manager.setActivePage(created.id, 1);
+
+    const info = manager.getActiveKeyConfig(0);
+
+    expect(info?.keyConfig.id).toBe("k32");
+  });
+
+  it("returns null when no profile is active", () => {
+    expect(manager.getActiveKeyConfig(0)).toBeNull();
+  });
+
+  it("returns null when activePage is out of range (stale persisted value)", () => {
+    const created = manager.createProfile(makeKeyedProfileInput());
+    manager.activateProfile(created.id);
+    // Simulate a corrupted/stale persisted activePage — must not throw.
+    manager.updateProfile({ ...created, activePage: 7 });
+
+    expect(manager.getActiveKeyConfig(0)).toBeNull();
+  });
+
+  it("returns null for a keyIndex absent from the active page", () => {
+    const created = manager.createProfile(makeKeyedProfileInput());
+    manager.activateProfile(created.id);
+
+    expect(manager.getActiveKeyConfig(31)).toBeNull();
+  });
+});

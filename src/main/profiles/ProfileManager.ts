@@ -96,6 +96,26 @@ export class ProfileManager extends EventEmitter {
   }
 
   /**
+   * Resolve the KeyConfig a hardware key press maps to: the key with this
+   * index on the ACTIVE profile's ACTIVE page. Returns null when there is no
+   * active profile, the activePage index is out of range (e.g. a stale value
+   * persisted by an older build), or the key has no entry on that page.
+   * Callers log the difference so dispatch drops are diagnosable instead of
+   * silent — this lookup is the single source of truth for hardware presses.
+   */
+  getActiveKeyConfig(
+    keyIndex: number,
+  ): { keyConfig: KeyConfig; deviceType: DeviceType } | null {
+    const profile = this.getActiveProfile();
+    if (!profile) return null;
+    const page = profile.pages[profile.activePage];
+    const keyConfig = page?.keys.find((k) => k.keyIndex === keyIndex);
+    return keyConfig
+      ? { keyConfig, deviceType: profile.deviceType }
+      : null;
+  }
+
+  /**
    * Create a new profile
    */
   createProfile(profileData: Omit<Profile, 'id' | 'createdAt' | 'updatedAt'>): Profile {

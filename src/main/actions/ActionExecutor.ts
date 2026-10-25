@@ -1,10 +1,20 @@
 // ============================================================================
 // BigDeck - Action Executor
 // Executes key actions: keyboard shortcuts, app launching, scripts, macros
+//
+// Linux viability notes:
+// - Every execute* helper returns a boolean ("carried out") so executeAction
+//   can log a truthful success/failure line per action type. Individual
+//   helpers log the concrete reason (missing tool, spawn error) first.
+// - Key/text injection on Wayland needs ydotool (with ydotoold running) or
+//   wtype; on X11 xdotool. Missing tools degrade gracefully with an explicit
+//   install hint instead of failing silently.
 // ============================================================================
 
-import { exec, spawn } from "child_process";
+import { exec, execFile, spawn } from "child_process";
 import { promisify } from "util";
+import { access, constants as fsConstants } from "fs/promises";
+import path from "path";
 import { uIOhook, UiohookKeyboardEvent } from "uiohook-napi";
 import {
   KeyboardShortcutAction,
@@ -22,6 +32,7 @@ import {
 import type { Logger } from "../utils/Logger";
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export class ActionExecutor {
   private logger: Logger;
@@ -78,6 +89,10 @@ export class ActionExecutor {
    * Execute an action. `origin` is the device key that triggered execution
    * when known (hardware press) — the SD plugin host uses it to resolve the
    * action-instance context.
+   *
+   * Logs start/success/failure with the action type so a hardware test can
+   * be diagnosed from bigdeck.log alone. Individual helpers log the concrete
+   * failure reason (missing tool, spawn error) before the summary line.
    */
   async executeAction(action: Action, origin?: ActionOrigin): Promise<void> {
     const debounceMs = this.getDebounceTime(action.type);
@@ -91,48 +106,72 @@ export class ActionExecutor {
 
     this.executionLocks.set(action.id, now);
 
+    this.logger.info(`Action executing: ${action.type} - ${action.name}`);
+
+    let succeeded = false;
     try {
       switch (action.type) {
         case "keyboard-shortcut":
-          await this.executeKeyboardShortcut(action as KeyboardShortcutAction);
+          succeeded = await this.executeKeyboardShortcut(
+            action as KeyboardShortcutAction,
+          );
           break;
         case "launch-app":
-          await this.executeLaunchApp(action as LaunchAppAction);
+          succeeded = await this.executeLaunchApp(action as LaunchAppAction);
           break;
         case "multimedia":
-          await this.executeMultimedia(action as MultimediaAction);
+          succeeded = await this.executeMultimedia(action as MultimediaAction);
           break;
         case "open-url":
-          await this.executeOpenUrl(action);
+          succeeded = await this.executeOpenUrl(action);
           break;
         case "open-folder":
-          await this.executeOpenFolder(action);
+          succeeded = await this.executeOpenFolder(action);
           break;
         case "run-script":
-          await this.executeScript(action as RunScriptAction);
+          succeeded = await this.executeScript(action as RunScriptAction);
           break;
         case "macro":
-          await this.executeMacro(action as MacroAction);
+          succeeded = await this.executeMacro(action as MacroAction);
           break;
         case "switch-profile":
           if (this.onSwitchProfile) {
-            await this.onSwitchProfile((action as SwitchProfileAction).profileId);
+            try {
+              await this.onSwitchProfile(
+                (action as SwitchProfileAction).profileId,
+              );
+              succeeded = true;
+            } catch (error) {
+              this.logger.error("switch-profile handler failed:", error);
+            }
           } else {
             this.logger.warn("No onSwitchProfile handler registered");
           }
           break;
         case "switch-page":
           if (this.onSwitchPage) {
-            await this.onSwitchPage((action as SwitchPageAction).pageIndex);
+            try {
+              await this.onSwitchPage((action as SwitchPageAction).pageIndex);
+              succeeded = true;
+            } catch (error) {
+              this.logger.error("switch-page handler failed:", error);
+            }
           } else {
             this.logger.warn("No onSwitchPage handler registered");
           }
           break;
         case "sdplugin":
           if (this.onSdPluginDispatch) {
-            await this.onSdPluginDispatch(action as SdPluginAction, origin);
+            try {
+              await this.onSdPluginDispatch(action as SdPluginAction, origin);
+              succeeded = true;
+            } catch (error) {
+              this.logger.error("sdplugin dispatch failed:", error);
+            }
           } else {
-            this.logger.warn("No onSdPluginDispatch handler registered (SD host not wired)");
+            this.logger.warn(
+              "No onSdPluginDispatch handler registered (SD host not wired)",
+            );
           }
           break;
         default:
@@ -140,6 +179,14 @@ export class ActionExecutor {
       }
     } catch (error) {
       this.logger.error(`Error executing action ${action.type}:`, error);
+    }
+
+    if (succeeded) {
+      this.logger.info(`Action succeeded: ${action.type} - ${action.name}`);
+    } else {
+      this.logger.warn(
+        `Action failed: ${action.type} - ${action.name} (reason logged above)`,
+      );
     }
   }
 
@@ -205,57 +252,79 @@ export class ActionExecutor {
       .map((k) => this.mapToXdotoolKey(k));
   }
 
+  // ------------------------------------------------------------------
+  // Keyboard shortcut injection (X11 via xdotool, Wayland via
+  // ydotool/wtype). Shared by the keyboard-shortcut action and macro
+  // "key" steps so both paths get the same backend fallbacks.
+  // ------------------------------------------------------------------
+
+  /**
+   * Send a `mod+mod+key` combo on the current session type.
+   * Returns true only when a backend actually carried the combo out.
+   */
+  private async sendKeyCombo(combo: string): Promise<boolean> {
+    const isWayland = this.isWaylandSession();
+
+    if (isWayland) {
+      // ydotool first: kernel-level injection, works on every compositor
+      // (requires the ydotoold daemon; failure below logs that hint).
+      if (await this.isToolAvailable("ydotool")) {
+        return this.executeYdotoolShortcut(combo);
+      }
+      // wtype: Wayland-native input-method injection, needs no daemon.
+      if (await this.isToolAvailable("wtype")) {
+        return this.executeWtypeShortcut(combo);
+      }
+      this.logger.error(
+        `Cannot send keyboard shortcut "${combo}" on Wayland: neither ydotool nor wtype is installed. ` +
+          `Install one of them (e.g. 'sudo apt install ydotool' or 'sudo pacman -S ydotool') and enable the ydotoold service, or install wtype.`,
+      );
+      return false;
+    }
+
+    if (await this.isToolAvailable("xdotool")) {
+      return this.executeXdotoolShortcut(combo);
+    }
+    if (await this.isToolAvailable("ydotool")) {
+      return this.executeYdotoolShortcut(combo);
+    }
+    this.logger.error(
+      `Cannot send keyboard shortcut "${combo}" on X11: neither xdotool nor ydotool is installed. ` +
+        `Install xdotool (e.g. 'sudo apt install xdotool').`,
+    );
+    return false;
+  }
+
   private async executeKeyboardShortcut(
     action: KeyboardShortcutAction,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const keys = action.keys || [];
     if (keys.length === 0) {
       this.logger.warn("No keys provided for keyboard-shortcut action");
-      return;
+      return false;
     }
 
     const modifiers = action.modifiers || [];
     const allKeys = [...modifiers, ...keys];
-    const combo = allKeys.join("+");
-    const isWayland = this.isWaylandSession();
-
-    if (isWayland) {
-      if (await this.isToolAvailable("ydotool")) {
-        await this.executeYdotoolShortcut(combo);
-      } else {
-        this.logger.warn("ydotool not available for Wayland keyboard shortcut");
-      }
-    } else {
-      if (await this.isToolAvailable("xdotool")) {
-        await this.executeXdotoolShortcut(combo);
-      } else if (await this.isToolAvailable("ydotool")) {
-        await this.executeYdotoolShortcut(combo);
-      } else {
-        this.logger.error("Neither xdotool nor ydotool available");
-      }
-    }
+    return this.sendKeyCombo(allKeys.join("+"));
   }
 
-  private async executeXdotoolShortcut(combo: string): Promise<void> {
-    const parts = combo.split("+");
-    const key = parts.pop() || "";
-    const modifiers = parts;
-
-    let cmd = "xdotool key";
-    for (const mod of modifiers) {
-      cmd += ` ${mod}`;
-    }
-    cmd += ` ${key}`;
+  private async executeXdotoolShortcut(combo: string): Promise<boolean> {
+    // `xdotool key ctrl+t` (one argument, + separated) presses the combo;
+    // separate arguments would press the keys one after another.
+    const cmd = `xdotool key ${combo}`;
 
     this.logger.debug(`Executing xdotool: ${cmd}`);
     try {
       await execAsync(cmd);
+      return true;
     } catch (error) {
-      this.logger.error("xdotool execution failed:", error);
+      this.logger.error(`xdotool execution failed for "${combo}":`, error);
+      return false;
     }
   }
 
-  private async executeYdotoolShortcut(combo: string): Promise<void> {
+  private async executeYdotoolShortcut(combo: string): Promise<boolean> {
     const parts = combo.split("+");
     const key = parts.pop() || "";
     const modifiers = parts;
@@ -267,25 +336,129 @@ export class ActionExecutor {
       super: 125,
     };
 
-    let cmd = "ydotool key";
+    const args: string[] = [];
     for (const mod of modifiers) {
       const code = modifierCodes[mod.toLowerCase()];
       if (code) {
-        cmd += ` ${code}:1`;
+        args.push(`${code}:1`);
       }
     }
 
     const keyCode = await this.comboToYdotoolKeyCode(key);
-    if (keyCode) {
-      cmd += ` ${keyCode}:1 ${keyCode}:0`;
+    if (!keyCode) {
+      this.logger.warn(
+        `ydotool: no key code known for "${key}" in combo "${combo}"`,
+      );
+      return false;
+    }
+    args.push(`${keyCode}:1`, `${keyCode}:0`);
+    for (const mod of modifiers) {
+      const code = modifierCodes[mod.toLowerCase()];
+      if (code) {
+        args.push(`${code}:0`);
+      }
     }
 
-    this.logger.debug(`Executing ydotool: ${cmd}`);
+    this.logger.debug(`Executing ydotool: key ${args.join(" ")}`);
     try {
-      await execAsync(cmd);
+      await execFileAsync("ydotool", ["key", ...args]);
+      return true;
     } catch (error) {
-      this.logger.error("ydotool execution failed:", error);
+      this.logger.error(
+        `ydotool execution failed for "${combo}" (is the ydotoold daemon running and does the user have access to /dev/uinput?):`,
+        error,
+      );
+      return false;
     }
+  }
+
+  /**
+   * Wayland-native combo injection via wtype. Modifiers are held with -M,
+   * the key pressed/released with -P/-U, then modifiers released with -m.
+   */
+  private async executeWtypeShortcut(combo: string): Promise<boolean> {
+    const parts = combo.split("+");
+    const key = parts.pop() || "";
+    const modifiers = parts;
+
+    const modifierNames: Record<string, string> = {
+      ctrl: "ctrl",
+      alt: "alt",
+      shift: "shift",
+      super: "logo",
+      meta: "logo",
+    };
+
+    const args: string[] = [];
+    for (const mod of modifiers) {
+      const name = modifierNames[mod.toLowerCase()];
+      if (name) args.push("-M", name);
+    }
+    if (key) {
+      args.push("-P", key, "-U", key);
+    }
+    for (const mod of modifiers) {
+      const name = modifierNames[mod.toLowerCase()];
+      if (name) args.push("-m", name);
+    }
+
+    this.logger.debug(`Executing wtype: ${args.join(" ")}`);
+    try {
+      await execFileAsync("wtype", args);
+      return true;
+    } catch (error) {
+      this.logger.error(`wtype execution failed for "${combo}":`, error);
+      return false;
+    }
+  }
+
+  /**
+   * Type literal text: wtype on Wayland (its core feature), xdotool on X11.
+   * Used by macro "text" steps — the old code always reached for xdotool,
+   * which is X11-only and silently did nothing on Wayland sessions.
+   */
+  private async typeText(text: string): Promise<boolean> {
+    if (this.isWaylandSession()) {
+      if (await this.isToolAvailable("wtype")) {
+        this.logger.debug("Executing wtype (text)");
+        try {
+          await execFileAsync("wtype", ["--", text]);
+          return true;
+        } catch (error) {
+          this.logger.error("wtype text typing failed:", error);
+          return false;
+        }
+      }
+      if (await this.isToolAvailable("ydotool")) {
+        this.logger.debug("Executing ydotool type");
+        try {
+          await execFileAsync("ydotool", ["type", text]);
+          return true;
+        } catch (error) {
+          this.logger.error(
+            "ydotool type failed (is the ydotoold daemon running?):",
+            error,
+          );
+          return false;
+        }
+      }
+      this.logger.error(
+        "Cannot type text on Wayland: neither wtype nor ydotool is installed.",
+      );
+      return false;
+    }
+
+    if (await this.isToolAvailable("xdotool")) {
+      try {
+        await execFileAsync("xdotool", ["type", "--clearmodifiers", text]);
+        return true;
+      } catch (error) {
+        this.logger.error("xdotool type failed:", error);
+        return false;
+      }
+    }
+    this.logger.error("Cannot type text on X11: xdotool is not installed.");
+    return false;
   }
 
   private async comboToYdotoolKeyCode(combo: string): Promise<string | null> {
@@ -327,7 +500,10 @@ export class ActionExecutor {
       "8": "9",
       "9": "10",
       enter: "28",
+      // Common aliases (mapToXdotoolKey normalizes Enter -> "Return").
+      return: "28",
       escape: "1",
+      esc: "1",
       backspace: "14",
       tab: "15",
       space: "57",
@@ -370,44 +546,129 @@ export class ActionExecutor {
     return keyCodeMap[key] || null;
   }
 
-  private async executeLaunchApp(action: LaunchAppAction): Promise<void> {
+  // ------------------------------------------------------------------
+  // launch-app
+  // ------------------------------------------------------------------
+
+  /**
+   * Check whether a .desktop entry with this id exists in the standard
+   * XDG / Flatpak application directories.
+   */
+  private async desktopEntryExists(desktopId: string): Promise<boolean> {
+    const dataHome =
+      process.env.XDG_DATA_HOME ||
+      path.join(process.env.HOME || "", ".local/share");
+    const dirs = [
+      path.join(dataHome, "applications"),
+      "/usr/local/share/applications",
+      "/usr/share/applications",
+      path.join(dataHome, "flatpak/exports/share/applications"),
+      "/var/lib/flatpak/exports/share/applications",
+    ];
+    for (const dir of dirs) {
+      try {
+        await access(path.join(dir, desktopId), fsConstants.F_OK);
+        return true;
+      } catch {
+        // Keep looking through the remaining directories.
+      }
+    }
+    return false;
+  }
+
+  private async executeLaunchApp(action: LaunchAppAction): Promise<boolean> {
     const command = action.command;
     if (!command) {
       this.logger.warn("No command provided for launch-app action");
-      return;
+      return false;
     }
 
     const args = action.args || [];
     const workingDirectory = action.workingDirectory;
+    const spawnOptions = {
+      detached: true,
+      stdio: "ignore" as const,
+      cwd: workingDirectory || undefined,
+    };
+    // spawn() errors (ENOENT etc.) arrive ASYNC on the child — without this
+    // handler they'd surface as an unhandled 'error' event, not a log line.
+    const attachErrorHandler = (
+      child: ReturnType<typeof spawn>,
+      label: string,
+    ) => {
+      child.on("error", (err) => {
+        this.logger.error(`Failed to launch ${label}:`, err);
+      });
+      child.unref();
+    };
 
-    try {
-      spawn(command, args, {
-        detached: true,
-        stdio: "ignore",
-        cwd: workingDirectory || undefined,
-      }).unref();
-      this.logger.info(`Launched app: ${command}`);
-    } catch (error) {
-      this.logger.error(`Failed to launch app ${command}:`, error);
+    // Resolve the command first so "not found" is a logged failure instead
+    // of a lost async error: absolute/relative paths are checked for the
+    // executable bit, bare names are looked up in PATH.
+    let resolved: string | null = null;
+    if (command.includes("/")) {
+      try {
+        await access(command, fsConstants.X_OK);
+        resolved = command;
+      } catch {
+        // Fall through to the .desktop fallback below.
+      }
+    } else if (await this.isToolAvailable(command)) {
+      resolved = command;
     }
+
+    if (resolved) {
+      attachErrorHandler(spawn(resolved, args, spawnOptions), command);
+      this.logger.info(`Launched app: ${command}`);
+      return true;
+    }
+
+    // Desktop-entry fallback: apps like Steam or Firefox are often only
+    // reachable through their .desktop file (no binary on PATH), or are
+    // Flatpak'd. gtk-launch starts them exactly like a desktop click.
+    const desktopId = `${path.basename(command.toLowerCase())}.desktop`;
+    if (
+      (await this.desktopEntryExists(desktopId)) &&
+      (await this.isToolAvailable("gtk-launch"))
+    ) {
+      attachErrorHandler(
+        spawn("gtk-launch", [desktopId, ...args], spawnOptions),
+        desktopId,
+      );
+      this.logger.info(`Launched app via desktop entry: ${desktopId}`);
+      return true;
+    }
+
+    this.logger.error(
+      `Cannot launch app "${command}": not found in PATH and no matching ${desktopId} entry. ` +
+        `Install the application or set the full executable path in the action.`,
+    );
+    return false;
   }
 
-  private async executeMultimedia(action: MultimediaAction): Promise<void> {
+  // ------------------------------------------------------------------
+  // multimedia (volume + MPRIS playback control)
+  // ------------------------------------------------------------------
+
+  private async executeMultimedia(action: MultimediaAction): Promise<boolean> {
     const mediaCommand = action.mediaCommand;
     if (!mediaCommand) {
       this.logger.warn("No media command provided");
-      return;
+      return false;
     }
 
-    if (await this.tryVolumeControl(mediaCommand)) return;
-    if (await this.tryPlayerctl(mediaCommand)) return;
-    if (await this.tryDbusSend(mediaCommand)) return;
-    if (await this.tryXdotool(mediaCommand)) return;
-    if (await this.tryYdotool(mediaCommand)) return;
+    if (await this.tryVolumeControl(mediaCommand)) return true;
+    if (await this.tryPlayerctl(mediaCommand)) return true;
+    if (await this.tryDbusSend(mediaCommand)) return true;
+    if (await this.tryXdotool(mediaCommand)) return true;
+    if (await this.tryYdotool(mediaCommand)) return true;
 
     this.logger.warn(
-      `No working multimedia control found for: ${mediaCommand}`,
+      `No working multimedia control found for "${mediaCommand}". ` +
+        `For volume control install pactl or amixer; for play/pause/next/previous install playerctl ` +
+        `(or make sure a running player exposes MPRIS on the session bus).`,
     );
+    return false;
   }
 
   private async tryVolumeControl(mediaCommand: string): Promise<boolean> {
@@ -425,11 +686,19 @@ export class ActionExecutor {
         ? "pactl"
         : null;
 
-    if (!tool) return false;
+    if (!tool) {
+      this.logger.debug(
+        `Volume control skipped for "${mediaCommand}": neither amixer nor pactl installed`,
+      );
+      return false;
+    }
 
     try {
       const cmd = volumeCommands[mediaCommand];
       await execAsync(`${tool} ${cmd.slice(1).join(" ")}`);
+      this.logger.info(
+        `Volume control via ${tool}: ${cmd.slice(1).join(" ")}`,
+      );
       return true;
     } catch {
       return false;
@@ -451,12 +720,51 @@ export class ActionExecutor {
 
     try {
       await execAsync(`playerctl ${cmd}`);
+      this.logger.info(`Media control via playerctl: ${cmd}`);
       return true;
     } catch {
       return false;
     }
   }
 
+  /**
+   * Discover running MPRIS players. playerctl -l knows player instances
+   * even when they hide from ListNames; the gdbus fallback works on any
+   * desktop with a session bus and needs no playerctl installed.
+   */
+  private async listMprisBusNames(): Promise<string[]> {
+    if (await this.isToolAvailable("playerctl")) {
+      try {
+        const { stdout } = await execAsync("playerctl -l");
+        const players = stdout
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (players.length > 0) {
+          return players.map((p) => `org.mpris.MediaPlayer2.${p}`);
+        }
+      } catch {
+        // playerctl exists but listed nothing — fall through to D-Bus.
+      }
+    }
+
+    try {
+      const { stdout } = await execAsync(
+        "gdbus call --session --dest org.freedesktop.DBus " +
+          "--object-path /org/freedesktop/DBus " +
+          "--method org.freedesktop.DBus.ListNames",
+      );
+      return stdout.match(/org\.mpris\.MediaPlayer2\.[A-Za-z0-9_.-]+/g) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Send the MPRIS command directly over the session bus. The old code
+   * targeted the hardcoded bus name "org.mpris.MediaPlayer2.Player", which
+   * no real player owns — discover the actual player bus names instead.
+   */
   private async tryDbusSend(mediaCommand: string): Promise<boolean> {
     const dbusCommands: Record<string, string> = {
       "play-pause": "PlayPause",
@@ -470,14 +778,24 @@ export class ActionExecutor {
     const method = dbusCommands[mediaCommand];
     if (!method) return false;
 
-    const dbusCmd = `dbus-send --print-reply --dest=org.mpris.MediaPlayer2.Player /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.${method}`;
+    if (!(await this.isToolAvailable("dbus-send"))) return false;
 
-    try {
-      await execAsync(dbusCmd);
-      return true;
-    } catch {
-      return false;
+    const players = await this.listMprisBusNames();
+    for (const busName of players) {
+      // playerctld is a multiplexer, not a player; targeting it would
+      // double-apply commands to whichever player it forwards to.
+      if (busName.endsWith(".playerctld")) continue;
+      try {
+        await execAsync(
+          `dbus-send --print-reply --dest=${busName} /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.${method}`,
+        );
+        this.logger.info(`Media control via MPRIS (${busName}): ${method}`);
+        return true;
+      } catch {
+        // Player may have quit or not implement the method — try the next.
+      }
     }
+    return false;
   }
 
   private async tryXdotool(mediaKey: string): Promise<boolean> {
@@ -522,45 +840,80 @@ export class ActionExecutor {
     }
   }
 
-  private async executeOpenUrl(action: Action): Promise<void> {
+  // ------------------------------------------------------------------
+  // open-url / open-folder (xdg-open on Linux)
+  // ------------------------------------------------------------------
+
+  private async executeOpenUrl(action: Action): Promise<boolean> {
     const url = (action as { url?: string }).url;
     if (!url) {
       this.logger.warn("No URL provided for open-url action");
-      return;
+      return false;
     }
 
     const cmd = process.platform === "darwin" ? "open" : "xdg-open";
+    if (!(await this.isToolAvailable(cmd))) {
+      this.logger.error(
+        `Cannot open URL "${url}": ${cmd} is not installed (part of xdg-utils).`,
+      );
+      return false;
+    }
 
     try {
-      spawn(cmd, [url], { detached: true, stdio: "ignore" }).unref();
+      const child = spawn(cmd, [url], { detached: true, stdio: "ignore" });
+      child.on("error", (err) => {
+        this.logger.error(`Failed to open URL ${url}:`, err);
+      });
+      child.unref();
       this.logger.info(`Opened URL: ${url}`);
+      return true;
     } catch (error) {
       this.logger.error(`Failed to open URL ${url}:`, error);
+      return false;
     }
   }
 
-  private async executeOpenFolder(action: Action): Promise<void> {
-    const path = (action as { path?: string }).path;
-    if (!path) {
+  private async executeOpenFolder(action: Action): Promise<boolean> {
+    const folderPath = (action as { path?: string }).path;
+    if (!folderPath) {
       this.logger.warn("No path provided for open-folder action");
-      return;
+      return false;
     }
 
     const cmd = process.platform === "darwin" ? "open" : "xdg-open";
+    if (!(await this.isToolAvailable(cmd))) {
+      this.logger.error(
+        `Cannot open folder "${folderPath}": ${cmd} is not installed (part of xdg-utils).`,
+      );
+      return false;
+    }
 
     try {
-      spawn(cmd, [path], { detached: true, stdio: "ignore" }).unref();
-      this.logger.info(`Opened folder: ${path}`);
+      const child = spawn(cmd, [folderPath], {
+        detached: true,
+        stdio: "ignore",
+      });
+      child.on("error", (err) => {
+        this.logger.error(`Failed to open folder ${folderPath}:`, err);
+      });
+      child.unref();
+      this.logger.info(`Opened folder: ${folderPath}`);
+      return true;
     } catch (error) {
-      this.logger.error(`Failed to open folder ${path}:`, error);
+      this.logger.error(`Failed to open folder ${folderPath}:`, error);
+      return false;
     }
   }
 
-  private async executeScript(action: RunScriptAction): Promise<void> {
+  // ------------------------------------------------------------------
+  // run-script
+  // ------------------------------------------------------------------
+
+  private async executeScript(action: RunScriptAction): Promise<boolean> {
     const script = action.script;
     if (!script) {
       this.logger.warn("No script provided for run-script action");
-      return;
+      return false;
     }
 
     const interpreter = action.scriptType || "shell";
@@ -571,62 +924,95 @@ export class ActionExecutor {
           ? "node"
           : "bash";
 
+    if (!(await this.isToolAvailable(cmd))) {
+      this.logger.error(
+        `Cannot run script: interpreter "${cmd}" is not installed.`,
+      );
+      return false;
+    }
+
     try {
-      spawn(cmd, ["-c", script], {
+      // Detached on purpose: long-running scripts must not hold the deck
+      // hostage. stdout/stderr are discarded, so failures inside the script
+      // itself (bad shebang, syntax error) are not tracked — only spawn
+      // errors are logged.
+      const child = spawn(cmd, ["-c", script], {
         detached: true,
         stdio: "ignore",
-      }).unref();
+      });
+      child.on("error", (err) => {
+        this.logger.error(`Failed to execute script with ${cmd}:`, err);
+      });
+      child.unref();
       this.logger.info(`Executed script with ${cmd}`);
+      return true;
     } catch (error) {
       this.logger.error(`Failed to execute script:`, error);
+      return false;
     }
   }
 
-  private async executeMacro(action: MacroAction): Promise<void> {
+  // ------------------------------------------------------------------
+  // macro
+  // ------------------------------------------------------------------
+
+  private async executeMacro(action: MacroAction): Promise<boolean> {
     const steps = action.steps || [];
     if (steps.length === 0) {
       this.logger.warn("No steps in macro");
-      return;
+      return false;
     }
 
     for (const step of steps) {
-      await this.executeMacroStep(step);
+      const ok = await this.executeMacroStep(step);
+      if (!ok) return false;
       if (step.duration) {
         await this.delay(step.duration);
       }
     }
+    return true;
   }
 
-  private async executeMacroStep(step: MacroStep): Promise<void> {
+  private async executeMacroStep(step: MacroStep): Promise<boolean> {
     switch (step.type) {
       case "key":
         if (step.value) {
-          const keys = this.sanitizeShortcutInput(step.value);
           if (process.platform === "darwin") {
-            await execAsync(
-              `osascript -e 'tell application "System Events" to keystroke "${keys.join("")}"'`,
-            );
-          } else if (this.isWaylandSession()) {
-            await this.executeYdotoolShortcut(keys.join("+"));
-          } else {
-            await this.executeXdotoolShortcut(keys.join("+"));
+            const keys = this.sanitizeShortcutInput(step.value);
+            try {
+              await execAsync(
+                `osascript -e 'tell application "System Events" to keystroke "${keys.join("")}"'`,
+              );
+              return true;
+            } catch (error) {
+              this.logger.error("macOS keystroke failed:", error);
+              return false;
+            }
           }
+          return this.sendKeyCombo(
+            this.sanitizeShortcutInput(step.value).join("+"),
+          );
         }
-        break;
+        return true;
       case "text":
         if (step.value) {
           if (process.platform === "darwin") {
-            await execAsync(
-              `osascript -e 'tell application "System Events" to keystroke "${step.value}"'`,
-            );
-          } else {
-            await execAsync(`xdotool type --clearmodifiers "${step.value}"`);
+            try {
+              await execAsync(
+                `osascript -e 'tell application "System Events" to keystroke "${step.value}"'`,
+              );
+              return true;
+            } catch (error) {
+              this.logger.error("macOS keystroke failed:", error);
+              return false;
+            }
           }
+          return this.typeText(step.value);
         }
-        break;
+        return true;
       case "delay":
         await this.delay(step.duration || 100);
-        break;
+        return true;
     }
   }
 

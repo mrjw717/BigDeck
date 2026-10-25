@@ -512,7 +512,7 @@ if (!gotTheLock) {
       const keyId = `${deviceId}:${keyIndex}`;
       const cached = hardwareSync.getCachedImages(deviceId, keyIndex);
       if (!cached) return;
-      const info = getActiveKeyConfig(keyIndex);
+      const info = profileManager.getActiveKeyConfig(keyIndex);
       if (!info) return;
       try {
         const rendered = await actionEngine.renderKeyImageEx(info.keyConfig, info.deviceType as any, true);
@@ -523,14 +523,6 @@ if (!gotTheLock) {
           await deviceManager.setKeyImage(deviceId, keyIndex, rendered.image, false, rendered.delays);
         }
       } catch {}
-    };
-
-    const getActiveKeyConfig = (keyIndex: number) => {
-      const activeProfile = profileManager.getActiveProfile();
-      if (!activeProfile) return null;
-      const page = activeProfile.pages[activeProfile.activePage];
-      const keyConfig = page?.keys.find((k) => k.keyIndex === keyIndex);
-      return keyConfig ? { keyConfig: keyConfig as KeyConfig, deviceType: activeProfile.deviceType } : null;
     };
 
     deviceManager.on("key:down", ({ deviceId, keyIndex }) => {
@@ -558,8 +550,10 @@ if (!gotTheLock) {
       ensurePressedCached(deviceId, keyIndex);
 
       // Execute key action. The origin lets SD-plugin actions resolve the
-      // action-instance context for this exact key.
-      const info = getActiveKeyConfig(keyIndex);
+      // action-instance context for this exact key. Every "no dispatch"
+      // outcome is logged with its reason — a press that silently produces
+      // no action line is impossible to diagnose from the log alone.
+      const info = profileManager.getActiveKeyConfig(keyIndex);
       if (info?.keyConfig?.action) {
         logger.info(
           `Triggering action: ${info!.keyConfig.action.type} for key ${keyIndex}`,
@@ -568,6 +562,17 @@ if (!gotTheLock) {
           deviceId,
           keyIndex,
         });
+      } else if (!info) {
+        const activeProfile = profileManager.getActiveProfile();
+        logger.warn(
+          `Key ${keyIndex} press DROPPED: no matching key on the active page ` +
+            `(profile=${activeProfile?.name ?? "none"}, ` +
+            `activePage=${activeProfile?.activePage ?? "?"} of ${activeProfile?.pages.length ?? 0} pages)`,
+        );
+      } else {
+        logger.debug(
+          `Key ${keyIndex} has no action assigned - press ignored (profile=${profileManager.getActiveProfile()?.name ?? "?"})`,
+        );
       }
     });
 
@@ -587,7 +592,7 @@ if (!gotTheLock) {
       if (cached) {
         deviceManager.setKeyImage(deviceId, keyIndex, cached.idle).catch(() => {});
       } else {
-        const info = getActiveKeyConfig(keyIndex);
+        const info = profileManager.getActiveKeyConfig(keyIndex);
         if (info?.keyConfig) {
           renderAndCacheIdle(deviceId, keyIndex, info.keyConfig, info.deviceType);
         }
@@ -817,6 +822,7 @@ if (!gotTheLock) {
           rawPath = rawPath.replace(/^\/+|\/+$/g, "");
           assetPath = decodeURIComponent(rawPath);
         }
+
         // Absolute paths (drag-dropped external files) are served as-is;
         // plain names resolve inside the managed assets directory.
         const fullPath = assetPath.startsWith("/")
