@@ -3,10 +3,21 @@ import { KeyImage } from "./KeyImage";
 import type { KeyLayer } from "../../shared/types";
 
 /**
- * Renders key layers as ONE z-ordered stack, matching the hardware composite
- * exactly: visible layers sorted ascending by `order`; later layers paint on
- * top. ALL layer types (including background) participate in the same stack —
- * grouping by type would scramble the z-order the hardware respects.
+ * Renders key layers as ONE z-ordered stack. This is the preview half of the
+ * single visual-truth contract with the hardware renderer:
+ *
+ *   src/main/actions/KeyRenderer.ts renderWithLayers():
+ *     [...layers].filter(l => l.visible).sort((a, b) => a.order - b.order)
+ *     then composites FIRST-to-LAST via sharp overlays — i.e. ascending
+ *     `order`, 0 = bottom of the stack, higher values paint on top; ties
+ *     keep stored-array order (V8 sort is stable).
+ *
+ * The JSX below is the exact same pipeline in CSS: identical filter, sort,
+ * and children order (later siblings paint above earlier ones). ALL layer
+ * types — including background — participate in the same stack; grouping by
+ * type would scramble the z-order the hardware respects. The layer LIST UI
+ * (LayerEditor) is the top-first mirror of this: its row 0 shows the HIGHEST
+ * order (front of the stack).
  */
 export function LayerStack({ layers }: { layers: KeyLayer[] }) {
   const sorted = [...layers]

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   GripVertical,
   Plus,
@@ -48,6 +48,16 @@ const LAYER_TYPES: { type: LayerType; label: string; icon: React.ReactNode }[] =
     { type: "icon", label: "Icon", icon: <Square size={14} /> },
     { type: "image", label: "Image", icon: <ImageIcon size={14} /> },
   ];
+
+/**
+ * `order` semantics (shared with src/main/actions/KeyRenderer.ts
+ * renderWithLayers): layers composite ascending by `order` — 0 is the BOTTOM
+ * of the stack, higher values paint on top. New layers therefore go to the
+ * TOP with max(order) + 1 (NOT layers.length, which is only correct when the
+ * stored array happens to be sorted 0..N-1 with no gaps/duplicates).
+ */
+const topOrder = (layers: KeyLayer[]): number =>
+  layers.reduce((max, l) => Math.max(max, l.order ?? 0), -1) + 1;
 
 interface SortableLayerProps {
   layer: KeyLayer;
@@ -342,6 +352,15 @@ export function LayerEditor({
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
+  // Display TOP-FIRST (highest `order` first — the Photoshop-style layer list
+  // convention): visual row 0 is the layer that paints on top of the key in
+  // BOTH the preview (LayerStack) and on hardware (KeyRenderer). Stable sort
+  // keeps ties in stored-array order.
+  const displayLayers = useMemo(
+    () => [...layers].sort((a, b) => b.order - a.order),
+    [layers],
+  );
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -353,13 +372,18 @@ export function LayerEditor({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = layers.findIndex((l) => l.id === active.id);
-      const newIndex = layers.findIndex((l) => l.id === over.id);
-      const reIndexed = arrayMove(layers, oldIndex, newIndex).map((layer, i) => ({
-        ...layer,
-        order: i,
-      }));
-      onChange(reIndexed);
+      const oldIndex = displayLayers.findIndex((l) => l.id === active.id);
+      const newIndex = displayLayers.findIndex((l) => l.id === over.id);
+      // Reorder within the top-first display sequence, then map visual rows
+      // back to `order`: row 0 (top) gets the HIGHEST order, the last row
+      // gets 0 (bottom). This is the inverse of the visual index — writing
+      // `order: i` here would invert every drag (the dragged-to-top layer
+      // would end up composited at the BOTTOM, hidden behind the rest).
+      const reordered = arrayMove(displayLayers, oldIndex, newIndex);
+      const count = reordered.length;
+      onChange(
+        reordered.map((layer, i) => ({ ...layer, order: count - 1 - i })),
+      );
     }
   };
 
@@ -381,7 +405,7 @@ export function LayerEditor({
             type: "image",
             visible: true,
             opacity: 1,
-            order: layers.length,
+            order: topOrder(layers), // dropped assets land on TOP
             source: filePath,
             fit: "contain",
           };
@@ -409,7 +433,7 @@ export function LayerEditor({
       type,
       visible: true,
       opacity: 1,
-      order: layers.length,
+      order: topOrder(layers), // new layers start on TOP of the stack
       ...(type === "background" && { backgroundColor: "#000000" }),
       ...(type === "text" && {
         text: "Text",
@@ -488,7 +512,7 @@ export function LayerEditor({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={layers.map((l) => l.id)}
+            items={displayLayers.map((l) => l.id)}
             strategy={verticalListSortingStrategy}
           >
             <div
@@ -496,7 +520,7 @@ export function LayerEditor({
                 isDragOver ? "opacity-60" : ""
               }`}
             >
-              {layers.map((layer, index) => (
+              {displayLayers.map((layer, index) => (
                 <SortableLayer
                   key={layer.id}
                   layer={layer}
@@ -519,7 +543,8 @@ export function LayerEditor({
       )}
 
       <div className="text-[10px] text-muted-foreground text-center pt-2 border-t border-border">
-        Drag layers to reorder. Drop assets to add image layers.
+        Top row = front. Drag layers to reorder. Drop assets to add image
+        layers.
       </div>
     </div>
   );

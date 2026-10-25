@@ -667,6 +667,8 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
           ),
         );
       } else {
+        // order semantics match KeyRenderer.renderWithLayers (0 = bottom):
+        // max(order) + 1 puts the new image on TOP of the stack.
         onChange([
           ...targetLayers,
           {
@@ -674,7 +676,10 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
             type: "image" as const,
             visible: true,
             opacity: 1,
-            order: targetLayers.length,
+            order: targetLayers.reduce(
+              (max, l) => Math.max(max, l.order ?? 0),
+              -1,
+            ) + 1,
             source: `bigdeck-asset://${encodeURIComponent(asset)}`,
             fit: "contain" as const,
           },
