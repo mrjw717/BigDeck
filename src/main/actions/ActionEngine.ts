@@ -9,6 +9,8 @@ import type {
   DeviceType,
   MacroStep,
   MediaPlayerInfo,
+  SdPluginAction,
+  ActionOrigin,
 } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 import { ActionExecutor } from "./ActionExecutor";
@@ -31,8 +33,14 @@ export class ActionEngine {
     this.executor.onSwitchPage = handler;
   }
 
-  async executeAction(action: Action): Promise<void> {
-    return this.executor.executeAction(action);
+  setOnSdPluginDispatch(
+    handler: (action: SdPluginAction, origin?: ActionOrigin) => Promise<void>,
+  ): void {
+    this.executor.onSdPluginDispatch = handler;
+  }
+
+  async executeAction(action: Action, origin?: ActionOrigin): Promise<void> {
+    return this.executor.executeAction(action, origin);
   }
 
   async renderKeyImage(

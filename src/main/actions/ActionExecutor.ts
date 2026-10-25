@@ -15,7 +15,9 @@ import {
   SwitchProfileAction,
   SwitchPageAction,
   MacroStep,
+  SdPluginAction,
   Action,
+  ActionOrigin,
 } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 
@@ -30,6 +32,14 @@ export class ActionExecutor {
 
   onSwitchProfile: ((profileId: string) => Promise<void>) | null = null;
   onSwitchPage: ((pageIndex: number) => Promise<void>) | null = null;
+  /**
+   * Elgato .sdPlugin actions dispatch through the SDPluginHost (see
+   * src/main/plugins/sd/SDPluginHost.ts). Wired in the app entry point,
+   * same pattern as onSwitchProfile/onSwitchPage.
+   */
+  onSdPluginDispatch:
+    | ((action: SdPluginAction, origin?: ActionOrigin) => Promise<void>)
+    | null = null;
 
   constructor(logger: Logger) {
     this.logger = logger;
@@ -64,7 +74,12 @@ export class ActionExecutor {
     }
   }
 
-  async executeAction(action: Action): Promise<void> {
+  /**
+   * Execute an action. `origin` is the device key that triggered execution
+   * when known (hardware press) — the SD plugin host uses it to resolve the
+   * action-instance context.
+   */
+  async executeAction(action: Action, origin?: ActionOrigin): Promise<void> {
     const debounceMs = this.getDebounceTime(action.type);
     const now = Date.now();
     const lastExec = this.executionLocks.get(action.id) || 0;
@@ -113,6 +128,13 @@ export class ActionExecutor {
             this.logger.warn("No onSwitchPage handler registered");
           }
           break;
+        case "sdplugin":
+          if (this.onSdPluginDispatch) {
+            await this.onSdPluginDispatch(action as SdPluginAction, origin);
+          } else {
+            this.logger.warn("No onSdPluginDispatch handler registered (SD host not wired)");
+          }
+          break;
         default:
           this.logger.warn(`Unknown action type: ${action.type}`);
       }
@@ -131,6 +153,10 @@ export class ActionExecutor {
       case "open-url":
       case "open-folder":
         return 500;
+      case "sdplugin":
+        // Plugin events must not be debounced — rapid taps are legitimate
+        // plugin input (hold-detection lives in the plugin).
+        return 0;
       default:
         return 1000;
     }

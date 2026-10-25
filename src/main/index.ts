@@ -21,6 +21,7 @@ import { ProfileManager } from "./profiles/ProfileManager";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
+import { SDPluginHost } from "./plugins/sd/SDPluginHost";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
 import { Logger } from "./utils/Logger";
@@ -39,6 +40,7 @@ let profileManager: ProfileManager;
 let actionEngine: ActionEngine;
 let hardwareSync: HardwareSync;
 let pluginManager: PluginManager;
+let sdPluginHost: SDPluginHost | null = null;
 let networkServer: NetworkServer;
 let settingsManager: SettingsManager;
 let logger: Logger;
@@ -554,13 +556,17 @@ if (!gotTheLock) {
       // Lazily render the real pressed variant in the background
       ensurePressedCached(deviceId, keyIndex);
 
-      // Execute key action
+      // Execute key action. The origin lets SD-plugin actions resolve the
+      // action-instance context for this exact key.
       const info = getActiveKeyConfig(keyIndex);
       if (info?.keyConfig?.action) {
         logger.info(
           `Triggering action: ${info!.keyConfig.action.type} for key ${keyIndex}`,
         );
-        actionEngine.executeAction(info!.keyConfig.action);
+        actionEngine.executeAction(info!.keyConfig.action, {
+          deviceId,
+          keyIndex,
+        });
       }
     });
 
@@ -689,6 +695,49 @@ if (!gotTheLock) {
         actionEngine,
       );
 
+      // Elgato .sdPlugin compatibility host (backend phase — docs/
+      // SDPLUGIN-COMPAT.md). Lives ALONGSIDE the legacy PluginManager above,
+      // which is untouched.
+      //
+      // The host must start (and therefore register its DeviceManager
+      // listeners) BEFORE setupDeviceEvents() below: on a physical press the
+      // host's listener runs first, and the ActionExecutor dispatch path
+      // relies on that order for its single-delivery guarantee
+      // (SDPluginHost.dispatchAction).
+      const sdPluginsDir = path.join(app.getPath("userData"), "sdplugins");
+      sdPluginHost = new SDPluginHost({
+        logger,
+        devicePort: deviceManager,
+        keyImageCache: hardwareSync,
+        pluginsDir: sdPluginsDir,
+        stateDir: path.join(sdPluginsDir, "state"),
+        appVersion: app.getVersion(),
+      });
+
+      actionEngine.setOnSdPluginDispatch(async (action, origin) => {
+        await sdPluginHost?.dispatchAction(action, origin);
+      });
+
+      // Simple flag for the backend phase: always-on when the sdplugins dir
+      // exists (something was installed) or any profile already carries an
+      // SD action. Otherwise the host stays down (and the dir is not created).
+      const sdPluginsDirExists = await fs
+        .stat(sdPluginsDir)
+        .then(() => true)
+        .catch(() => false);
+      const anySdActionConfigured = profileManager
+        .getProfiles()
+        .some((profile) =>
+          profile.pages.some((page) =>
+            page.keys.some((key) => key.action?.type === "sdplugin"),
+          ),
+        );
+      if (sdPluginsDirExists || anySdActionConfigured) {
+        await sdPluginHost.start();
+      } else {
+        logger.info("SD plugin host not started (no sdplugins dir, no SD actions)");
+      }
+
       // Setup event handlers
       setupDeviceEvents();
 
@@ -768,6 +817,7 @@ if (!gotTheLock) {
 
     // Flush any debounced profile writes, then cleanup
     profileManager?.flush();
+    await sdPluginHost?.stop();
     await deviceManager?.cleanup();
     await networkServer?.stop();
 
