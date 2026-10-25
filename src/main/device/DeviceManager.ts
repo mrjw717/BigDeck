@@ -19,6 +19,9 @@
 //   30s cap) and a concurrent-connect guard; polling connects pass the
 //   already-enumerated entry through, so no second enumeration can race the
 //   first and re-open a device mid-enumeration.
+// - Connect readiness is probed (firmware query, bounded retries) instead of
+//   an unconditional post-open sleep; hardware key downs AND ups are debounced
+//   per direction, so press/release pairs can't desync.
 // ============================================================================
 
 import { EventEmitter } from "events";
@@ -83,6 +86,7 @@ export class DeviceManager extends EventEmitter {
   private logger: Logger;
   private detectionInterval: NodeJS.Timeout | null = null;
   private isDetecting = false;
+  /** Last accepted key-event time per `${deviceId}-${keyIndex}:{down|up}`. */
   private lastKeyTime: Map<string, number> = new Map();
   private failedWrites: Array<{
     deviceId: string;
@@ -104,6 +108,13 @@ export class DeviceManager extends EventEmitter {
   private readonly CONNECT_BACKOFF_MAX_MS = 30 * 1000;
   /** Hardware key-press debounce (switch noise is ~5-20ms; 80ms is safe). */
   private readonly KEY_DEBOUNCE_MS = 80;
+  /**
+   * Readiness probe: after open, the device must answer a firmware query
+   * before it is declared connected (bounded retries, short spacing) —
+   * replaces a magic 500ms post-open sleep.
+   */
+  private readonly CONNECT_PROBE_ATTEMPTS = 3;
+  private readonly CONNECT_PROBE_RETRY_MS = 100;
   private inactivityTimers: Map<string, NodeJS.Timeout> = new Map();
   private readonly INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;
   private readonly DIM_LEVEL = 30;
@@ -241,6 +252,34 @@ export class DeviceManager extends EventEmitter {
 
       deck = await openStreamDeck(discovered.path);
 
+      // Readiness probe: query the device (firmware) with short bounded
+      // retries before declaring it connected — the Elgato reference pattern.
+      // Replaces the old unconditional 500ms sleep, which was simultaneously
+      // too long for healthy devices and too short for slow ones.
+      let firmwareVersion = "unknown";
+      let ready = false;
+      for (
+        let attempt = 1;
+        attempt <= this.CONNECT_PROBE_ATTEMPTS && !ready;
+        attempt++
+      ) {
+        try {
+          firmwareVersion = await deck.getFirmwareVersion();
+          ready = true;
+        } catch {
+          if (attempt < this.CONNECT_PROBE_ATTEMPTS) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, this.CONNECT_PROBE_RETRY_MS),
+            );
+          }
+        }
+      }
+      if (!ready) {
+        throw new Error(
+          `Device ${deviceId} not answering firmware query; not ready`,
+        );
+      }
+
       // Get device type from model
       const deviceType = this.modelToDeviceType(discovered.model);
       const specs = DEVICE_SPECS[deviceType];
@@ -249,7 +288,7 @@ export class DeviceManager extends EventEmitter {
         id: deviceId,
         type: deviceType,
         serialNumber: discovered.serialNumber || "unknown",
-        firmwareVersion: await this.getFirmwareVersion(deck),
+        firmwareVersion,
         rows: specs.rows,
         columns: specs.columns,
         keyCount: specs.keyCount,
@@ -264,7 +303,10 @@ export class DeviceManager extends EventEmitter {
 
       deck.on("down", (keyIndex: number) => {
         const now = Date.now();
-        const keyId = `${deviceId}-${keyIndex}`;
+        // Debounce key is per DIRECTION: an up is compared against the last
+        // accepted UP, so a debounced (dropped) down can never swallow its
+        // matching up — press/release pairs stay in sync.
+        const keyId = `${deviceId}-${keyIndex}:down`;
         const lastTime = this.lastKeyTime.get(keyId) || 0;
 
         if (now - lastTime < this.KEY_DEBOUNCE_MS) {
@@ -283,6 +325,19 @@ export class DeviceManager extends EventEmitter {
       });
 
       deck.on("up", (keyIndex: number) => {
+        const now = Date.now();
+        // Same debounce as down, keyed per direction (see above): bouncy
+        // switches must not emit duplicate ups — but the FIRST up after a
+        // press is always delivered, even if the down itself was debounced.
+        const keyId = `${deviceId}-${keyIndex}:up`;
+        const lastTime = this.lastKeyTime.get(keyId) || 0;
+
+        if (now - lastTime < this.KEY_DEBOUNCE_MS) {
+          this.logger.debug(`Debouncing duplicate key up: ${keyId}`);
+          return;
+        }
+        this.lastKeyTime.set(keyId, now);
+
         this.logger.info(
           `HARDWARE EVENT: Key Up [${keyIndex}] on device ${deviceId}`,
         );
@@ -321,9 +376,6 @@ export class DeviceManager extends EventEmitter {
       });
 
       this.devices.set(deviceId, { info, deck });
-
-      // Wait a bit for the device to be ready for commands
-      await new Promise((resolve) => setTimeout(resolve, 500));
 
       this.emit("device:connected", info);
 
@@ -968,17 +1020,6 @@ export class DeviceManager extends EventEmitter {
     if (modelLower.includes("neo")) return "neo";
 
     return "original";
-  }
-
-  /**
-   * Get firmware version (if available)
-   */
-  private async getFirmwareVersion(deck: StreamDeck): Promise<string> {
-    try {
-      return await deck.getFirmwareVersion();
-    } catch {
-      return "unknown";
-    }
   }
 
   /**

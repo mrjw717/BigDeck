@@ -449,8 +449,8 @@ describe("DeviceManager", () => {
     expect(hid.openCalls).toBe(2);
     expect(connected).toEqual([]);
 
-    // +10s more (t=16s): backoff expired -> attempt 3 succeeds; the post-open
-    // readiness sleep adds 500ms before device:connected fires
+    // +10s more (t=16s): backoff expired -> attempt 3 succeeds (readiness
+    // probe passes on the first try)
     await vi.advanceTimersByTimeAsync(10500);
     expect(hid.openCalls).toBe(3);
     expect(connected).toEqual(["TEST"]);
@@ -459,5 +459,62 @@ describe("DeviceManager", () => {
     // Subsequent scans leave the connected device alone
     await vi.advanceTimersByTimeAsync(4000);
     expect(hid.openCalls).toBe(3);
+  });
+
+  // ---- Connect readiness + key debounce (audit #6) ------------------------
+
+  it("should fail the connect when the device never answers the readiness probe", async () => {
+    // Arrange: device opens but never answers a firmware query
+    const deck = makeHidDeck();
+    let closed = 0;
+    (deck as unknown as Record<string, unknown>).getFirmwareVersion =
+      async () => {
+        throw new Error("no response");
+      };
+    (deck as unknown as Record<string, unknown>).close = async () => {
+      closed++;
+    };
+    hid.deck = deck;
+
+    const connected: string[] = [];
+    manager.on("device:connected", (info) => connected.push(info.id));
+
+    // Act: probe makes up to 3 attempts, 100ms apart (~200ms of waits)
+    const pending = manager.connectDevice("TEST", {
+      model: "original",
+      path: "/dev/fake0",
+      serialNumber: "TEST",
+    });
+    await vi.advanceTimersByTimeAsync(300);
+    const result = await pending;
+
+    // Assert: not declared connected, and the opened handle was released
+    expect(result).toBe(false);
+    expect(connected).toEqual([]);
+    expect(closed).toBe(1);
+  });
+
+  it("should debounce key downs and ups per direction, keeping press/release pairs intact", async () => {
+    // Arrange: connect (probe passes immediately), then bounce a key hard
+    hid.deck = makeHidDeck();
+    const events: string[] = [];
+    manager.on("key:down", (e) => events.push(`down:${e.keyIndex}`));
+    manager.on("key:up", (e) => events.push(`up:${e.keyIndex}`));
+
+    await manager.connectDevice("TEST", {
+      model: "original",
+      path: "/dev/fake0",
+      serialNumber: "TEST",
+    });
+    const hidDeck = hid.deck!;
+
+    // Act: noisy press/release within the 80ms debounce window
+    hidDeck.emit("down", 0); // accepted
+    hidDeck.emit("down", 0); // switch bounce -> debounced
+    hidDeck.emit("up", 0); // matching up -> MUST be delivered
+    hidDeck.emit("up", 0); // duplicate up -> debounced
+
+    // Assert: exactly one down and one up — the pair stays in sync
+    expect(events).toEqual(["down:0", "up:0"]);
   });
 });
