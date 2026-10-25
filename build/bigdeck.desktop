@@ -1,0 +1,21 @@
+# BigDeck desktop entry template.
+#
+# WAYLAND/X11 WINDOW-ICON PAIRING (keep in sync with electron-builder.yml):
+# Electron derives the X11 WM_CLASS and the Wayland app_id from productName
+# ("BigDeck", which is also the packaged executable name). This file is
+# named bigdeck.desktop so Wayland shells match app_id "BigDeck" to it, and
+# StartupWMClass=BigDeck so X11 shells match the window class.
+#
+# Install manually with:
+#   sudo cp build/bigdeck.desktop /usr/share/applications/
+#   sudo cp assets/icons/icon-512x512.png /usr/share/pixmaps/bigdeck.png
+# (the deb/AppImage packages install this automatically via electron-builder)
+[Desktop Entry]
+Type=Application
+Name=BigDeck
+Comment=Streamdeck Controller for Linux
+Exec=BigDeck %U
+Icon=bigdeck
+Terminal=false
+Categories=Utility;System;
+StartupWMClass=BigDeck

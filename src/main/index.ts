@@ -84,13 +84,24 @@ if (!gotTheLock) {
   });
 
   async function createWindow(): Promise<void> {
+    // X11: the title-bar/taskbar icon comes from the BrowserWindow `icon`
+    // (largest PNG available, 512px). On Wayland the compositor ignores this
+    // and matches the window's app_id against a .desktop entry instead —
+    // that pairing is maintained in electron-builder.yml (desktop section)
+    // and build/bigdeck.desktop: productName "BigDeck" (which is what
+    // Electron uses as WM_CLASS / Wayland app_id) must equal StartupWMClass.
+    const windowIconPath = path.join(
+      app.getAppPath(),
+      "assets/icons/icon-512x512.png",
+    );
+
     mainWindow = new BrowserWindow({
       width: 1400,
       height: 900,
       minWidth: 1200,
       minHeight: 800,
       title: "BigDeck",
-      icon: path.join(app.getAppPath(), "assets/icons/bigdeck-icon.png"),
+      icon: windowIconPath,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -803,6 +814,11 @@ if (!gotTheLock) {
   // App lifecycle
   app.whenReady().then(async () => {
     try {
+      // Match electron-builder's appId (see electron-builder.yml). Set before
+      // any window exists: it identifies the app to the shell (Windows
+      // taskbar/notifications, and keeps the id consistent across platforms).
+      app.setAppUserModelId("com.bigdeck.app");
+
       protocol.handle("bigdeck-asset", (request) => {
         // Two URL forms arrive here:
         // - Query form `bigdeck-asset://local/?p=<encoded>` — what the

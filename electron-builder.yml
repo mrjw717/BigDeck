@@ -35,11 +35,18 @@ linux:
   vendor: BigDeck
   synopsis: Streamdeck controller for Linux
   description: BigDeck is a Linux application for controlling Elgato Streamdeck devices with profile management, key mapping, macros, network control, and plugin support.
+  # executableName defaults to productName ("BigDeck"), and Electron derives
+  # the X11 WM_CLASS and the Wayland app_id from it. The .desktop entry MUST
+  # therefore pair with it: StartupWMClass=BigDeck (X11 matching) and the
+  # entry name bigdeck.desktop (Wayland matches app_id to the file id).
+  # build/bigdeck.desktop is kept in sync; see also src/main/index.ts
+  # (BrowserWindow icon + app.setAppUserModelId).
   desktop:
     Name: BigDeck
     Comment: Streamdeck Controller for Linux
     Terminal: false
     Categories: Utility;System;
+    StartupWMClass: BigDeck
 
 deb:
   priority: optional
