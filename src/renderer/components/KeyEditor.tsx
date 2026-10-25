@@ -15,16 +15,19 @@ import {
   Image as ImageIcon,
   Keyboard,
   Library,
+  Moon,
   Music,
   Palette,
   Play,
   Repeat,
   Square,
+  Sun,
   Terminal,
   Trash2,
   Type,
   Upload,
   X,
+  XCircle,
   Zap,
   Layers,
 } from "lucide-react";
@@ -99,6 +102,24 @@ const ACTION_OPTIONS: ActionOption[] = [
     label: "Macro",
     icon: <Repeat size={18} />,
     description: "Record multi-step workflows",
+  },
+  {
+    type: "system-sleep",
+    label: "Sleep",
+    icon: <Moon size={18} />,
+    description: "Suspend the computer",
+  },
+  {
+    type: "close-app",
+    label: "Close App",
+    icon: <XCircle size={18} />,
+    description: "Close all instances of an app",
+  },
+  {
+    type: "key-brightness",
+    label: "Brightness",
+    icon: <Sun size={18} />,
+    description: "Set Stream Deck key brightness",
   },
 ];
 
@@ -277,6 +298,12 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
       case "run-script":
         (baseAction as any).scriptType = "shell";
         (baseAction as any).script = "";
+        break;
+      case "close-app":
+        (baseAction as any).target = "";
+        break;
+      case "key-brightness":
+        (baseAction as any).brightness = 50;
         break;
     }
 
@@ -626,6 +653,60 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                 placeholder="#!/bin/bash\n# Write your code here"
                 className="w-full h-40 p-4 bg-muted/40 border-2 border-border rounded-xl text-xs font-mono focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none resize-none"
               />
+            </div>
+          )}
+
+          {keyConfig.action.type === "close-app" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <XCircle size={14} className="text-primary" />
+                Close App
+              </label>
+              <input
+                type="text"
+                value={(keyConfig.action as any).target || ""}
+                onChange={(e) =>
+                  setKeyAction(keyIndex, {
+                    ...keyConfig.action,
+                    target: e.target.value,
+                  } as Action)
+                }
+                placeholder="Process name or window title, e.g. firefox"
+                className="w-full h-11 px-4 bg-muted/40 border-2 border-border rounded-xl text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none font-medium"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Asks matching windows to close gracefully (wmctrl on X11);
+                falls back to SIGTERM on the exact process name. Force-kill is
+                never used.
+              </p>
+            </div>
+          )}
+
+          {keyConfig.action.type === "key-brightness" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Sun size={14} className="text-primary" />
+                Key Brightness
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={(keyConfig.action as any).brightness ?? 50}
+                  onChange={(e) =>
+                    setKeyAction(keyIndex, {
+                      ...keyConfig.action,
+                      brightness: Number(e.target.value),
+                    } as Action)
+                  }
+                  className="flex-1 accent-primary"
+                />
+                <span className="w-12 text-right text-sm font-bold tabular-nums">
+                  {(keyConfig.action as any).brightness ?? 50}%
+                </span>
+              </div>
             </div>
           )}
 

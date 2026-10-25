@@ -7,6 +7,9 @@ import {
   FolderOpen,
   Terminal,
   Repeat,
+  Moon,
+  Sun,
+  XCircle,
   Search,
   Zap,
 } from "lucide-react";
@@ -120,6 +123,48 @@ const TEMPLATES: ActionTemplate[] = [
       layers: [
         { id: "bg-macro", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#3e2a1a", backgroundGradientEnd: "#2e1a0f", backgroundGradientDirection: 135 },
         { id: "text-macro", type: "text", order: 1, visible: true, text: "↻", fontSize: 24, textColor: "#f8a884", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "sleep",
+    type: "system-sleep",
+    label: "Sleep",
+    icon: <Moon size={18} />,
+    description: "Suspend the computer",
+    payload: {},
+    appearance: {
+      layers: [
+        { id: "bg-sleep", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#1a1a3e", backgroundGradientEnd: "#0f0f1e", backgroundGradientDirection: 135 },
+        { id: "text-sleep", type: "text", order: 1, visible: true, text: "☾", fontSize: 28, textColor: "#a5b4fc", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "close-app",
+    type: "close-app",
+    label: "Close App",
+    icon: <XCircle size={18} />,
+    description: "Close an app's windows",
+    payload: { target: "" },
+    appearance: {
+      layers: [
+        { id: "bg-close", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e1a1a", backgroundGradientEnd: "#2e0f0f", backgroundGradientDirection: 135 },
+        { id: "text-close", type: "text", order: 1, visible: true, text: "✕", fontSize: 26, textColor: "#f88484", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "brightness",
+    type: "key-brightness",
+    label: "Brightness",
+    icon: <Sun size={18} />,
+    description: "Set key brightness",
+    payload: { brightness: 50 },
+    appearance: {
+      layers: [
+        { id: "bg-brightness", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e521a", backgroundGradientEnd: "#2e291a", backgroundGradientDirection: 135 },
+        { id: "text-brightness", type: "text", order: 1, visible: true, text: "☀", fontSize: 26, textColor: "#f8e084", opacity: 1 },
       ],
     },
   },

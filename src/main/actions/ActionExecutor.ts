@@ -24,6 +24,9 @@ import {
   MacroAction,
   SwitchProfileAction,
   SwitchPageAction,
+  SystemSleepAction,
+  CloseAppAction,
+  KeyBrightnessAction,
   MacroStep,
   SdPluginAction,
   Action,
@@ -43,6 +46,15 @@ export class ActionExecutor {
 
   onSwitchProfile: ((profileId: string) => Promise<void>) | null = null;
   onSwitchPage: ((pageIndex: number) => Promise<void>) | null = null;
+  /**
+   * key-brightness actions go through the DeviceManager (it owns the
+   * hardware backlight). `deviceId` is the originating device when known
+   * (hardware press); null means "every connected device" (network API).
+   * Wired in the app entry point, same pattern as onSwitchProfile.
+   */
+  onKeyBrightness:
+    | ((deviceId: string | null, brightness: number) => Promise<boolean>)
+    | null = null;
   /**
    * Elgato .sdPlugin actions dispatch through the SDPluginHost (see
    * src/main/plugins/sd/SDPluginHost.ts). Wired in the app entry point,
@@ -160,6 +172,38 @@ export class ActionExecutor {
             this.logger.warn("No onSwitchPage handler registered");
           }
           break;
+        case "system-sleep":
+          succeeded = await this.executeSystemSleep();
+          break;
+        case "close-app":
+          succeeded = await this.executeCloseApp(
+            action as CloseAppAction,
+          );
+          break;
+        case "key-brightness": {
+          const brightnessAction = action as KeyBrightnessAction;
+          if (this.onKeyBrightness) {
+            try {
+              succeeded = await this.onKeyBrightness(
+                origin?.deviceId ?? null,
+                brightnessAction.brightness,
+              );
+              if (!succeeded) {
+                // Concrete reason already logged by the handler.
+                this.logger.debug(
+                  `Brightness ${brightnessAction.brightness} not applied to any device`,
+                );
+              }
+            } catch (error) {
+              this.logger.error("key-brightness handler failed:", error);
+            }
+          } else {
+            this.logger.warn(
+              "No onKeyBrightness handler registered (device manager not wired)",
+            );
+          }
+          break;
+        }
         case "sdplugin":
           if (this.onSdPluginDispatch) {
             try {
@@ -193,12 +237,14 @@ export class ActionExecutor {
   private getDebounceTime(actionType: string): number {
     switch (actionType) {
       case "multimedia":
+      case "key-brightness":
         return 200;
       case "keyboard-shortcut":
         return 300;
       case "launch-app":
       case "open-url":
       case "open-folder":
+      case "close-app":
         return 500;
       case "sdplugin":
         // Plugin events must not be debounced — rapid taps are legitimate
@@ -267,31 +313,52 @@ export class ActionExecutor {
 
     if (isWayland) {
       // ydotool first: kernel-level injection, works on every compositor
-      // (requires the ydotoold daemon; failure below logs that hint).
+      // (requires the ydotoold daemon). FAILURE FALLS THROUGH: installed
+      // but misconfigured must not block the next backend.
+      const tried: string[] = [];
       if (await this.isToolAvailable("ydotool")) {
-        return this.executeYdotoolShortcut(combo);
+        if (await this.executeYdotoolShortcut(combo)) return true;
+        tried.push("ydotool");
       }
       // wtype: Wayland-native input-method injection, needs no daemon.
       if (await this.isToolAvailable("wtype")) {
-        return this.executeWtypeShortcut(combo);
+        if (await this.executeWtypeShortcut(combo)) return true;
+        tried.push("wtype");
       }
-      this.logger.error(
-        `Cannot send keyboard shortcut "${combo}" on Wayland: neither ydotool nor wtype is installed. ` +
-          `Install one of them (e.g. 'sudo apt install ydotool' or 'sudo pacman -S ydotool') and enable the ydotoold service, or install wtype.`,
-      );
+      if (tried.length > 0) {
+        this.logger.error(
+          `Keyboard shortcut "${combo}": ${tried.join(" and ")} failed on Wayland. ` +
+            `ydotool needs its daemon: 'systemctl --user start ydotool' (and your user in the 'input' group, then re-login). ` +
+            `wtype needs compositor virtual-keyboard support.`,
+        );
+      } else {
+        this.logger.error(
+          `Cannot send keyboard shortcut "${combo}" on Wayland: neither ydotool nor wtype is installed. ` +
+            `Install one of them (e.g. 'sudo apt install ydotool' or 'sudo pacman -S ydotool'), or install wtype.`,
+        );
+      }
       return false;
     }
 
+    const triedX11: string[] = [];
     if (await this.isToolAvailable("xdotool")) {
-      return this.executeXdotoolShortcut(combo);
+      if (await this.executeXdotoolShortcut(combo)) return true;
+      triedX11.push("xdotool");
     }
     if (await this.isToolAvailable("ydotool")) {
-      return this.executeYdotoolShortcut(combo);
+      if (await this.executeYdotoolShortcut(combo)) return true;
+      triedX11.push("ydotool");
     }
-    this.logger.error(
-      `Cannot send keyboard shortcut "${combo}" on X11: neither xdotool nor ydotool is installed. ` +
-        `Install xdotool (e.g. 'sudo apt install xdotool').`,
-    );
+    if (triedX11.length > 0) {
+      this.logger.error(
+        `Keyboard shortcut "${combo}": ${triedX11.join(" and ")} failed on X11.`,
+      );
+    } else {
+      this.logger.error(
+        `Cannot send keyboard shortcut "${combo}" on X11: neither xdotool nor ydotool is installed. ` +
+          `Install xdotool (e.g. 'sudo apt install xdotool').`,
+      );
+    }
     return false;
   }
 
@@ -300,7 +367,9 @@ export class ActionExecutor {
   ): Promise<boolean> {
     const keys = action.keys || [];
     if (keys.length === 0) {
-      this.logger.warn("No keys provided for keyboard-shortcut action");
+      this.logger.warn(
+        "Keyboard shortcut has no keys recorded yet — open this key's editor and record a combo (the empty shortcut is saved as a draft).",
+      );
       return false;
     }
 
@@ -419,6 +488,9 @@ export class ActionExecutor {
    */
   private async typeText(text: string): Promise<boolean> {
     if (this.isWaylandSession()) {
+      // Same fall-through contract as sendKeyCombo: an installed-but-failing
+      // backend must not block the next one.
+      const tried: string[] = [];
       if (await this.isToolAvailable("wtype")) {
         this.logger.debug("Executing wtype (text)");
         try {
@@ -426,7 +498,7 @@ export class ActionExecutor {
           return true;
         } catch (error) {
           this.logger.error("wtype text typing failed:", error);
-          return false;
+          tried.push("wtype");
         }
       }
       if (await this.isToolAvailable("ydotool")) {
@@ -439,12 +511,19 @@ export class ActionExecutor {
             "ydotool type failed (is the ydotoold daemon running?):",
             error,
           );
-          return false;
+          tried.push("ydotool");
         }
       }
-      this.logger.error(
-        "Cannot type text on Wayland: neither wtype nor ydotool is installed.",
-      );
+      if (tried.length > 0) {
+        this.logger.error(
+          `Text typing failed: ${tried.join(" and ")} did not deliver the text on Wayland. ` +
+            `ydotool needs its daemon: 'systemctl --user start ydotool' (and your user in the 'input' group, then re-login).`,
+        );
+      } else {
+        this.logger.error(
+          "Cannot type text on Wayland: neither wtype nor ydotool is installed.",
+        );
+      }
       return false;
     }
 
@@ -838,6 +917,117 @@ export class ActionExecutor {
     } catch {
       return false;
     }
+  }
+
+  // ------------------------------------------------------------------
+  // system-sleep (systemctl suspend)
+  // ------------------------------------------------------------------
+
+  /**
+   * Suspend the machine. Elgato's Sleep action; on Linux the session-independent
+   * path is systemd. A failed suspend (polkit denial, sleep target masked)
+   * is logged — from a hardware key the user sees nothing else.
+   */
+  private async executeSystemSleep(): Promise<boolean> {
+    if (!(await this.isToolAvailable("systemctl"))) {
+      this.logger.error(
+        "Cannot suspend: systemctl is not available (non-systemd system?). " +
+          "BigDeck's sleep action requires systemd (logind).",
+      );
+      return false;
+    }
+
+    this.logger.info("Suspending system (systemctl suspend)");
+    try {
+      await execFileAsync("systemctl", ["suspend"]);
+      return true;
+    } catch (error) {
+      this.logger.error(
+        "systemctl suspend failed (is your user allowed to suspend without a password? " +
+          "Check polkit, or that the sleep target is not masked):",
+        error,
+      );
+      return false;
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // close-app (graceful app close: wmctrl windows, pkill fallback)
+  // ------------------------------------------------------------------
+
+  /**
+   * Close all instances of an app (Elgato's Close action). Graceful first:
+   * on X11 wmctrl asks each matching window to close (the app may prompt to
+   * save), then a SIGTERM to the exact process name covers headless apps and
+   * Wayland sessions where window listing is unavailable. SIGKILL is never
+   * used — that is "force quit", not "close".
+   */
+  private async executeCloseApp(action: CloseAppAction): Promise<boolean> {
+    const target = action.target?.trim();
+    if (!target) {
+      this.logger.warn("No target provided for close-app action");
+      return false;
+    }
+
+    // X11: close each window whose title contains the target. Most honest
+    // reading of "close the app" — the app gets to shut down cleanly.
+    if (
+      process.env.XDG_SESSION_TYPE !== "wayland" &&
+      (await this.isToolAvailable("wmctrl"))
+    ) {
+      try {
+        const { stdout } = await execAsync("wmctrl -l");
+        const windowIds = stdout
+          .split("\n")
+          .filter((line) => line.toLowerCase().includes(target.toLowerCase()))
+          .map((line) => line.split(/\s+/)[0])
+          .filter(Boolean);
+
+        if (windowIds.length > 0) {
+          let closed = 0;
+          for (const id of windowIds) {
+            try {
+              await execAsync(`wmctrl -ic ${id}`);
+              closed++;
+            } catch {
+              // Window may have closed itself in between — keep going.
+            }
+          }
+          this.logger.info(
+            `Closed ${closed} window(s) matching "${target}" via wmctrl`,
+          );
+          return true;
+        }
+        this.logger.debug(
+          `No wmctrl windows match "${target}" — falling back to process signal`,
+        );
+      } catch (error) {
+        this.logger.warn("wmctrl -l failed:", error);
+      }
+    }
+
+    // Fallback (and the only path on Wayland): SIGTERM the exact process
+    // name. Exit code 0 means at least one process was signalled.
+    if (await this.isToolAvailable("pkill")) {
+      try {
+        await execFileAsync("pkill", ["-TERM", "-x", target]);
+        this.logger.info(`Sent SIGTERM to process "${target}"`);
+        return true;
+      } catch (error) {
+        // pkill exits non-zero when nothing matched.
+        this.logger.warn(
+          `No running process named "${target}" to close (pkill matched nothing)`,
+          error,
+        );
+        return false;
+      }
+    }
+
+    this.logger.error(
+      `Cannot close "${target}": neither wmctrl (X11) nor pkill is installed. ` +
+        `Install wmctrl (e.g. 'sudo apt install wmctrl') or procps for the pkill fallback.`,
+    );
+    return false;
   }
 
   // ------------------------------------------------------------------

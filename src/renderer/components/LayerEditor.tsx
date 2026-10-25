@@ -153,6 +153,13 @@ function SortableLayer({
                 rows={2}
                 className="w-full p-2 bg-muted/40 border-2 border-border rounded-lg text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none resize-none"
               />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Tokens resolved at render time:{" "}
+                <code className="text-primary">{"{date}"}</code>,{" "}
+                <code className="text-primary">{"{time}"}</code>,{" "}
+                <code className="text-primary">{"{weekday}"}</code> — refresh
+                when the key re-renders (page switch, edit).
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>

@@ -24,6 +24,7 @@ import type {
   MediaPlayerInfo,
 } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
+import { applyTextTokens } from "./textTokens";
 
 /** Hard cap on animation frames sent to a device (time is preserved via delay scaling). */
 const MAX_ANIMATION_FRAMES = 60;
@@ -263,7 +264,10 @@ export class KeyRenderer {
         return `icon:${layer.source}:${base}`;
       }
       if (layer.type === "text" && layer.text) {
-        return `text:${layer.text}:${layer.textColor || ""}:${layer.fontSize || 14}:${base}`;
+        // Date/time tokens ({date}/{time}/{weekday}) resolve to the CURRENT
+        // moment here so the cache key rolls over at midnight instead of
+        // serving yesterday's rendered frame.
+        return `text:${applyTextTokens(layer.text)}:${layer.textColor || ""}:${layer.fontSize || 14}:${base}`;
       }
       if (layer.type === "background") {
         return `bg:${layer.backgroundColor || ""}:${layer.backgroundGradientStart || ""}:${layer.backgroundGradientEnd || ""}:${layer.backgroundGradientDirection || 135}:${base}`;
@@ -448,7 +452,11 @@ export class KeyRenderer {
   ): Promise<Buffer | null> {
     try {
       if (layer.type === "text" && layer.text) {
-        return await this.renderTextLayer(layer, width, height);
+        return await this.renderTextLayer(
+          { ...layer, text: applyTextTokens(layer.text) },
+          width,
+          height,
+        );
       }
 
       if ((layer.type === "image" || layer.type === "icon") && layer.source) {
@@ -702,7 +710,7 @@ export class KeyRenderer {
         }
         case "text":
           imageOrFrames = await this.renderTextImage(
-            keyConfig.image.text || "",
+            applyTextTokens(keyConfig.image.text || ""),
             width,
             height,
             keyConfig.image.textColor || "#ffffff",

@@ -704,6 +704,42 @@ if (!gotTheLock) {
         }
       });
 
+      // key-brightness actions: the executor knows nothing about devices;
+      // the DeviceManager owns the backlight. A hardware press targets its
+      // own device; a network/API trigger (no origin) fans out to every
+      // connected device. Truthful boolean back to the executor's logging.
+      actionEngine.setOnKeyBrightness(async (deviceId, brightness) => {
+        if (!Number.isFinite(brightness)) {
+          logger.error(
+            `key-brightness: non-numeric brightness value (${brightness})`,
+          );
+          return false;
+        }
+        const clamped = Math.max(0, Math.min(100, Math.round(brightness)));
+        const targets = deviceId
+          ? [deviceId]
+          : deviceManager.getDevices().map((d) => d.id);
+        if (targets.length === 0) {
+          logger.warn("key-brightness: no connected device to apply brightness to");
+          return false;
+        }
+        let applied = 0;
+        for (const target of targets) {
+          try {
+            await deviceManager.setBrightness(target, clamped);
+            applied++;
+          } catch (err) {
+            logger.error(`key-brightness: failed on device ${target}:`, err);
+          }
+        }
+        if (applied > 0) {
+          logger.info(
+            `Brightness set to ${clamped}% on ${applied} device(s)`,
+          );
+        }
+        return applied > 0;
+      });
+
       pluginManager = new PluginManager(logger);
       networkServer = new NetworkServer(
         logger,

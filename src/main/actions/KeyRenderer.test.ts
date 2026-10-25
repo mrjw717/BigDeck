@@ -7,7 +7,7 @@
 // frame-count budget, delay alignment, short-animation looping, cache.
 // ============================================================================
 
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import path from "path";
 import os from "os";
 import fs from "fs/promises";
@@ -253,5 +253,62 @@ describe("KeyRenderer", () => {
     // Frame 1 corner still shows the green background
     const corner1 = px(frames[1], 2, 2);
     expect(corner1[1]).toBeGreaterThan(200);
+  });
+
+  // ------------------------------------------------------------------
+  // Date/time tokens in text layers ({date} {time} {weekday}).
+  // Static (render-time) clock display: tokens resolve when the key is
+  // rendered, and the frame-cache key must roll over with the date so a
+  // day change produces a fresh render instead of yesterday's badge.
+  // ------------------------------------------------------------------
+  describe("date/time tokens in text layers", () => {
+    it("renders a token layer to a non-empty image", async () => {
+      const key = keyWithLayers([textLayer("date", 1, "{date}")]);
+      const result = await renderer.renderKeyImageEx(key, "original", false);
+      expect(Array.isArray(result.image)).toBe(false);
+      expect((result.image as Buffer).length).toBeGreaterThan(0);
+    });
+
+    it("resolves tokens to the current date and rolls the cache key at midnight", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      try {
+        vi.setSystemTime(new Date(2026, 9, 25, 23, 58, 0));
+        const key = keyWithLayers([textLayer("clock", 1, "{date}")]);
+
+        const day1 = await renderer.renderKeyImageEx(key, "original", false);
+
+        // Cache key must contain the RESOLVED date, not the raw token —
+        // that is what makes the next render after midnight a cache miss.
+        const cacheKeys = [
+          ...(renderer as unknown as { frameCache: Map<string, unknown> })
+            .frameCache.keys(),
+        ];
+        expect(cacheKeys.some((k) => k.startsWith("text:2026-10-25:"))).toBe(
+          true,
+        );
+
+        // After midnight the resolved text (and therefore the cache key)
+        // changes: a NEW cache entry is minted for the new date while the
+        // old one stays for its own day. (Pixels can't be compared here —
+        // headless environments without fonts render all SVG text to the
+        // same blank image — so the cache key is the deterministic proof.)
+        vi.setSystemTime(new Date(2026, 9, 26, 0, 1, 0));
+        const day2 = await renderer.renderKeyImageEx(key, "original", false);
+        expect(Array.isArray(day2.image)).toBe(false);
+
+        const keysAfter = [
+          ...(renderer as unknown as { frameCache: Map<string, unknown> })
+            .frameCache.keys(),
+        ];
+        expect(
+          keysAfter.filter((k) => k.startsWith("text:2026-10-25:")),
+        ).toHaveLength(1);
+        expect(
+          keysAfter.filter((k) => k.startsWith("text:2026-10-26:")),
+        ).toHaveLength(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 });

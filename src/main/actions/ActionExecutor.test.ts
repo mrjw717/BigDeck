@@ -175,6 +175,44 @@ describe("ActionExecutor", () => {
         expect.any(Function),
       );
     });
+
+    it("falls back to wtype when ydotool is installed but FAILS (daemon down)", async () => {
+      // Regression: ydotool present-but-broken used to `return false`
+      // immediately, so wtype never got its turn (2026-10-25 hardware test).
+      mockWhich(["ydotool", "wtype"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const tool = callArgs[0];
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        if (tool === "ydotool") {
+          // Daemon not running: ydotool client exits non-zero.
+          cb?.(new Error("failed to connect to socket"), { stdout: "" });
+        } else {
+          cb?.(null, { stdout: "" });
+        }
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "keyboard-shortcut", keys: ["a"], modifiers: ["ctrl"] }),
+      );
+
+      // The failed ydotool attempt...
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "ydotool",
+        expect.any(Array),
+        expect.any(Function),
+      );
+      // ...must be followed by the wtype attempt.
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "wtype",
+        ["-M", "ctrl", "-P", "a", "-U", "a", "-m", "ctrl"],
+        expect.any(Function),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: keyboard-shortcut"),
+      );
+    });
   });
 
   describe("keyboard-shortcut (X11)", () => {
@@ -386,6 +424,261 @@ describe("ActionExecutor", () => {
       );
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining("Action failed: macro"),
+      );
+    });
+  });
+
+  describe("system-sleep", () => {
+    it("runs systemctl suspend when available", async () => {
+      mockWhich(["systemctl"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "" });
+      });
+
+      await executor.executeAction(makeAction({ type: "system-sleep" }));
+
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "systemctl",
+        ["suspend"],
+        expect.any(Function),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: system-sleep"),
+      );
+    });
+
+    it("fails with guidance when systemctl is missing", async () => {
+      mockWhich([]);
+
+      await executor.executeAction(makeAction({ type: "system-sleep" }));
+
+      expect(cp.execFile).not.toHaveBeenCalled();
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("systemctl is not available"),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: system-sleep"),
+      );
+    });
+
+    it("surfaces a suspend failure (polkit/sleep-target) as a failed action", async () => {
+      mockWhich(["systemctl"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown) => void)
+          | undefined;
+        cb?.(new Error("Operation not permitted"));
+      });
+
+      await executor.executeAction(makeAction({ type: "system-sleep" }));
+
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("systemctl suspend failed"),
+        expect.any(Error),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: system-sleep"),
+      );
+    });
+  });
+
+  describe("close-app (X11)", () => {
+    beforeEach(() => {
+      delete process.env.WAYLAND_DISPLAY;
+      vi.stubEnv("XDG_SESSION_TYPE", "x11");
+    });
+
+    it("closes every wmctrl window whose title matches the target", async () => {
+      const closed: string[] = [];
+      cp.exec.mockImplementation(
+        (cmd: string, cb: (err: unknown, out?: { stdout: string }) => void) => {
+          if (cmd === "which wmctrl") {
+            cb(null, { stdout: "/usr/bin/wmctrl\n" });
+            return;
+          }
+          if (cmd === "wmctrl -l") {
+            cb(null, {
+              stdout:
+                "0x01 0 host Firefox\n" +
+                "0x02 0 host Some Firefox prefs\n" +
+                "0x03 0 host Terminal",
+            });
+            return;
+          }
+          if (cmd.startsWith("wmctrl -ic ")) {
+            closed.push(cmd.slice("wmctrl -ic ".length));
+            cb(null, { stdout: "" });
+            return;
+          }
+          cb(new Error(`not found / unhandled: ${cmd}`));
+        },
+      );
+
+      await executor.executeAction(
+        makeAction({ type: "close-app", target: "firefox" }),
+      );
+
+      expect(closed.sort()).toEqual(["0x01", "0x02"]);
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Closed 2 window(s) matching "firefox"'),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: close-app"),
+      );
+    });
+
+    it("falls back to pkill SIGTERM when no window title matches", async () => {
+      mockWhich(["wmctrl", "pkill"]);
+      // wmctrl -l answers through the which-aware mock; pkill goes via execFile.
+      mockCommand("wmctrl -l", "0x01 0 host Terminal");
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "" });
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "close-app", target: "code" }),
+      );
+
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "pkill",
+        ["-TERM", "-x", "code"],
+        expect.any(Function),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Sent SIGTERM to process "code"'),
+      );
+    });
+  });
+
+  describe("close-app (Wayland)", () => {
+    beforeEach(() => {
+      vi.stubEnv("WAYLAND_DISPLAY", "wayland-0");
+      vi.stubEnv("XDG_SESSION_TYPE", "wayland");
+    });
+
+    it("skips the X11 wmctrl path and signals the process directly", async () => {
+      mockWhich(["pkill"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "" });
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "close-app", target: "firefox" }),
+      );
+
+      expect(cp.exec).not.toHaveBeenCalledWith("wmctrl -l", expect.anything());
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "pkill",
+        ["-TERM", "-x", "firefox"],
+        expect.any(Function),
+      );
+    });
+
+    it("reports a truthful failure when pkill matches nothing", async () => {
+      mockWhich(["pkill"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown) => void)
+          | undefined;
+        cb?.(new Error("no process matched"));
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "close-app", target: "ghost" }),
+      );
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('No running process named "ghost"'),
+        expect.anything(),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: close-app"),
+      );
+    });
+
+    it("fails with install hints when neither wmctrl nor pkill exists", async () => {
+      mockWhich([]);
+
+      await executor.executeAction(
+        makeAction({ type: "close-app", target: "firefox" }),
+      );
+
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("neither wmctrl (X11) nor pkill is installed"),
+      );
+    });
+  });
+
+  it("close-app rejects an empty target before touching any tool", async () => {
+    delete process.env.WAYLAND_DISPLAY;
+    vi.stubEnv("XDG_SESSION_TYPE", "x11");
+    mockWhich(["wmctrl", "pkill"]);
+
+    await executor.executeAction(makeAction({ type: "close-app", target: "  " }));
+
+    expect(cp.exec).not.toHaveBeenCalled();
+    expect(cp.execFile).not.toHaveBeenCalled();
+    expect(logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining("No target provided for close-app"),
+    );
+  });
+
+  describe("key-brightness", () => {
+    it("routes through the onKeyBrightness callback with the origin device", async () => {
+      const handler = vi.fn().mockResolvedValue(true);
+      executor.onKeyBrightness = handler;
+
+      await executor.executeAction(
+        makeAction({ type: "key-brightness", brightness: 75 }),
+        { deviceId: "dev-1", keyIndex: 3 },
+      );
+
+      expect(handler).toHaveBeenCalledWith("dev-1", 75);
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: key-brightness"),
+      );
+    });
+
+    it("passes null deviceId when triggered without device context", async () => {
+      const handler = vi.fn().mockResolvedValue(true);
+      executor.onKeyBrightness = handler;
+
+      await executor.executeAction(
+        makeAction({ type: "key-brightness", brightness: 10 }),
+      );
+
+      expect(handler).toHaveBeenCalledWith(null, 10);
+    });
+
+    it("logs a failure when the handler applies to no device", async () => {
+      executor.onKeyBrightness = vi.fn().mockResolvedValue(false);
+
+      await executor.executeAction(
+        makeAction({ type: "key-brightness", brightness: 10 }),
+      );
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: key-brightness"),
+      );
+    });
+
+    it("warns when no handler is registered", async () => {
+      await executor.executeAction(
+        makeAction({ type: "key-brightness", brightness: 10 }),
+      );
+
+      expect(cp.execFile).not.toHaveBeenCalled();
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("No onKeyBrightness handler registered"),
       );
     });
   });

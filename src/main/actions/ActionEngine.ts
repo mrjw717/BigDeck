@@ -39,6 +39,12 @@ export class ActionEngine {
     this.executor.onSdPluginDispatch = handler;
   }
 
+  setOnKeyBrightness(
+    handler: (deviceId: string | null, brightness: number) => Promise<boolean>,
+  ): void {
+    this.executor.onKeyBrightness = handler;
+  }
+
   async executeAction(action: Action, origin?: ActionOrigin): Promise<void> {
     return this.executor.executeAction(action, origin);
   }

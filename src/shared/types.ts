@@ -45,6 +45,9 @@ export type ActionType =
   | "macro"
   | "switch-profile"
   | "switch-page"
+  | "system-sleep"
+  | "close-app"
+  | "key-brightness"
   | "toggle-folder"
   | "obs-action"
   | "system-command"
@@ -141,6 +144,34 @@ export interface SwitchPageAction extends BaseAction {
   pageIndex: number;
 }
 
+/**
+ * Suspend the machine via `systemctl suspend`. No configuration — mirrors
+ * Elgato's Sleep action (com.elgato.streamdeck.system.sleep).
+ */
+export interface SystemSleepAction extends BaseAction {
+  type: "system-sleep";
+}
+
+/**
+ * Close all instances of an app, gracefully. `target` is matched against
+ * window titles (wmctrl, X11) and process names (pkill SIGTERM fallback) —
+ * mirrors Elgato's Close action (com.elgato.streamdeck.system.close).
+ */
+export interface CloseAppAction extends BaseAction {
+  type: "close-app";
+  target: string;
+}
+
+/**
+ * Set Stream Deck key backlight brightness (0-100), mirroring Elgato's
+ * Brightness action (com.elgato.streamdeck.system.keybrightness). Executed
+ * through the onKeyBrightness callback — DeviceManager owns the hardware.
+ */
+export interface KeyBrightnessAction extends BaseAction {
+  type: "key-brightness";
+  brightness: number;
+}
+
 export interface PluginAction extends BaseAction {
   type: "plugin";
   pluginId: string;
@@ -180,6 +211,9 @@ export type Action =
   | MacroAction
   | SwitchProfileAction
   | SwitchPageAction
+  | SystemSleepAction
+  | CloseAppAction
+  | KeyBrightnessAction
   | PluginAction
   | SdPluginAction;
 
