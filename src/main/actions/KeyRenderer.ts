@@ -23,6 +23,11 @@ import type {
   KeyLayer,
   MediaPlayerInfo,
 } from "../../shared/types";
+import {
+  normalizeLayerOpacity,
+  parseHexColor,
+  rgbToHex,
+} from "../../shared/color";
 import type { Logger } from "../utils/Logger";
 import { applyTextTokens } from "./textTokens";
 
@@ -116,22 +121,45 @@ export class KeyRenderer {
       .filter((l) => l.visible)
       .sort((a, b) => a.order - b.order);
 
-    // --- Background settings (flatten color for the final RGB output) ---
+    // --- Flatten base = the device-off backdrop (black) ---
+    // The background COLOR/GRADIENT is painted exclusively by the background
+    // layer's overlay (renderBackgroundLayer), which honors that layer's
+    // opacity and chroma-key. Flattening onto black — the same backdrop the
+    // LayerStack preview paints under its layer divs — is what lets a
+    // semi-transparent or knocked-out background composite honestly instead
+    // of being double-painted at full opacity by the flatten step.
     let baseBackground = "#000000";
 
     const bgLayer = sortedLayers.find((l) => l.type === "background");
-    if (bgLayer && !(bgLayer.backgroundGradientStart && bgLayer.backgroundGradientEnd)) {
-      baseBackground = bgLayer.backgroundColor || "#000000";
-    }
 
     // --- Render every layer (cached; animated layers pre-rendered per frame) ---
     const layerRenders: LayerRender[] = [];
+    let bgOverlayRendered = false;
     for (const layer of sortedLayers) {
       try {
         const render = await this.renderLayer(layer, width, height);
-        if (render) layerRenders.push(render);
+        if (render) {
+          layerRenders.push(render);
+          if (layer.type === "background") bgOverlayRendered = true;
+        }
       } catch (err) {
         this.logger.error(`[renderWithLayers] failed for ${layer.type}: ${err}`);
+      }
+    }
+
+    // Degrade gracefully: if the background layer FAILED to render (bad hex,
+    // unreadable profile value, …), fall back to painting its solid color as
+    // the flatten base so the key isn't pure black. The color is validated —
+    // the failure may BE the invalid color, and an invalid flatten background
+    // would throw and kill the whole key render.
+    if (
+      bgLayer &&
+      !bgOverlayRendered &&
+      !(bgLayer.backgroundGradientStart && bgLayer.backgroundGradientEnd)
+    ) {
+      const fallback = parseHexColor(bgLayer.backgroundColor);
+      if (fallback) {
+        baseBackground = rgbToHex(fallback);
       }
     }
 
@@ -278,12 +306,22 @@ export class KeyRenderer {
     return null;
   }
 
+  /**
+   * Render a background layer to a full-bleed RGBA PNG frame.
+   *
+   * Shared semantics with the LayerStack preview (LayerStack.tsx): the layer
+   * paints gradient (start+end set) or solid backgroundColor full-bleed, and
+   * per-layer `opacity` multiplies alpha — semi-transparent backgrounds blend
+   * over the black device-off backdrop (renderWithLayers flatten base),
+   * exactly like the preview's opacity-styled div over its black host.
+   */
   private async renderBackgroundLayer(
     layer: KeyLayer,
     width: number,
     height: number,
   ): Promise<Buffer | null> {
     try {
+      let buf: Buffer;
       if (layer.backgroundGradientStart && layer.backgroundGradientEnd) {
         const gradientSvg = this.createGradientSvg(
           width,
@@ -292,23 +330,26 @@ export class KeyRenderer {
           layer.backgroundGradientEnd,
           layer.backgroundGradientDirection || 135,
         );
-        return await sharp(Buffer.from(gradientSvg))
+        buf = await sharp(Buffer.from(gradientSvg))
           .resize(width, height, { fit: "fill" })
           .ensureAlpha()
           .png()
           .toBuffer();
+      } else {
+        buf = await sharp({
+          create: {
+            width,
+            height,
+            channels: 4,
+            background: layer.backgroundColor || "#000000",
+          },
+        })
+          .png()
+          .toBuffer();
       }
-      return await sharp({
-        create: {
-          width,
-          height,
-          channels: 4,
-          background: layer.backgroundColor || "#000000",
-        },
-      })
-        .png()
-        .toBuffer();
-    } catch {
+      return await this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
+    } catch (err) {
+      this.logger.warn(`[renderBackgroundLayer] failed for layer ${layer.id}: ${err}`);
       return null;
     }
   }
@@ -359,12 +400,15 @@ export class KeyRenderer {
       const decodedFrames = Math.floor(roll.data.length / frameBytes);
       if (decodedFrames === 0) return null;
 
+      // Per-frame opacity: normalizeLayerOpacity makes non-finite profile
+      // values degrade to full opacity instead of silently zeroing alpha.
+      const op = normalizeLayerOpacity(opacity);
       const frames: Buffer[] = [];
       for (const idx of indices) {
         const f = Math.min(idx, decodedFrames - 1);
         let frameRaw = roll.data.subarray(f * frameBytes, (f + 1) * frameBytes);
-        if (opacity !== undefined && opacity < 1) {
-          frameRaw = this.applyOpacityRaw(frameRaw, opacity);
+        if (op !== undefined) {
+          frameRaw = this.applyOpacityRaw(frameRaw, op);
         }
         frames.push(
           await sharp(frameRaw, {
@@ -500,7 +544,7 @@ export class KeyRenderer {
           .png()
           .toBuffer();
 
-        return await this.applyOpacity(buf, layer.opacity);
+        return await this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
       }
 
       return null;
@@ -528,7 +572,15 @@ export class KeyRenderer {
     width: number,
     height: number,
   ): Promise<Buffer | null> {
-    const fontSize = layer.fontSize || 14;
+    // Sanitize profile values: NaN/0/negative font sizes from JSON profiles
+    // previously produced a corrupt SVG (y="NaN") that librsvg silently
+    // rendered at the top edge instead of centered.
+    const fontSize =
+      typeof layer.fontSize === "number" &&
+      Number.isFinite(layer.fontSize) &&
+      layer.fontSize > 0
+        ? layer.fontSize
+        : 14;
     const textColor = layer.textColor || "#ffffff";
     const lines = this.wordWrapText(layer.text!, width, fontSize);
     const lineH = Math.ceil(fontSize * 1.4);
@@ -549,7 +601,7 @@ export class KeyRenderer {
       .png()
       .toBuffer();
 
-    return this.applyOpacity(buf, layer.opacity);
+    return this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
   }
 
   /**
