@@ -80,14 +80,13 @@ function getKeyBackgroundStyle(
   if (!config) return {};
 
   const img = config.image;
-  const hasLegacyBg = !!(
-    img?.backgroundGradientStart ||
-    img?.backgroundColor ||
-    img?.pressedBackgroundColor ||
-    img?.pressedBackgroundGradientStart
-  );
 
-  if (hasLegacyBg || !config.layers?.length) {
+  // Layer-driven keys: the legacy `image` background is ignored by the
+  // hardware renderer whenever a non-empty layers array exists
+  // (KeyRenderer.renderKeyImageEx: layers.length > 0 wins) — the background
+  // comes from the background LAYER inside LayerStack, in stack order. So the
+  // button itself must not paint the legacy background underneath it.
+  if (!config.layers?.length) {
     const gradientDir = img?.backgroundGradientDirection || 135;
     const pressedGradientDir =
       img?.pressedBackgroundGradientDirection ||
@@ -116,8 +115,6 @@ function getKeyBackgroundStyle(
       : {};
   }
 
-  // Layer-based keys: backgrounds render inside LayerStack (correct z-order),
-  // so the button itself paints no background.
   return {};
 }
 
@@ -195,8 +192,19 @@ const DeckKey = React.memo(function DeckKey({
          `}
         style={getKeyBackgroundStyle(config, isPressed)}
       >
-        {/* Key Content */}
-        {hasImage ? (
+        {/* Key Content — precedence mirrors KeyRenderer.renderKeyImageEx:
+            a non-empty `layers` array replaces the legacy `image` field
+            entirely (the hardware ignores `image` when layers exist), so the
+            preview must show the layer composite, never the legacy image. */}
+        {(hasLayers || hasPressedLayers) ? (
+          <LayerStack
+            layers={
+              isPressed && hasPressedLayers
+                ? config?.pressedLayers || []
+                : config?.layers || []
+            }
+          />
+        ) : hasImage ? (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             {config?.image?.type === "text" && (
               <span
@@ -222,14 +230,6 @@ const DeckKey = React.memo(function DeckKey({
               />
             )}
           </div>
-        ) : (hasLayers || hasPressedLayers) ? (
-          <LayerStack
-            layers={
-              isPressed && hasPressedLayers
-                ? config?.pressedLayers || []
-                : config?.layers || []
-            }
-          />
         ) : hasAction ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-1 text-primary">
