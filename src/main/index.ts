@@ -799,10 +799,24 @@ if (!gotTheLock) {
   app.whenReady().then(async () => {
     try {
       protocol.handle("bigdeck-asset", (request) => {
-        let rawPath = request.url.replace("bigdeck-asset://", "");
-        rawPath = rawPath.replace(/^\/+|\/+$/g, "");
-
-        const assetPath = decodeURIComponent(rawPath);
+        // Two URL forms arrive here:
+        // - Query form `bigdeck-asset://local/?p=<encoded>` — what the
+        //   renderer emits (see src/renderer/utils/assets.ts). The payload
+        //   rides in the query string, which Chromium canonicalizes
+        //   transparently: filename case survives (host-form URLs had their
+        //   case folded, 404-ing multi-case names like "Animation Waving
+        //   GIF...gif"). decodeURIComponent restores the exact target.
+        // - Legacy host form `bigdeck-asset://<encoded-name>` — older stored
+        //   profiles, kept working for lowercase names.
+        const queryPath = /[?&]p=([^&]*)/.exec(request.url)?.[1];
+        let assetPath: string;
+        if (queryPath !== undefined) {
+          assetPath = decodeURIComponent(queryPath);
+        } else {
+          let rawPath = request.url.replace("bigdeck-asset://", "");
+          rawPath = rawPath.replace(/^\/+|\/+$/g, "");
+          assetPath = decodeURIComponent(rawPath);
+        }
         // Absolute paths (drag-dropped external files) are served as-is;
         // plain names resolve inside the managed assets directory.
         const fullPath = assetPath.startsWith("/")

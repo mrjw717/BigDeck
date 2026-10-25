@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { resolveAssetUrl } from "../utils/assets";
 
 interface AssetImageProps {
   src?: string;
@@ -6,22 +7,6 @@ interface AssetImageProps {
   className?: string;
   style?: React.CSSProperties;
   fallback?: React.ReactNode;
-}
-
-/** See KeyImage.resolveAssetUrl — same streaming protocol path. */
-function resolveAssetUrl(src: string): string {
-  if (
-    src.startsWith("bigdeck-asset://") ||
-    src.startsWith("http://") ||
-    src.startsWith("https://") ||
-    src.startsWith("data:")
-  ) {
-    return src;
-  }
-  if (src.startsWith("/")) {
-    return `bigdeck-asset://${encodeURIComponent(src)}`;
-  }
-  return src;
 }
 
 export function AssetImage({
