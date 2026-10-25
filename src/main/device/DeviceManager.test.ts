@@ -39,6 +39,7 @@ class FakeStreamDeck {
   async clearKey(): Promise<void> {}
   async clearPanel(): Promise<void> {}
   async setBrightness(): Promise<void> {}
+  async close(): Promise<void> {}
 }
 
 interface AnimatedKeySnapshot {
@@ -50,9 +51,18 @@ interface AnimatedKeySnapshot {
   nextFrameTime: number;
 }
 
+interface FailedWrite {
+  deviceId: string;
+  keyIndex: number;
+  buffer: Buffer;
+  retries: number;
+}
+
 interface DeviceManagerInternals {
   devices: Map<string, { info: DeviceInfo; deck: StreamDeck }>;
   animatedKeys: Map<string, AnimatedKeySnapshot>;
+  failedWrites: FailedWrite[];
+  lastWrittenHash: Map<string, string>;
 }
 
 function makeFrame(tag: string): Buffer {
@@ -251,5 +261,64 @@ describe("DeviceManager", () => {
     // Assert
     expect(deck.writes).toHaveLength(1);
     expect(internals.animatedKeys.size).toBe(0);
+  });
+
+  // ---- Device-flap resilience (audit #2) ----------------------------------
+
+  it("should queue a write for retry when the device is momentarily missing", async () => {
+    // Arrange: device flaps out mid-render
+    internals.devices.delete(DEVICE_ID);
+
+    // Act: the write must land in the retry queue, not vanish
+    await expect(
+      manager.setKeyImage(DEVICE_ID, 3, makeFrame("QQ"))
+    ).rejects.toThrow(/queued for retry/);
+    expect(internals.failedWrites).toHaveLength(1);
+    expect(internals.failedWrites[0].keyIndex).toBe(3);
+
+    // Device returns -> the retry queue delivers the frame
+    internals.devices.set(DEVICE_ID, {
+      info: deviceInfo(),
+      deck: deck as unknown as StreamDeck,
+    });
+    await vi.advanceTimersByTimeAsync(1000);
+
+    // Assert
+    expect(internals.failedWrites).toHaveLength(0);
+    expect(deck.writes).toHaveLength(1);
+    expect(deck.writes[0].head).toBe("QQ\0\0");
+  });
+
+  it("should throw without queueing for an invalid key index", async () => {
+    // Act / Assert: not retryable — a retry can never fix a bad index
+    await expect(
+      manager.setKeyImage(DEVICE_ID, 99, makeFrame("QQ"))
+    ).rejects.toThrow(/Invalid key index/);
+    expect(internals.failedWrites).toHaveLength(0);
+  });
+
+  it("should re-write an identical image after a reconnect (hashes forgotten on disconnect)", async () => {
+    // Arrange
+    await manager.setKeyImage(DEVICE_ID, 1, makeFrame("ZZ"));
+    expect(deck.writes).toHaveLength(1);
+
+    // Act: unexpected disconnect wipes panel state, device comes back
+    await (
+      manager as unknown as {
+        handleDeviceDisconnect(id: string): Promise<void>;
+      }
+    ).handleDeviceDisconnect(DEVICE_ID);
+    internals.devices.set(DEVICE_ID, {
+      info: deviceInfo(),
+      deck: deck as unknown as StreamDeck,
+    });
+
+    // Profile re-apply sends the same frame — the hardware is blank, so the
+    // write must reach USB instead of being skipped as "identical"
+    await manager.setKeyImage(DEVICE_ID, 1, makeFrame("ZZ"));
+
+    // Assert
+    expect(deck.writes).toHaveLength(2);
+    expect(deck.writes[1].head).toBe("ZZ\0\0");
   });
 });

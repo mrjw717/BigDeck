@@ -11,6 +11,9 @@
 //   time-based catch-up (late frames are skipped, keeping real-time sync).
 // - Re-applying identical frames is a no-op (content hash), so key presses and
 //   profile re-applies don't restart running animations.
+// - Writes that arrive while a device is momentarily missing (USB flap) are
+//   queued for retry at this boundary instead of being lost, so renders
+//   scheduled during the flap land once the device returns.
 // ============================================================================
 
 import { EventEmitter } from "events";
@@ -317,6 +320,14 @@ export class DeviceManager extends EventEmitter {
         }
       }
 
+      // Forget content hashes too: they describe what the HARDWARE was
+      // showing, and the departed device's panel is blank now. Keeping them
+      // made post-reconnect re-applies no-op as "identical" and left blank
+      // keys after a flap.
+      for (const keyId of [...this.lastWrittenHash.keys()]) {
+        if (keyId.startsWith(`${deviceId}-`)) this.lastWrittenHash.delete(keyId);
+      }
+
       this.emit("device:disconnected", deviceId);
       this.logger.info(`Device disconnected: ${deviceId}`);
     }
@@ -383,8 +394,36 @@ export class DeviceManager extends EventEmitter {
     delays?: number[],
   ): Promise<void> {
     const device = this.devices.get(deviceId);
+
+    // Genuinely invalid request — throw without queueing; no retry can fix it.
+    if (device && (keyIndex < 0 || keyIndex >= device.info.keyCount)) {
+      throw new Error(
+        `Invalid key index ${keyIndex} for device ${deviceId} (${device.info.keyCount} keys)`,
+      );
+    }
+
     if (!device) {
-      throw new Error(`Device not found: ${deviceId}`);
+      // Transient device absence (USB flap / mid-enumeration). This is
+      // retryable, so the write goes into the failedWrites retry queue here
+      // at the boundary — throwing past all handlers without queueing meant
+      // renders scheduled during a flap were lost forever (blank keys until
+      // a manual profile re-apply). We still rethrow after queueing so
+      // callers keep their existing failure handling and don't record the
+      // render as complete; the retry queue delivers once the device returns.
+      // For animations only frame 0 is queued — the full animation is
+      // re-applied on reconnect (device:connected re-applies the profile).
+      if (Array.isArray(imageOrFrames) && imageOrFrames.length === 0) {
+        return; // Nothing to write (matches the connected-device no-op path)
+      }
+      const first = Array.isArray(imageOrFrames) ? imageOrFrames[0] : imageOrFrames;
+      this.queueFailedWrite(
+        deviceId,
+        keyIndex,
+        Buffer.isBuffer(first) ? first : Buffer.from(first),
+      );
+      throw new Error(
+        `Device not connected, key ${keyIndex} write queued for retry: ${deviceId}`,
+      );
     }
 
     const keyId = `${deviceId}-${keyIndex}`;
@@ -760,6 +799,12 @@ export class DeviceManager extends EventEmitter {
    */
   async cleanup(): Promise<void> {
     this.stopDetection();
+
+    if (this.retryInterval) {
+      clearInterval(this.retryInterval);
+      this.retryInterval = null;
+    }
+    this.failedWrites.length = 0;
 
     for (const anim of this.animatedKeys.values()) {
       if (anim.timer) clearTimeout(anim.timer);
