@@ -83,6 +83,19 @@ ws.on("message", (data) => {
       // Spec-tolerance probe: an event BigDeck does not implement. The host
       // must log and ignore it (never crash or close).
       send({ event: "someFutureElgatoEvent", payload: { hello: true } });
+      // Optional probe (env-gated by SDPluginHost.test.ts): a switchToProfile
+      // request like real plugins send. SDK frame shape — `device` is a
+      // TOP-LEVEL field, only `profile` lives in the payload.
+      if (process.env.FAKE_SD_SWITCH_PROFILE) {
+        send({
+          event: "switchToProfile",
+          context: "",
+          ...(process.env.FAKE_SD_SWITCH_DEVICE
+            ? { device: process.env.FAKE_SD_SWITCH_DEVICE }
+            : {}),
+          payload: { profile: process.env.FAKE_SD_SWITCH_PROFILE },
+        });
+      }
       break;
     }
 

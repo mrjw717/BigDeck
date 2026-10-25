@@ -51,8 +51,6 @@
 //   that reply and hang on silence.
 //
 // Deliberately out of scope for the backend phase:
-// - switchToProfile: emitted as an event for observability; wiring it to
-//   ProfileManager is UI-phase work.
 // - Property Inspector hosting: sendToPropertyInspector is stored on the
 //   context and emitted, but no PI webview client exists yet.
 // ============================================================================
@@ -1363,13 +1361,21 @@ export class SDPluginHost extends EventEmitter {
       }
 
       case "switchToProfile": {
-        // Wired to ProfileManager in the UI phase; emitted here so flows are
-        // observable and testable now.
+        // Acknowledgment flows through the SdBridge → ProfileManager wiring
+        // (index.ts); the host-side emit keeps the request observable and
+        // testable. SDK frame shape: `device` is a TOP-LEVEL field, only
+        // `profile` lives in the payload.
         this.logger.debug(`[sd] ${sender.uuid}: switchToProfile requested`);
         this.emit("switchToProfile", {
           pluginUUID: sender.uuid,
-          device: payload.device ?? null,
-          profile: payload.profile ?? null,
+          context: contextId,
+          device:
+            typeof message.device === "string"
+              ? message.device
+              : typeof payload.device === "string"
+                ? payload.device
+                : null,
+          profile: typeof payload.profile === "string" ? payload.profile : null,
         });
         break;
       }

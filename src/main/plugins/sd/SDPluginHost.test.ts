@@ -29,8 +29,9 @@ import {
   type SDKeyImageCachePort,
   type SDController,
 } from "./SDPluginHost";
-import { wireSdPlacements, type SdPlacementSource } from "./SdBridge";
+import { wireSdPlacements, wireSdProfileSwitching, type SdPlacementSource, type SDProfileSwitchPort } from "./SdBridge";
 import type { SdPluginPlacementChange } from "../../actions/HardwareSync";
+import type { Profile } from "../../../shared/types";
 import type { Logger } from "../../utils/Logger";
 
 // These tests spawn real child processes and wait on real WebSocket I/O;
@@ -147,7 +148,10 @@ let messages: InboundMessage[];
 let records: Array<{ level: string; msg: string }>;
 let previousNodePath: string | undefined;
 
-async function makeHost(opts: { copyFixture?: boolean } = { copyFixture: true }): Promise<SDPluginHost> {
+async function makeHost(
+  opts: { copyFixture?: boolean } = { copyFixture: true },
+  beforeStart?: (h: SDPluginHost) => void,
+): Promise<SDPluginHost> {
   device = new FakeDevicePort();
   cache = new FakeKeyImageCache();
   messages = [];
@@ -162,6 +166,9 @@ async function makeHost(opts: { copyFixture?: boolean } = { copyFixture: true })
     appVersion: "test",
   });
   h.on("plugin-message", (m) => messages.push(m as InboundMessage));
+  // Bridge wiring happens before start() — exactly like index.ts — so listeners
+  // exist before the fixture can register (and e.g. request a profile switch).
+  beforeStart?.(h);
   await h.start();
   return h;
 }
@@ -865,5 +872,182 @@ describe("SDPluginHost placement-driven contexts (SdBridge)", () => {
     device.emit("dial:up", { deviceId: "dev1", dialIndex: 0 });
     const dialUp = await waitFor(() => echoFrame("dialUp"));
     expect(dialUp!.payload).toMatchObject({ controller: "Encoder", pressed: false });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// switchToProfile → ProfileManager: the fixture plugin (env-gated) sends a
+// real switchToProfile frame over the WS; wireSdProfileSwitching resolves it
+// against a structural ProfileManager port.
+// ---------------------------------------------------------------------------
+
+function makeProfile(id: string, name: string, deviceType: Profile["deviceType"]): Profile {
+  return {
+    id,
+    name,
+    deviceType,
+    pages: [{ id: `${id}-page`, name: "Page 1", keys: [] }],
+    activePage: 0,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
+  };
+}
+
+function makeProfilePort(profiles: Profile[]) {
+  const activations: Profile[] = [];
+  const port: SDProfileSwitchPort = {
+    getProfiles: () => profiles,
+    getActiveProfile: () => activations[activations.length - 1] ?? null,
+    activateProfile: (profileId) => {
+      const found = profiles.find((p) => p.id === profileId);
+      if (!found) throw new Error(`Profile not found: ${profileId}`);
+      activations.push(found);
+      return found;
+    },
+  };
+  return { port, activations };
+}
+
+describe("SDPluginHost switchToProfile → ProfileManager", () => {
+  interface Ack {
+    pluginUUID: unknown;
+    context: unknown;
+    device: unknown;
+    profile: unknown;
+    profileId: unknown;
+  }
+
+  it("activates the profile matching name AND device type (fixture plugin over WS)", async () => {
+    process.env.FAKE_SD_SWITCH_PROFILE = "OBS Scenes";
+    process.env.FAKE_SD_SWITCH_DEVICE = "dev1";
+    try {
+      const acks: Ack[] = [];
+      const wired = makeProfilePort([
+        makeProfile("p-obs-xl", "OBS Scenes", "xl"),
+        makeProfile("p-obs", "OBS Scenes", "original"),
+      ]);
+      host = await makeHost({}, (h) => {
+        h.on("didReceiveProfileChange", (e) => acks.push(e as Ack));
+        wireSdProfileSwitching({
+          host: h,
+          profiles: wired.port,
+          resolveDeviceType: (id) => (id === "dev1" ? "original" : null),
+          logger: makeLogger().logger,
+        });
+      });
+      await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+      // The fixture's probe fired at didRegisterPlugin; the bridge's
+      // didReceiveProfileChange ack is the observable completion.
+      const ack = await waitFor(() => acks[0]);
+      expect(ack).toMatchObject({
+        pluginUUID: PLUGIN_UUID,
+        device: "dev1",
+        profile: "OBS Scenes",
+        profileId: "p-obs", // the "original" twin, not the xl one
+      });
+      expect(wired.activations.map((p) => p.id)).toEqual(["p-obs"]);
+    } finally {
+      delete process.env.FAKE_SD_SWITCH_PROFILE;
+      delete process.env.FAKE_SD_SWITCH_DEVICE;
+    }
+  });
+
+  it("logs and no-ops when no profile matches the requested name (spec-compliant)", async () => {
+    process.env.FAKE_SD_SWITCH_PROFILE = "No Such Profile";
+    process.env.FAKE_SD_SWITCH_DEVICE = "dev1";
+    try {
+      const acks: Ack[] = [];
+      const wired = makeProfilePort([makeProfile("p-obs", "OBS Scenes", "original")]);
+      const wireLog = makeLogger();
+      host = await makeHost({}, (h) => {
+        h.on("didReceiveProfileChange", (e) => acks.push(e as Ack));
+        wireSdProfileSwitching({
+          host: h,
+          profiles: wired.port,
+          resolveDeviceType: (id) => (id === "dev1" ? "original" : null),
+          logger: wireLog.logger,
+        });
+      });
+      await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+      await waitFor(() => acks.length > 0);
+
+      // No activation happened; the ack reports the miss and the reason is logged.
+      expect(wired.activations).toEqual([]);
+      expect(acks).toHaveLength(1);
+      expect(acks[0].profileId).toBeNull();
+      expect(
+        wireLog.records.find((r) => r.msg.includes("matched no BigDeck profile")),
+      ).toBeTruthy();
+    } finally {
+      delete process.env.FAKE_SD_SWITCH_PROFILE;
+      delete process.env.FAKE_SD_SWITCH_DEVICE;
+    }
+  });
+
+  it("resolves the target device from the requesting context when no device field is sent", async () => {
+    const acks: Ack[] = [];
+    const wired = makeProfilePort([
+      makeProfile("p-obs", "OBS Scenes", "original"),
+      makeProfile("p-obs-xl", "OBS Scenes", "xl"),
+    ]);
+    host = await makeHost({}, (h) => {
+      h.on("didReceiveProfileChange", (e) => acks.push(e as Ack));
+      wireSdProfileSwitching({
+        host: h,
+        profiles: wired.port,
+        resolveDeviceType: (id) => (id === "dev1" ? "original" : null),
+        logger: makeLogger().logger,
+      });
+    });
+    await waitFor(() => host.getPlugins().find((p) => p.uuid === PLUGIN_UUID && p.status === "running"));
+
+    // A placed context on dev1: SDK plugins send switchToProfile with the
+    // context of one of their instances and no device field. The emitted
+    // frame mirrors what routePluginMessage produces.
+    const { context } = host.registerActionInstance({
+      pluginUUID: PLUGIN_UUID,
+      actionUUID: ACTION_UUID,
+      deviceId: "dev1",
+      controller: "Keypad",
+      index: 9,
+    });
+    host.emit("switchToProfile", {
+      pluginUUID: PLUGIN_UUID,
+      context,
+      device: null,
+      profile: "OBS Scenes",
+    });
+
+    const ack = await waitFor(() => acks[0]);
+    expect(ack.profileId).toBe("p-obs"); // original via the context's device
+    expect(wired.activations.map((p) => p.id)).toEqual(["p-obs"]);
+  });
+
+  it("does not re-activate the already-active profile but still acknowledges", async () => {
+    const acks: Ack[] = [];
+    const wired = makeProfilePort([makeProfile("p-obs", "OBS Scenes", "original")]);
+    // Pre-activate: getActiveProfile reports it from the start.
+    wired.activations.push(wired.port.getProfiles().find((p) => p.id === "p-obs")!);
+    host = await makeHost({}, (h) => {
+      h.on("didReceiveProfileChange", (e) => acks.push(e as Ack));
+      wireSdProfileSwitching({
+        host: h,
+        profiles: wired.port,
+        resolveDeviceType: (id) => (id === "dev1" ? "original" : null),
+        logger: makeLogger().logger,
+      });
+    });
+
+    host.emit("switchToProfile", {
+      pluginUUID: PLUGIN_UUID,
+      context: null,
+      device: "dev1",
+      profile: "OBS Scenes",
+    });
+
+    const ack = await waitFor(() => acks[0]);
+    expect(ack.profileId).toBe("p-obs");
+    expect(wired.activations).toHaveLength(1); // no duplicate activation
   });
 });

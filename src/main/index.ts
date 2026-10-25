@@ -22,7 +22,7 @@ import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
 import { SDPluginHost } from "./plugins/sd/SDPluginHost";
-import { wireSdPlacements } from "./plugins/sd/SdBridge";
+import { wireSdPlacements, wireSdProfileSwitching } from "./plugins/sd/SdBridge";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
 import { Logger } from "./utils/Logger";
@@ -748,6 +748,22 @@ if (!gotTheLock) {
       // host; this is the only meeting point.
       if (sdPluginHost) {
         wireSdPlacements(hardwareSync, sdPluginHost);
+
+        // SDK switchToProfile: a plugin asks for a profile switch by NAME;
+        // resolve it against ProfileManager (preferring the requesting
+        // device's type) and activate through the existing path — the
+        // profile:activated listener above applies it to hardware. The
+        // renderer is notified like any other profile activation.
+        wireSdProfileSwitching({
+          host: sdPluginHost,
+          profiles: profileManager,
+          resolveDeviceType: (deviceId) =>
+            deviceId ? (deviceManager.getDevice(deviceId)?.type ?? null) : null,
+          logger,
+          onActivated: (profile) => {
+            mainWindow?.webContents.send(IPC_CHANNELS.PROFILE_CHANGED, profile);
+          },
+        });
       }
 
       // Setup event handlers
