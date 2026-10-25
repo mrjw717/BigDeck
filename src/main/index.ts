@@ -811,17 +811,50 @@ if (!gotTheLock) {
     }
   });
 
-  app.on("before-quit", async () => {
-    isQuitting = true;
-    logger?.info("BigDeck shutting down...");
+  // Electron does NOT await before-quit listener promises: an async handler
+  // only runs its synchronous prefix before the app tears down. So the
+  // cleanup is bracketed with preventDefault() + app.exit() here, and capped
+  // with a race: a plugin that swallows SIGTERM only dies via SDPluginHost's
+  // SIGKILL escalation (≤ 2s), and a hung cleanup must never stall exit
+  // indefinitely. 3s leaves margin above that escalation window.
+  const QUIT_CLEANUP_CAP_MS = 3000;
+  let quitCleanup: Promise<void> | null = null;
 
-    // Flush any debounced profile writes, then cleanup
-    profileManager?.flush();
-    await sdPluginHost?.stop();
-    await deviceManager?.cleanup();
-    await networkServer?.stop();
+  app.on("before-quit", (event) => {
+    // Hold the default quit — app.exit(0) below is the real exit, after
+    // cleanup. This must happen on EVERY invocation: a second before-quit
+    // letting the default through would tear the app down mid-cleanup.
+    event.preventDefault();
 
-    logger?.info("Cleanup complete");
+    // Re-entrancy guard: app.quit() can fire before-quit more than once
+    // (tray menu, window-all-closed, ...). Only the first invocation starts
+    // the cleanup; later ones piggyback on the in-flight run.
+    if (!quitCleanup) {
+      isQuitting = true;
+      logger?.info("BigDeck shutting down...");
+
+      // Flush any debounced profile writes, then cleanup. The race's losing
+      // branch is abandoned rather than cancelled — the app is exiting
+      // anyway, and Promise.race keeps every member's rejection handled.
+      quitCleanup = (async () => {
+        profileManager?.flush();
+        await Promise.race([
+          (async () => {
+            await sdPluginHost?.stop();
+            await deviceManager?.cleanup();
+            await networkServer?.stop();
+          })(),
+          new Promise<void>((resolve) => setTimeout(resolve, QUIT_CLEANUP_CAP_MS)),
+        ]);
+        logger?.info("Cleanup complete");
+      })().catch((error) => {
+        // Cleanup must never reject: the app.exit() below has to run either
+        // way, and an unhandled rejection here would be our last log line.
+        logger?.error("Error during quit cleanup:", error);
+      });
+    }
+
+    void quitCleanup.then(() => app.exit(0));
   });
 
   // Handle uncaught exceptions

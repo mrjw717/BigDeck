@@ -18,15 +18,56 @@ import {
   buildSpawnArgs,
   resolveLauncher,
   SDPluginProcess,
+  KILL_GRACE_MS,
 } from "./SDPluginProcess";
 import type { Logger } from "../../utils/Logger";
 
-const silentLogger: Logger = {
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-  debug: () => {},
-} as unknown as Logger;
+// Fixtures live next to this file. `__dirname` is shimmed by vitest's module
+// runner and native under the CommonJS main-process build; the cwd fallback
+// covers any environment that provides neither.
+const FIXTURES = path.join(
+  typeof __dirname !== "undefined"
+    ? __dirname
+    : path.join(process.cwd(), "src/main/plugins/sd"),
+  "__fixtures__",
+);
+
+function arglessLogger(): Logger {
+  return {
+    info: () => {},
+    warn: () => {},
+    error: () => {},
+    debug: () => {},
+  } as unknown as Logger;
+}
+
+const silentLogger: Logger = arglessLogger();
+
+/** Poll until `fn` returns truthy (child processes and WS I/O are async). */
+function waitFor<T>(fn: () => T | undefined | null | false, timeoutMs = 10000): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const tick = () => {
+      let value: T | undefined | null | false;
+      try {
+        value = fn();
+      } catch (err) {
+        reject(err);
+        return;
+      }
+      if (value) {
+        resolve(value as T);
+        return;
+      }
+      if (Date.now() - started > timeoutMs) {
+        reject(new Error("waitFor: timed out"));
+        return;
+      }
+      setTimeout(tick, 25);
+    };
+    tick();
+  });
+}
 
 describe("buildSpawnArgs", () => {
   it("matches the spec argv: -port, -pluginUUID, -registerEvent, URL-encoded -info", () => {
@@ -255,6 +296,52 @@ describe("SDPluginProcess", () => {
 
     proc.stop();
     await exited;
+    expect(proc.getStatus()).toBe("stopped");
+  });
+
+  it("stop() resolves after SIGKILL escalation when a plugin traps SIGTERM (quit-orphaning regression)", async () => {
+    // Fixture ignores SIGTERM — exactly the plugin shape that used to get
+    // orphaned at quit, when Electron fired before-quit without awaiting
+    // the cleanup and the escalation timer raced app exit.
+    const stderrLines: string[] = [];
+    const capturing: Logger = {
+      ...silentLogger,
+      error: (msg: unknown) => stderrLines.push(String(msg)),
+    } as unknown as Logger;
+    const proc = new SDPluginProcess(
+      {
+        pluginUUID: "u",
+        pluginName: "sigterm-trap",
+        codePath: path.join(FIXTURES, "sigterm-trap.js"),
+        port: 1,
+        info: {},
+        respawn: false,
+      },
+      capturing,
+    );
+
+    expect(proc.start()).toBe(true);
+    const pid = proc.getPid()!;
+
+    // Wait until the fixture actually INSTALLED its trap: a SIGTERM sent
+    // during the child's exec window kills it with the default disposition
+    // (fine, but it would not exercise the escalation we are pinning).
+    await waitFor(() => stderrLines.find((l) => l.includes("sigterm-trap-ready")));
+
+    // Awaitable: resolves (does not hang) only once the child is truly dead.
+    const startedAt = Date.now();
+    await proc.stop();
+    const elapsed = Date.now() - startedAt;
+
+    // The trap forced the full escalation: SIGTERM at t=0, SIGKILL at the
+    // grace boundary. Small slop on the lower bound for clock rounding; the
+    // upper bound proves the promise resolved within the escalation window
+    // instead of hanging on a plugin that never exits.
+    expect(elapsed).toBeGreaterThanOrEqual(KILL_GRACE_MS - 100);
+    expect(elapsed).toBeLessThan(KILL_GRACE_MS + 5000);
+
+    // Dead is dead: the pid no longer addresses a live process.
+    expect(() => process.kill(pid, 0)).toThrow();
     expect(proc.getStatus()).toBe("stopped");
   });
 

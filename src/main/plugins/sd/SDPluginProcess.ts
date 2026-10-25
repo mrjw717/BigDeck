@@ -63,8 +63,8 @@ export type SDProcessStatus =
 
 /** Time a child must stay up before its respawn failure count resets. */
 const STABLE_RUN_MS = 60 * 1000;
-/** Grace period between SIGTERM and SIGKILL on stop(). */
-const KILL_GRACE_MS = 2000;
+/** Grace period between SIGTERM and SIGKILL on stop(). Exported for tests. */
+export const KILL_GRACE_MS = 2000;
 
 /**
  * Build the plugin spawn argv exactly per the compat spec. The `-info` JSON
@@ -288,39 +288,61 @@ export class SDPluginProcess {
     }, delay);
   }
 
-  /** Stop the plugin: SIGTERM, escalate to SIGKILL after the grace period. */
-  stop(): void {
+  /**
+   * Stop the plugin: SIGTERM, escalate to SIGKILL after the grace period.
+   *
+   * Resolves once the child is ACTUALLY gone (immediately when none is
+   * running). The promise is what makes quit-time shutdown correct: Electron
+   * does not await before-quit listeners, so the host must be able to await
+   * real termination — otherwise a plugin that swallows SIGTERM races app
+   * exit against this class's internal escalation timer and gets orphaned.
+   */
+  stop(): Promise<void> {
     this.killedByUs = true;
     if (this.respawnTimer) {
       clearTimeout(this.respawnTimer);
       this.respawnTimer = null;
     }
-    if (!this.child) {
+    const child = this.child;
+    if (!child) {
       this.status = "stopped";
-      return;
+      return Promise.resolve();
     }
 
-    const child = this.child;
-    try {
-      child.kill("SIGTERM");
-    } catch {
-      // Already gone.
-    }
-    this.killTimer = setTimeout(() => {
-      if (this.child === child && child.exitCode === null) {
-        this.logger.warn(`[sd] ${this.opts.pluginName}: SIGKILL after grace period`);
-        try {
-          child.kill("SIGKILL");
-        } catch {
-          // Already gone.
+    return new Promise<void>((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (this.killTimer) {
+          clearTimeout(this.killTimer);
+          this.killTimer = null;
         }
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      // 'exit' fires for every real termination. 'error' must settle too:
+      // a failed spawn (ENOENT etc.) emits 'error' and never emits 'exit',
+      // which would leave this promise pending forever.
+      child.once("exit", finish);
+      child.once("error", finish);
+
+      try {
+        child.kill("SIGTERM");
+      } catch {
+        // Already gone — the exit/error listeners above settle the promise.
+        finish();
       }
-    }, KILL_GRACE_MS);
-    child.once("exit", () => {
-      if (this.killTimer) {
-        clearTimeout(this.killTimer);
-        this.killTimer = null;
-      }
+
+      this.killTimer = setTimeout(() => {
+        if (this.child === child && child.exitCode === null) {
+          this.logger.warn(`[sd] ${this.opts.pluginName}: SIGKILL after grace period`);
+          try {
+            child.kill("SIGKILL");
+          } catch {
+            // Already gone.
+          }
+        }
+      }, KILL_GRACE_MS);
     });
   }
 

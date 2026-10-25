@@ -399,7 +399,10 @@ export class SDPluginHost extends EventEmitter {
     );
   }
 
-  /** Stop the host: flush state, kill plugin processes, close the server. */
+  /**
+   * Stop the host: kill plugin processes (awaiting REAL termination), flush
+   * state, close the server.
+   */
   async stop(): Promise<void> {
     if (!this.running && !this.wss) return;
     this.running = false;
@@ -409,12 +412,20 @@ export class SDPluginHost extends EventEmitter {
     }
     this.deviceListeners.length = 0;
 
-    for (const entry of this.plugins.values()) {
-      entry.process?.stop();
-      entry.socket?.close();
-      entry.socket = null;
-      if (entry.status === "running") entry.status = "stopped";
-    }
+    // Wait for every plugin child to actually die, in parallel: each stop()
+    // resolves only after the child honored SIGTERM or ate the SIGKILL
+    // escalation (≤ KILL_GRACE_MS per plugin). This await is the last line
+    // of defense against quit-time orphaning — Electron does not await
+    // before-quit listeners, so nothing else guarantees a SIGTERM-trapping
+    // plugin is gone before app.exit().
+    await Promise.all(
+      [...this.plugins.values()].map(async (entry) => {
+        entry.socket?.close();
+        entry.socket = null;
+        if (entry.status === "running") entry.status = "stopped";
+        await entry.process?.stop();
+      }),
+    );
 
     this.settings?.flush();
 
@@ -566,7 +577,9 @@ export class SDPluginHost extends EventEmitter {
 
       // Refresh (or create) the registry entry; spawn if the host is running.
       const existing = this.plugins.get(parsed.manifest.UUID);
-      existing?.process?.stop();
+      // Fire-and-forget kill of the previous build (SIGTERM→SIGKILL
+      // escalation finishes in the background).
+      void existing?.process?.stop();
       const entry = (await this.loadPluginDirectory(dest))!;
       this.plugins.set(entry.uuid, entry);
       if (this.running && entry.enabled) this.spawnPlugin(entry);
@@ -632,7 +645,9 @@ export class SDPluginHost extends EventEmitter {
 
     entry.enabled = enabled;
     if (!enabled) {
-      entry.process?.stop();
+      // Fire-and-forget: the SIGTERM→SIGKILL escalation finishes in the
+      // background; nothing at quit time depends on it here.
+      void entry.process?.stop();
       entry.process = null;
       entry.socket = null;
       entry.status = "disabled";
