@@ -1,0 +1,161 @@
+{
+  "name": "bigdeck",
+  "version": "1.0.21",
+  "description": "A beautiful Linux application for controlling Elgato Streamdeck devices",
+  "main": "dist/main/main/index.js",
+  "author": "BigDeck Team",
+  "license": "MIT",
+  "homepage": "https://github.com/bigdeck/bigdeck",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bigdeck/bigdeck.git"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev:main\" \"npm run dev:preload\" \"npm run dev:renderer\"",
+    "dev:main": "tsc -p tsconfig.main.json --watch",
+    "dev:preload": "vite build -c vite.preload.config.ts --watch",
+    "dev:renderer": "vite",
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:preload": "vite build -c vite.preload.config.ts",
+    "build:renderer": "vite build",
+    "start": "electron .",
+    "start:dev": "cross-env NODE_ENV=development electron .",
+    "package": "npm run build && electron-builder --linux",
+    "package:deb": "npm run build && electron-builder --linux deb",
+    "package:appimage": "npm run build && electron-builder --linux AppImage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "daemon:install": "sudo cp systemd/bigdeck.service /etc/systemd/system/ && sudo systemctl daemon-reload",
+    "daemon:start": "sudo systemctl start bigdeck",
+    "daemon:stop": "sudo systemctl stop bigdeck",
+    "daemon:enable": "sudo systemctl enable bigdeck",
+    "udev:install": "sudo cp udev/70-streamdeck.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@elgato-stream-deck/node": "^6.2.0",
+    "electron-store": "^8.1.0",
+    "eventemitter3": "^5.0.4",
+    "express": "^4.18.2",
+    "node-hid": "^3.0.0",
+    "sharp": "^0.35.0",
+    "socket.io": "^4.7.2",
+    "tslib": "^2.8.1",
+    "uiohook-napi": "^1.5.4",
+    "usb": "^2.13.0",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0",
+    "ws": "^8.14.2",
+    "xdg-basedir": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/uuid": "^9.0.7",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "lucide-react": "^0.294.0",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss": "^3.3.6",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vite-plugin-electron": "^0.28.0",
+    "vitest": "^1.1.0",
+    "zustand": "^4.4.7"
+  },
+  "build": {
+    "appId": "com.bigdeck.app",
+    "productName": "BigDeck",
+    "npmRebuild": false,
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "**/*.node",
+      "**/*.so",
+      "**/*.so.*",
+      "node_modules/sharp/**/*",
+      "node_modules/@img/**/*",
+      "node_modules/node-hid/**/*",
+      "node_modules/usb/**/*"
+    ],
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "Utility",
+      "icon": "assets/icons/bigdeck-icon.png",
+      "maintainer": "BigDeck Team",
+      "vendor": "BigDeck",
+      "synopsis": "Streamdeck Controller for Linux",
+      "description": "A beautiful application for controlling Elgato Streamdeck devices on Linux with profiles, macros, and network control."
+    },
+    "deb": {
+      "depends": [
+        "libusb-1.0-0",
+        "libudev1"
+      ]
+    },
+    "extraResources": [
+      {
+        "from": "udev/",
+        "to": "udev/"
+      },
+      {
+        "from": "systemd/",
+        "to": "systemd/"
+      },
+      {
+        "from": "plugins/",
+        "to": "plugins/"
+      }
+    ]
+  }
+}

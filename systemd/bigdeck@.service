@@ -1,0 +1,19 @@
+[Unit]
+Description=BigDeck Streamdeck Controller Daemon for %i
+Documentation=https://github.com/bigdeck/bigdeck
+After=network.target graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/opt/BigDeck/bigdeck --daemon --no-gui
+Restart=on-failure
+RestartSec=5
+Environment=DISPLAY=:0
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
