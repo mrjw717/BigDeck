@@ -374,6 +374,33 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
     setShowActionPicker(false);
   };
 
+  const renderActionPicker = () => (
+    <div className="w-full rounded-2xl border border-border/70 bg-muted/20 p-3 grid gap-2">
+      {ACTION_OPTIONS.map((option) => (
+        <button
+          key={option.type}
+          onClick={() => handleActionSelect(option.type)}
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors ${
+            keyConfig.action?.type === option.type
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-transparent hover:border-border hover:bg-muted/40"
+          }`}
+        >
+          <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
+            {option.icon}
+          </div>
+          <div className="flex-1 text-left">
+            <div className="text-sm font-semibold">{option.label}</div>
+            <div className="text-[11px] text-muted-foreground">
+              {option.description}
+            </div>
+          </div>
+          <ChevronRight size={14} className="text-muted-foreground/60" />
+        </button>
+      ))}
+    </div>
+  );
+
   const renderActionForm = () => {
     if (!keyConfig.action) {
       return (
@@ -404,6 +431,14 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
               </button>
             ))}
           </div>
+
+          <button
+            onClick={() => setShowActionPicker((prev) => !prev)}
+            className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-border hover:border-primary text-muted-foreground hover:text-primary transition-colors"
+          >
+            {showActionPicker ? "Hide Action Types" : "Choose Action Type"}
+          </button>
+          {showActionPicker && renderActionPicker()}
         </div>
       );
     }
@@ -434,32 +469,7 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
           </div>
         </div>
 
-        {showActionPicker && (
-          <div className="rounded-2xl border border-border/70 bg-muted/20 p-3 grid gap-2">
-            {ACTION_OPTIONS.map((option) => (
-              <button
-                key={option.type}
-                onClick={() => handleActionSelect(option.type)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors ${
-                  keyConfig.action?.type === option.type
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-transparent hover:border-border hover:bg-muted/40"
-                }`}
-              >
-                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
-                  {option.icon}
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-sm font-semibold">{option.label}</div>
-                  <div className="text-[11px] text-muted-foreground">
-                    {option.description}
-                  </div>
-                </div>
-                <ChevronRight size={14} className="text-muted-foreground/60" />
-              </button>
-            ))}
-          </div>
-        )}
+        {showActionPicker && renderActionPicker()}
 
         <div className="p-5 rounded-2xl border border-border/60 bg-muted/10 space-y-5">
           {keyConfig.action.type === "keyboard-shortcut" && (
