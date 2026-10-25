@@ -16,6 +16,39 @@ import type { DeviceInfo } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 import type { StreamDeck } from "@elgato-stream-deck/node";
 
+// Module mock for the enumeration/open layer (used by the hot-plug/backoff
+// tests below). Other tests inject fakes through internals and never
+// enumerate, so this is inert for them.
+const hid = vi.hoisted(() => ({
+  listCalls: 0,
+  openCalls: 0,
+  openFailures: 0,
+  deck: null as EventEmitter | null,
+}));
+
+vi.mock("@elgato-stream-deck/node", async () => {
+  const { EventEmitter } = await import("events");
+  return {
+    listStreamDecks: vi.fn(async () => {
+      hid.listCalls++;
+      return hid.deck
+        ? [{ model: "original", path: "/dev/fake0", serialNumber: "TEST" }]
+        : [];
+    }),
+    openStreamDeck: vi.fn(async () => {
+      hid.openCalls++;
+      if (hid.openFailures > 0) {
+        hid.openFailures--;
+        throw new Error("open failed (simulated flaky USB)");
+      }
+      if (!hid.deck) throw new Error("no fake deck configured");
+      return hid.deck;
+    }),
+  };
+});
+
+import { EventEmitter } from "events";
+
 const silentLogger: Logger = {
   info: () => {},
   warn: () => {},
@@ -86,6 +119,15 @@ function deviceInfo(): DeviceInfo {
   };
 }
 
+/** HID-level fake deck returned by the mocked openStreamDeck (enumeration tests). */
+function makeHidDeck(): EventEmitter {
+  const deck = new EventEmitter();
+  const asAny = deck as unknown as Record<string, unknown>;
+  asAny.getFirmwareVersion = async () => "1.0";
+  asAny.close = async () => {};
+  return deck;
+}
+
 describe("DeviceManager", () => {
   let manager: DeviceManager;
   let internals: DeviceManagerInternals;
@@ -100,6 +142,10 @@ describe("DeviceManager", () => {
       info: deviceInfo(),
       deck: deck as unknown as StreamDeck,
     });
+    hid.listCalls = 0;
+    hid.openCalls = 0;
+    hid.openFailures = 0;
+    hid.deck = null;
   });
 
   afterEach(async () => {
@@ -372,5 +418,46 @@ describe("DeviceManager", () => {
     // the latest-wins animation frame left in pendingAnimFrames.
     expect(recorded.map((r) => r.keyIndex)).toEqual([0, 0, 5, 0]);
     expect(recorded[2].head).toBe("RR\0\0");
+  });
+
+  // ---- Hot-plug polling (audit #5) ----------------------------------------
+
+  it("should pass enumeration through to connectDevice and back off after failures", async () => {
+    // Arrange: enumeration finds the device, but opens fail twice (flaky USB)
+    hid.deck = makeHidDeck();
+    hid.openFailures = 2;
+
+    const connected: string[] = [];
+    manager.on("device:connected", (info) => connected.push(info.id));
+
+    // Act: initial scan connects (and fails)
+    await manager.startDetection();
+
+    // Assert: ONE enumeration for the scan, and the connect reused that entry
+    // — the old code re-ran listStreamDecks() inside connectDevice (race).
+    expect(hid.listCalls).toBe(1);
+    expect(hid.openCalls).toBe(1);
+    expect(connected).toEqual([]);
+
+    // +2s scan: inside the 5s backoff -> skipped entirely
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(hid.listCalls).toBe(2);
+    expect(hid.openCalls).toBe(1);
+
+    // +4s more (t=6s): backoff expired -> attempt 2 fails -> 10s backoff
+    await vi.advanceTimersByTimeAsync(4000);
+    expect(hid.openCalls).toBe(2);
+    expect(connected).toEqual([]);
+
+    // +10s more (t=16s): backoff expired -> attempt 3 succeeds; the post-open
+    // readiness sleep adds 500ms before device:connected fires
+    await vi.advanceTimersByTimeAsync(10500);
+    expect(hid.openCalls).toBe(3);
+    expect(connected).toEqual(["TEST"]);
+    expect(manager.getDevices().map((d) => d.id)).toEqual(["TEST"]);
+
+    // Subsequent scans leave the connected device alone
+    await vi.advanceTimersByTimeAsync(4000);
+    expect(hid.openCalls).toBe(3);
   });
 });

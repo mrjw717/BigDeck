@@ -15,6 +15,10 @@
 //   writes), so retries serialize with animation frames instead of tearing
 //   them; writes that arrive while a device is momentarily missing (USB flap)
 //   are queued at the boundary and land once the device returns.
+// - Discovery is 2s polling with per-device connect backoff (5s doubling to a
+//   30s cap) and a concurrent-connect guard; polling connects pass the
+//   already-enumerated entry through, so no second enumeration can race the
+//   first and re-open a device mid-enumeration.
 // ============================================================================
 
 import { EventEmitter } from "events";
@@ -66,6 +70,13 @@ interface AnimatedKey {
   timer: NodeJS.Timeout | null;
 }
 
+/** A device entry as returned by listStreamDecks() enumeration. */
+interface DiscoveredDevice {
+  model: string;
+  path: string;
+  serialNumber?: string;
+}
+
 export class DeviceManager extends EventEmitter {
   private devices: Map<string, ConnectedDevice> = new Map();
   private writeStates: Map<string, DeviceWriteState> = new Map();
@@ -82,6 +93,15 @@ export class DeviceManager extends EventEmitter {
   private retryInterval: NodeJS.Timeout | null = null;
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY_MS = 1000;
+  /** deviceIds with an in-flight connect attempt (collapses concurrent tries). */
+  private connecting: Set<string> = new Set();
+  /** deviceId -> failures + earliest next attempt (flaky-USB thrash guard). */
+  private connectBackoff: Map<
+    string,
+    { failures: number; nextAttemptAt: number }
+  > = new Map();
+  private readonly CONNECT_BACKOFF_BASE_MS = 5 * 1000;
+  private readonly CONNECT_BACKOFF_MAX_MS = 30 * 1000;
   /** Hardware key-press debounce (switch noise is ~5-20ms; 80ms is safe). */
   private readonly KEY_DEBOUNCE_MS = 80;
   private inactivityTimers: Map<string, NodeJS.Timeout> = new Map();
@@ -149,8 +169,15 @@ export class DeviceManager extends EventEmitter {
         detectedIds.add(deviceId);
 
         if (!this.devices.has(deviceId)) {
-          // New device found
-          await this.connectDevice(deviceId, detected.path);
+          // Backoff gate: a device that just failed to open (flaky USB,
+          // mid-reset) is not re-attempted until its cooldown expires —
+          // retrying on every 2s poll thrashed the device.
+          if (!this.canAttemptConnect(deviceId)) continue;
+
+          // New device found — pass the enumeration entry through. A second
+          // listStreamDecks() inside connectDevice could disagree with this
+          // one (mid-enumeration race).
+          await this.connectDevice(deviceId, detected);
         }
       }
 
@@ -168,33 +195,60 @@ export class DeviceManager extends EventEmitter {
   }
 
   /**
-   * Connect to a specific device
+   * Connect to a specific device.
+   *
+   * `deviceInfo` is the enumeration entry from the scan that discovered the
+   * device; passing it through avoids a second listStreamDecks() whose result
+   * could race the first (mid-enumeration opens on flaky USB). Manual connects
+   * (IPC) without an entry fall back to a single enumeration lookup.
+   *
+   * Concurrent connects for the same deviceId are collapsed by `connecting`.
+   * Repeated failures record an exponential backoff (5s doubling, 30s cap)
+   * which the polling gate in scanDevices respects; a manual connect bypasses
+   * the gate (explicit user intent) but still records failures.
    */
-  async connectDevice(deviceId: string, path?: string): Promise<boolean> {
-    try {
-      const devices = await listStreamDecks();
-      const deviceInfo = devices.find(
-        (d) =>
-          d.serialNumber === deviceId ||
-          `${d.model}-${d.path}` === deviceId ||
-          (path && d.path === path),
+  async connectDevice(
+    deviceId: string,
+    deviceInfo?: DiscoveredDevice,
+  ): Promise<boolean> {
+    if (this.devices.has(deviceId)) {
+      return true; // Already connected
+    }
+    if (this.connecting.has(deviceId)) {
+      this.logger.debug(
+        `Connect already in progress for ${deviceId}; skipping duplicate attempt`,
       );
+      return false;
+    }
+    this.connecting.add(deviceId);
 
-      if (!deviceInfo) {
-        this.logger.warn(`Device not found: ${deviceId}`);
-        return false;
+    let deck: StreamDeck | null = null;
+    try {
+      let discovered = deviceInfo;
+      if (!discovered) {
+        const devices = await listStreamDecks();
+        discovered = devices.find(
+          (d) =>
+            d.serialNumber === deviceId ||
+            `${d.model}-${d.path}` === deviceId,
+        );
+
+        if (!discovered) {
+          this.logger.warn(`Device not found: ${deviceId}`);
+          return false;
+        }
       }
 
-      const deck = await openStreamDeck(deviceInfo.path);
+      deck = await openStreamDeck(discovered.path);
 
       // Get device type from model
-      const deviceType = this.modelToDeviceType(deviceInfo.model);
+      const deviceType = this.modelToDeviceType(discovered.model);
       const specs = DEVICE_SPECS[deviceType];
 
       const info: DeviceInfo = {
         id: deviceId,
         type: deviceType,
-        serialNumber: deviceInfo.serialNumber || "unknown",
+        serialNumber: discovered.serialNumber || "unknown",
         firmwareVersion: await this.getFirmwareVersion(deck),
         rows: specs.rows,
         columns: specs.columns,
@@ -273,12 +327,48 @@ export class DeviceManager extends EventEmitter {
 
       this.emit("device:connected", info);
 
+      // Success clears the failure backoff — the next flap reconnects at once
+      this.connectBackoff.delete(deviceId);
+
       this.logger.info(`Connected to ${specs.name} (${deviceId})`);
       return true;
     } catch (error) {
+      // Don't leak an opened handle when a post-open step failed
+      if (deck) {
+        deck.close().catch(() => {});
+      }
+      this.recordConnectFailure(deviceId);
       this.logger.error(`Failed to connect device ${deviceId}:`, error);
       return false;
+    } finally {
+      this.connecting.delete(deviceId);
     }
+  }
+
+  /**
+   * Whether a connect attempt is allowed for a device now. After a failure
+   * the next attempt waits CONNECT_BACKOFF_BASE_MS, doubling per consecutive
+   * failure up to CONNECT_BACKOFF_MAX_MS.
+   */
+  private canAttemptConnect(deviceId: string): boolean {
+    const entry = this.connectBackoff.get(deviceId);
+    return !entry || Date.now() >= entry.nextAttemptAt;
+  }
+
+  /** Record a failed connect attempt and schedule the next one (backoff). */
+  private recordConnectFailure(deviceId: string): void {
+    const entry =
+      this.connectBackoff.get(deviceId) ?? { failures: 0, nextAttemptAt: 0 };
+    entry.failures += 1;
+    const delay = Math.min(
+      this.CONNECT_BACKOFF_BASE_MS * 2 ** (entry.failures - 1),
+      this.CONNECT_BACKOFF_MAX_MS,
+    );
+    entry.nextAttemptAt = Date.now() + delay;
+    this.connectBackoff.set(deviceId, entry);
+    this.logger.warn(
+      `Connect failed for ${deviceId}; backing off ${Math.round(delay / 1000)}s`,
+    );
   }
 
   /**
@@ -840,6 +930,8 @@ export class DeviceManager extends EventEmitter {
 
     this.devices.clear();
     this.writeStates.clear();
+    this.connecting.clear();
+    this.connectBackoff.clear();
   }
 
   /**
