@@ -23,7 +23,6 @@ import fs from "fs";
 import fsp from "fs/promises";
 import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 import {
   SDPluginHost,
   type SDDevicePort,
@@ -36,7 +35,15 @@ import type { Logger } from "../../utils/Logger";
 // give them more headroom than the 30s global default on loaded machines.
 vi.setConfig({ testTimeout: 60_000 });
 
-const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), "__fixtures__");
+// Fixtures live next to this file. `__dirname` is shimmed by vitest's module
+// runner and native under the CommonJS main-process build; the cwd fallback
+// covers any environment that provides neither.
+const FIXTURES = path.join(
+  typeof __dirname !== "undefined"
+    ? __dirname
+    : path.join(process.cwd(), "src/main/plugins/sd"),
+  "__fixtures__",
+);
 const FIXTURE_PLUGIN_DIR = path.join(FIXTURES, "fake-plugin.sdPlugin");
 const FIXTURE_PACKAGE = path.join(FIXTURES, "fake-plugin.streamDeckPlugin");
 
