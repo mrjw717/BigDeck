@@ -126,9 +126,6 @@ interface DeckKeyProps {
   clipboardActive: boolean;
   onKeyClick: (e: React.MouseEvent, index: number) => void;
   onContextMenu: (e: React.MouseEvent, index: number) => void;
-  onNativeDrop: (e: React.DragEvent, index: number) => void;
-  onDragEnterKey: (index: number) => void;
-  onDragLeaveKey: () => void;
   onClear: (index: number) => void;
   onSelect: (index: number) => void;
 }
@@ -145,9 +142,6 @@ const DeckKey = React.memo(function DeckKey({
   clipboardActive,
   onKeyClick,
   onContextMenu,
-  onNativeDrop,
-  onDragEnterKey,
-  onDragLeaveKey,
   onClear,
   onSelect,
 }: DeckKeyProps) {
@@ -169,20 +163,15 @@ const DeckKey = React.memo(function DeckKey({
 
   return (
     <div className="relative w-full h-full group/key">
+      {/* Native action drops are handled at the GRID level (the container
+          computes the nearest key from the pointer position) — the
+          data-key-index attribute is what the resolver measures against.
+          No per-key drag handlers: gaps and padding resolve to the nearest
+          key instead of rejecting the drop. */}
       <button
+        data-key-index={keyIndex}
         onClick={(e) => onKeyClick(e, keyIndex)}
         onContextMenu={(e) => onContextMenu(e, keyIndex)}
-        onDragEnter={(e) => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "copy";
-          onDragEnterKey(keyIndex);
-        }}
-        onDragLeave={onDragLeaveKey}
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "copy";
-        }}
-        onDrop={(e) => onNativeDrop(e, keyIndex)}
         className={`
            streamdeck-key relative transition-all duration-200 rounded-xl overflow-hidden border-2 w-full h-full
            ${isPressed ? "active ring-4 ring-primary/30 scale-95" : ""}
@@ -579,13 +568,80 @@ export function StreamdeckView({
     [keys, updateKeyConfig],
   );
 
-  const handleDragEnterKey = useCallback(
-    (index: number) => setDraggedOverIndex(index),
+  // ------------------------------------------------------------------
+  // Grid-level native drop handling. The whole keys grid is the drop
+  // surface: during dragover the pointer resolves to the NEAREST key
+  // center (gaps, padding and bezel included), so dropping anywhere on
+  // the device body lands on a key instead of requiring pixel-perfect
+  // aim on a single small button.
+  // ------------------------------------------------------------------
+  const keysGridRef = useRef<HTMLDivElement>(null);
+
+  const computeKeyIndexFromPoint = useCallback(
+    (x: number, y: number): number | null => {
+      const grid = keysGridRef.current;
+      if (!grid) return null;
+      const gridRect = grid.getBoundingClientRect();
+      if (
+        x < gridRect.left ||
+        x > gridRect.right ||
+        y < gridRect.top ||
+        y > gridRect.bottom
+      ) {
+        return null;
+      }
+      const cells = grid.querySelectorAll<HTMLElement>("[data-key-index]");
+      let bestIndex: number | null = null;
+      let bestDist = Infinity;
+      cells.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const dx = r.left + r.width / 2 - x;
+        const dy = r.top + r.height / 2 - y;
+        const dist = dx * dx + dy * dy;
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIndex = Number(el.dataset.keyIndex);
+        }
+      });
+      return bestIndex;
+    },
     [],
   );
-  const handleDragLeaveKey = useCallback(
-    () => setDraggedOverIndex(null),
-    [],
+
+  const handleGridDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      const idx = computeKeyIndexFromPoint(e.clientX, e.clientY);
+      if (idx !== null) setDraggedOverIndex(idx);
+    },
+    [computeKeyIndexFromPoint],
+  );
+
+  const handleGridDragLeave = useCallback((e: React.DragEvent) => {
+    // Child transitions fire dragleave constantly — only clear when the
+    // pointer genuinely left the grid.
+    const grid = keysGridRef.current;
+    if (
+      grid &&
+      e.relatedTarget instanceof Node &&
+      grid.contains(e.relatedTarget)
+    ) {
+      return;
+    }
+    setDraggedOverIndex(null);
+  }, []);
+
+  const handleGridDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const idx = computeKeyIndexFromPoint(e.clientX, e.clientY);
+      setDraggedOverIndex(null);
+      if (idx !== null) {
+        void handleNativeDrop(e, idx);
+      }
+    },
+    [computeKeyIndexFromPoint, handleNativeDrop],
   );
 
   useEffect(() => {
@@ -665,9 +721,6 @@ export function StreamdeckView({
           clipboardActive={!!clipboard}
           onKeyClick={handleKeyClick}
           onContextMenu={handleContextMenu}
-          onNativeDrop={handleNativeDrop}
-          onDragEnterKey={handleDragEnterKey}
-          onDragLeaveKey={handleDragLeaveKey}
           onClear={handleClear}
           onSelect={onKeySelect}
         />
@@ -741,8 +794,12 @@ export function StreamdeckView({
             <div className="absolute inset-0 rounded-[32px] ring-1 ring-white/10 pointer-events-none z-20" />
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none z-10" />
 
-            {/* Keys Grid */}
+            {/* Keys Grid — THE drop surface for native action drops */}
             <div
+              ref={keysGridRef}
+              onDragOver={handleGridDragOver}
+              onDragLeave={handleGridDragLeave}
+              onDrop={handleGridDrop}
               className="w-full h-full grid"
               style={{
                 padding: "6%",
