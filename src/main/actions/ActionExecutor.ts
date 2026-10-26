@@ -34,6 +34,7 @@ import {
   ActionOrigin,
 } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
+import { UinputInjector } from "./UinputInjector";
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
@@ -65,8 +66,11 @@ export class ActionExecutor {
     | ((action: SdPluginAction, origin?: ActionOrigin) => Promise<void>)
     | null = null;
 
+  private uinput: UinputInjector;
+
   constructor(logger: Logger) {
     this.logger = logger;
+    this.uinput = new UinputInjector(logger);
 
     uIOhook.on("keydown", (e: UiohookKeyboardEvent) => {
       if (this.isRecordingMacro) {
@@ -311,6 +315,15 @@ export class ActionExecutor {
    */
   private async sendKeyCombo(combo: string): Promise<boolean> {
     const isWayland = this.isWaylandSession();
+
+    // --- uinput first: native kernel injection, works on EVERY compositor
+    // (X11, KDE/GNOME Wayland, wlroots) with zero external tools. Falls
+    // through when /dev/uinput is inaccessible, python3 is missing, or a
+    // key name has no evdev mapping.
+    const mapped = UinputInjector.mapCombo(combo.split("+"));
+    if (mapped) {
+      if (await this.uinput.sendCombo(mapped)) return true;
+    }
 
     if (isWayland) {
       // ydotool first: kernel-level injection, works on every compositor

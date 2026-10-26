@@ -29,6 +29,21 @@ vi.mock("uiohook-napi", () => ({
   uIOhook: { on: vi.fn(), start: vi.fn() },
 }));
 
+// "fs" (sync) backs UinputInjector's /dev/uinput capability check — force it
+// to report no write access so tests never spawn the real python3 helper.
+vi.mock("fs", () => ({
+  default: {
+    accessSync: vi.fn(() => {
+      throw new Error("EACCES (mocked)");
+    }),
+    constants: { W_OK: 2 },
+  },
+  accessSync: vi.fn(() => {
+    throw new Error("EACCES (mocked)");
+  }),
+  constants: { W_OK: 2 },
+}));
+
 // fs/promises backs launch-app path checks and .desktop discovery.
 const fsMocks = vi.hoisted(() => ({
   access: vi.fn(),

@@ -35,3 +35,9 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="0fd9", MODE="0666", GROUP="plugdev", TAG+="
 
 # uiohook-napi: Allow access to input event devices for global shortcuts
 KERNEL=="event*", SUBSYSTEM=="input", MODE="0660", GROUP="input", TAG+="uaccess"
+
+# BigDeck keyboard injection (uinput): lets the app send keyboard shortcuts
+# to any compositor (KDE/GNOME Wayland reject virtual-keyboard clients, so
+# this kernel-level path replaces ydotool/wtype entirely). uaccess grants the
+# active session user access without group membership or relogin.
+KERNEL=="uinput", MODE="0660", GROUP="input", TAG+="uaccess"
