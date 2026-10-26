@@ -171,7 +171,7 @@ describe("ActionExecutor", () => {
 
       expect(cp.execFile).toHaveBeenCalledWith(
         "wtype",
-        ["-M", "ctrl", "-P", "a", "-U", "a", "-m", "ctrl"],
+        ["-M", "ctrl", "-P", "a", "-p", "a", "-m", "ctrl"],
         expect.any(Function),
       );
     });
@@ -206,7 +206,7 @@ describe("ActionExecutor", () => {
       // ...must be followed by the wtype attempt.
       expect(cp.execFile).toHaveBeenCalledWith(
         "wtype",
-        ["-M", "ctrl", "-P", "a", "-U", "a", "-m", "ctrl"],
+        ["-M", "ctrl", "-P", "a", "-p", "a", "-m", "ctrl"],
         expect.any(Function),
       );
       expect(logger.info).toHaveBeenCalledWith(

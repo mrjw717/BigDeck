@@ -465,7 +465,11 @@ export class ActionExecutor {
       if (name) args.push("-M", name);
     }
     if (key) {
-      args.push("-P", key, "-U", key);
+      // wtype 0.4 has NO -U flag: press is -P <key>, release is -p <key>.
+      // Single letters must be LOWERCASE — the uppercase keysym ("V") is the
+      // shifted keysym, so ctrl+V would fire ctrl+shift+v on the target.
+      const wtypeKey = key.length === 1 ? key.toLowerCase() : key;
+      args.push("-P", wtypeKey, "-p", wtypeKey);
     }
     for (const mod of modifiers) {
       const name = modifierNames[mod.toLowerCase()];
