@@ -14,7 +14,7 @@
 Type=Application
 Name=BigDeck
 Comment=Streamdeck Controller for Linux
-Exec=BigDeck %U
+Exec=env ELECTRON_OZONE_PLATFORM_HINT=auto bigdeck
 Icon=bigdeck
 Terminal=false
 Categories=Utility;System;

@@ -864,6 +864,23 @@ if (!gotTheLock) {
   }
 
   // App lifecycle
+  // --- Wayland: native rendering + fractional scaling --------------------
+  // Without native Wayland, Electron falls back to XWayland and the
+  // compositor scales the X11 surface — on fractional-scaling setups the
+  // window renders at the wrong size. `ozone-platform-hint=auto` selects
+  // native Wayland when available (X11 fallback otherwise, so SSH/VM
+  // launches keep working), and WaylandFractionalScaleV1 renders at
+  // physical pixels for crisp fractional scaling (no-op on Electron
+  // builds whose Chromium predates the protocol; the hint still fixes
+  // sizing there — full crispness lands with an Electron ≥30 bump).
+  // The switches MUST be appended before whenReady (Chromium init).
+  if (
+    process.env.XDG_SESSION_TYPE === "wayland" ||
+    process.env.WAYLAND_DISPLAY
+  ) {
+    app.commandLine.appendSwitch("ozone-platform-hint", "auto");
+    app.commandLine.appendSwitch("enable-features", "WaylandFractionalScaleV1");
+  }
   app.whenReady().then(async () => {
     try {
       // Match electron-builder's appId (see electron-builder.yml). Set before

@@ -20,7 +20,7 @@
     "build:preload": "vite build -c vite.preload.config.ts",
     "build:renderer": "vite build",
     "start": "electron .",
-    "start:dev": "cross-env NODE_ENV=development electron .",
+    "start:dev": "cross-env NODE_ENV=development ELECTRON_OZONE_PLATFORM_HINT=auto electron .",
     "package": "npm run build && electron-builder --linux",
     "package:deb": "npm run build && electron-builder --linux deb",
     "package:appimage": "npm run build && electron-builder --linux AppImage",
