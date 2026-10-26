@@ -701,12 +701,24 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                 <PathPicker
                   type="file"
                   value={(keyConfig.action as any).scriptFile || ""}
-                  onChange={(scriptFile: string) =>
+                  onChange={(scriptFile: string) => {
+                    // Infer the interpreter from the extension so "point at
+                    // file → press" just works: .py → python, .js/.mjs/.cjs →
+                    // node, everything else → shell. The dropdown stays as a
+                    // manual override.
+                    const ext = scriptFile.split(".").pop()?.toLowerCase();
+                    const inferred =
+                      ext === "py"
+                        ? "python"
+                        : ext === "js" || ext === "mjs" || ext === "cjs"
+                          ? "node"
+                          : "shell";
                     setKeyAction(keyIndex, {
                       ...keyConfig.action,
                       scriptFile,
-                    } as Action)
-                  }
+                      scriptType: inferred,
+                    } as Action);
+                  }}
                 />
               ) : (
                 <textarea
