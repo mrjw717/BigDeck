@@ -621,20 +621,18 @@ describe("convertElgatoProfile", () => {
     );
     const key = result.profile.pages[0].keys[0];
     const layers = key.layers as KeyLayer[];
-    expect(layers).toHaveLength(2);
+    expect(layers).toHaveLength(1);
     expect(layers[0]).toMatchObject({
       type: "image",
       source: "bigdeck-asset://elgato-ABCDEF.png",
       order: 0,
       fit: "contain",
     });
-    expect(layers[1]).toMatchObject({
-      type: "text",
-      text: "Undo",
-      textColor: "#ffffff",
-      y: 82, // TitleAlignment "bottom"
-      order: 1,
-    });
+    // Elgato titles become the key LABEL (not a text layer) so the
+    // appearance editor's Label controls manage them natively.
+    expect(key.label).toBe("Undo");
+    expect(key.labelColor).toBe("#ffffff");
+    expect(key.labelPosition).toBe("bottom");
   });
 
   it("uses the active state's image and warns about extra states", async () => {

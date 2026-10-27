@@ -1386,6 +1386,14 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
           <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             Label
           </div>
+          {(keyConfig.layers || []).some(
+            (l) => l.type === "text" && l.visible,
+          ) && (
+            <div className="p-2 rounded-lg border border-amber-500/30 bg-amber-500/5 text-[11px] text-amber-200/90">
+              This key also has visible text layer(s) — those are separate
+              from this Label. Toggle them in the Layers list.
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <input
               type="text"

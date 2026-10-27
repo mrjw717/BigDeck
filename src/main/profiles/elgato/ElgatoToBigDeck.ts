@@ -807,17 +807,16 @@ export async function convertElgatoProfile(
         }
       }
     }
+    // Elgato titles become the key's LABEL (not a text layer) — titles ARE
+    // labels semantically, and the Label controls in the appearance editor
+    // (text/eye/position/color) then manage them natively.
     if (state?.Title && state.ShowTitle !== false) {
-      layers.push({
-        id: uuidv4(),
-        type: "text",
-        visible: true,
-        opacity: 1,
-        order: 1,
-        text: normalizeElgatoTitle(state.Title),
-        textColor: state.TitleColor ?? "#ffffff",
-        y: titleVerticalPercent(state.TitleAlignment),
-      });
+      key.label = normalizeElgatoTitle(state.Title);
+      key.labelColor = state.TitleColor ?? "#ffffff";
+      // Alignment was a vertical percent (18/50/82) — snap to the nearest
+      // label position.
+      const y = titleVerticalPercent(state.TitleAlignment);
+      key.labelPosition = y < 40 ? "top" : y > 60 ? "bottom" : "center";
     }
     if (layers.length > 0) key.layers = layers;
 
