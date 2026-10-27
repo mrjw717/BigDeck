@@ -139,3 +139,74 @@ describe("KeyRenderer chroma-key compositing", () => {
     expect(brightPixels).toBeGreaterThan(0);
   });
 });
+
+// ============================================================================
+// Full-stack compositing: background → image → icon → text → label.
+// Guards the hardware stacking order for "one key, every layer type".
+// ============================================================================
+
+describe("KeyRenderer full layer stack (hardware)", () => {
+  let renderer: KeyRenderer;
+  beforeAll(async () => {
+    const userDataPath = await fs.mkdtemp(
+      path.join(os.tmpdir(), "bigdeck-stack-"),
+    );
+    renderer = new KeyRenderer(silentLogger, userDataPath);
+  });
+
+  it("composites background → image → icon → text → label in order", async () => {
+    // Icon fixture: full-canvas BLACK square SVG (obscures everything under
+    // it; the text + label above it must still show).
+    const iconSvg = path.join(os.tmpdir(), "bigdeck-stack-icon.svg");
+    await fs.writeFile(
+      iconSvg,
+      '<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="#000000"/></svg>'.replace('viewBox="0 0 256 256" ', ''),
+    );
+
+    const key: KeyConfig = {
+      id: "stack-key",
+      keyIndex: 0,
+      label: "TEST",
+      labelPosition: "bottom",
+      labelColor: "#ff2020",
+      layers: [
+        { id: "bg", type: "background", visible: true, opacity: 1, order: 0, backgroundColor: "#0000ff" },
+        { id: "img", type: "image", visible: true, opacity: 1, order: 1, source: "bigdeck-asset://wide-banner-200x80.png", fit: "fill" },
+        { id: "ico", type: "icon", visible: true, opacity: 1, order: 2, source: iconSvg },
+        { id: "txt", type: "text", visible: true, opacity: 1, order: 3, text: "ON", fontSize: 24, textColor: "#ffffff" },
+      ],
+    };
+
+    const result = await renderer.renderKeyImageEx(key, "original", false);
+    const raw = result.image as Buffer;
+    const px = (x: number, y: number) => {
+      const o = (y * 72 + x) * 3;
+      return [raw[o], raw[o + 1], raw[o + 2]] as [number, number, number];
+    };
+
+    // 1. The black icon layer covers the banner + blue background at the
+    //    top corners (no text there): proves icon sits ABOVE image+bg.
+    expect(px(4, 4)[0] + px(4, 4)[1] + px(4, 4)[2]).toBeLessThan(30);
+
+    // 2. The white text layer sits ABOVE the black icon: bright pixels
+    //    exist in the upper half (the text's own color, not the scrim).
+    let brightTop = 0;
+    for (let y = 8; y < 30; y++)
+      for (let x = 8; x < 64; x++) {
+        const [r, g, b] = px(x, y);
+        if (r > 180 && g > 180 && b > 180) brightTop++;
+      }
+    expect(brightTop).toBeGreaterThan(20);
+
+    // 3. The label scrim + red label text render at the BOTTOM strip,
+    //    above the icon: red-dominant pixels in the bottom 14 rows.
+    let redBottom = 0;
+    for (let y = 60; y < 71; y++)
+      for (let x = 8; x < 64; x++) {
+        const [r, g, b] = px(x, y);
+        if (r > 90 && r > g * 2 && r > b * 2) redBottom++;
+      }
+    expect(redBottom).toBeGreaterThan(10);
+  });
+});
+

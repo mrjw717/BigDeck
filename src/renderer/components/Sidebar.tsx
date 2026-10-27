@@ -137,24 +137,26 @@ export function Sidebar({
         </ul>
       </nav>
 
-      <div className="p-3 border-t border-border space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+      <div className="p-3 border-t border-border">
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1">
             <div
               className={`w-1.5 h-1.5 rounded-full ${devices.length > 0 ? "bg-green-500" : "bg-muted"}`}
             />
             <span>{devices.length > 0 ? "Connected" : "Disconnected"}</span>
           </div>
-          <button
-            onClick={() => setTheme(nextTheme)}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            aria-label={`Current theme: ${theme}, switch to ${nextTheme}`}
-            title={`Theme: ${nextTheme}`}
-          >
-            {getThemeIcon()}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setTheme(nextTheme)}
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              aria-label={`Current theme: ${theme}, switch to ${nextTheme}`}
+              title={`Theme: ${nextTheme}`}
+            >
+              {getThemeIcon()}
+            </button>
+            <span>v1.0.0</span>
+          </div>
         </div>
-        <div className="text-[10px] text-muted-foreground">v1.0.0</div>
       </div>
     </aside>
   );

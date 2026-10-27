@@ -44,6 +44,17 @@ const DEFAULT_FRAME_DELAY_MS = 100;
 /** Max entries in the layer frame cache (LRU-ish, insertion order eviction). */
 const FRAME_CACHE_LIMIT = 40;
 
+/**
+ * Icon layers render as a centered BADGE sized to this fraction of the key —
+ * the hardware half of the shared contract with the LayerStack preview
+ * (LayerStack.tsx renders icon layers as a fixed `w-10 h-10 object-contain`
+ * badge, ≈ half of a square preview cell). Rendering icons full-bleed made
+ * them ~2x the previewed size, and an icon layered above text/image layers
+ * buried them on hardware while the preview showed everything coexisting —
+ * reported as "text and icon layers don't respect the layer stack".
+ */
+const ICON_LAYER_SIZE_FRACTION = 0.5;
+
 export interface RenderedKey {
   image: Buffer | Buffer[];
   /** Per-frame delays in ms when `image` is an animation; aligned 1:1 with frames. */
@@ -116,7 +127,7 @@ export class KeyRenderer {
   // --------------------------------------------------------------------------
 
   private async renderWithLayers(
-    _keyConfig: KeyConfig,
+    keyConfig: KeyConfig,
     targetLayers: KeyLayer[],
     width: number,
     height: number,
@@ -177,6 +188,28 @@ export class KeyRenderer {
       }
     }
 
+    // --- Key label: system overlay, composited ABOVE every user layer ---
+    // The preview always shows KeyConfig.label over the layer stack
+    // (StreamdeckView DeckKey's Label Overlay div sits after/above the
+    // LayerStack), but the legacy render was the only path that drew it.
+    // Layer keys lost the label entirely on hardware — so render it here,
+    // last, on BOTH idle and pressed appearances (this function runs per
+    // state; pressedLayers never suppress the label).
+    let labelOverlay: Buffer | null = null;
+    if (keyConfig.label && keyConfig.label.trim()) {
+      try {
+        labelOverlay = await this.renderLabelOverlay(
+          keyConfig.label.trim(),
+          keyConfig.labelPosition || "bottom",
+          keyConfig.labelColor || "#ffffff",
+          width,
+          height,
+        );
+      } catch (err) {
+        this.logger.warn(`[renderWithLayers] label overlay failed: ${err}`);
+      }
+    }
+
     // --- Composite one output frame ---
     const transparentBase = {
       create: { width, height, channels: 4 as const, background: { r: 0, g: 0, b: 0, alpha: 0 } },
@@ -190,6 +223,8 @@ export class KeyRenderer {
           : r.frames[0];
         if (buf) overlays.push({ input: buf, blend: "over" });
       }
+      // Label is the topmost paint, mirroring the preview's overlay div.
+      if (labelOverlay) overlays.push({ input: labelOverlay, blend: "over" });
 
       const composite = overlays.length > 0
         ? sharp(transparentBase).composite(overlays)
@@ -293,7 +328,10 @@ export class KeyRenderer {
         return `img:${resolved}:${base}:${layer.fit || "contain"}:${st.mtimeMs}:${st.size}`;
       }
       if (layer.type === "icon" && layer.source) {
-        return `icon:${layer.source}:${base}`;
+        // `fit` participates in the render (badge box scaling), so it must
+        // participate in the key — otherwise a contain-rendered icon is
+        // served to a cover layer (and vice versa) from the frame cache.
+        return `icon:${layer.source}:${layer.fit || "contain"}:${base}`;
       }
       if (layer.type === "text" && layer.text) {
         // Date/time tokens ({date}/{time}/{weekday}) resolve to the CURRENT
@@ -553,19 +591,10 @@ export class KeyRenderer {
         let layerImage: sharp.Sharp | null = null;
 
         if (layer.type === "icon") {
-          const iconPath = path.join(this.userDataPath, "icons", `${layer.source}.svg`);
-          try {
-            const svgContent = await fs.readFile(iconPath, "utf-8");
-            // Set density to render SVG at target resolution — prevents tiny/blurry SVGs
-            layerImage = sharp(Buffer.from(svgContent), { density: 300 });
-          } catch {
-            try {
-              const resolved = this.resolveAssetPath(layer.source);
-              layerImage = sharp(resolved, { density: 300 });
-            } catch {
-              return null;
-            }
-          }
+          const iconBuf = await this.readIconSource(layer.source);
+          if (!iconBuf) return null;
+          // Set density to render SVG at target resolution — prevents tiny/blurry SVGs
+          layerImage = sharp(iconBuf, { density: 300 });
         } else {
           const resolved = this.resolveAssetPath(layer.source);
           if (Buffer.isBuffer(resolved)) {
@@ -581,6 +610,45 @@ export class KeyRenderer {
 
         if (!layerImage) return null;
         const fit = layer.fit || "contain";
+
+        if (layer.type === "icon") {
+          // Icon layers are centered BADGES (ICON_LAYER_SIZE_FRACTION of the
+          // key), NOT full-bleed — the LayerStack preview shows icon layers
+          // as a fixed `w-10 h-10 object-contain` badge (~half the square
+          // preview cell). Full-bleed hardware icons were ~2x the previewed
+          // size and buried the text/image layers beneath them. The badge is
+          // placed on a full-key transparent canvas so z-compositing is
+          // unchanged; `fit` applies within the badge box (the preview
+          // hardcodes contain, which is also the layer default).
+          const badgeW = Math.max(1, Math.floor(width * ICON_LAYER_SIZE_FRACTION));
+          const badgeH = Math.max(1, Math.floor(height * ICON_LAYER_SIZE_FRACTION));
+          const badge = await layerImage
+            .resize(badgeW, badgeH, {
+              fit,
+              background: { r: 0, g: 0, b: 0, alpha: 0 },
+            })
+            .png()
+            .toBuffer();
+          const buf = await sharp({
+            create: {
+              width,
+              height,
+              channels: 4,
+              background: { r: 0, g: 0, b: 0, alpha: 0 },
+            },
+          })
+            .composite([
+              {
+                input: badge,
+                top: Math.floor((height - badgeH) / 2),
+                left: Math.floor((width - badgeW) / 2),
+              },
+            ])
+            .png()
+            .toBuffer();
+          return await this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
+        }
+
         const buf = await layerImage
           .resize(width, height, {
             fit,
@@ -597,6 +665,40 @@ export class KeyRenderer {
     } catch (err) {
       this.logger.error(`[renderLayerBuffer] failed for ${layer.type}: ${err}`);
       return null;
+    }
+  }
+
+  /**
+   * Resolve an icon layer's source to raw file bytes. Two source flavors are
+   * supported (the IconPackPicker APPLY DECISION documents the same split):
+   *   - Absolute paths (and bigdeck-asset:// wrappers) are read as-is via
+   *     resolveAssetPath — icon-pack icons live in
+   *     <userData>/iconpacks/<pack>/icons/<icon>.svg, so joining them into
+   *     the managed-icons directory can never hit.
+   *   - Bare managed-asset names ("elgato-mute") resolve to
+   *     <userData>/icons/<name>.svg, with a resolveAssetPath fallback kept
+   *     from the previous behavior.
+   * Returns null when neither flavor resolves — the layer is skipped.
+   */
+  private async readIconSource(source: string): Promise<Buffer | null> {
+    const resolved = this.resolveAssetPath(source);
+    if (typeof resolved === "string" && path.isAbsolute(resolved)) {
+      try {
+        return await fs.readFile(resolved);
+      } catch {
+        return null;
+      }
+    }
+    try {
+      return await fs.readFile(
+        path.join(this.userDataPath, "icons", `${source}.svg`),
+      );
+    } catch {
+      try {
+        return await fs.readFile(resolved as string);
+      } catch {
+        return null;
+      }
     }
   }
 
@@ -1066,6 +1168,68 @@ export class KeyRenderer {
       this.logger.debug(`Icon not found: ${iconName}, using blank image`);
       return this.createBlankImage(width, height, backgroundColor);
     }
+  }
+
+  /**
+   * Render KeyConfig.label as a full-key RGBA overlay for LAYER-mode keys —
+   * the hardware half of the label contract with the preview:
+   *
+   *   StreamdeckView DeckKey "Label Overlay" div (rendered above/after the
+   *   LayerStack, so the label is the topmost paint on the key):
+   *     - full-width strip anchored top / center / bottom (default bottom)
+   *     - text-[10px] font-black tracking-tighter text-center, px-1 py-1,
+   *       leading-[1.1], clamped to 2 lines (line-clamp-2 break-words)
+   *     - top/bottom strips sit on a 60%-black scrim fading from the key
+   *       edge inward (bg-gradient-to-b/-t from-black/60); center has none
+   *     - text color is labelColor || #ffffff
+   *
+   * This overlay reproduces those styles at key resolution (fontSize ≈
+   * height/8 — 12px on a 96px Stream Deck XL key, matching the preview's
+   * 10px in its ~80px square cell) and is composited LAST by
+   * renderWithLayers, above every user layer, on both idle and pressed
+   * appearances. It never participates in the frame cache: it is one cheap
+   * SVG raster per key render.
+   */
+  private async renderLabelOverlay(
+    label: string,
+    position: "top" | "center" | "bottom",
+    color: string,
+    width: number,
+    height: number,
+  ): Promise<Buffer> {
+    const fontSize = Math.max(10, Math.round(height * 0.125));
+    const pad = Math.max(2, Math.round(fontSize * 0.4));
+    const lineH = Math.ceil(fontSize * 1.1);
+    const lines = this.wordWrapText(label, Math.max(8, width - 2 * pad), fontSize).slice(0, 2);
+    const stripH = Math.min(height, lines.length * lineH + 2 * pad);
+
+    let stripTop: number;
+    if (position === "top") stripTop = 0;
+    else if (position === "center") stripTop = Math.floor((height - stripH) / 2);
+    else stripTop = height - stripH;
+
+    // Scrim: 60% black fading from the outer key edge inward. librsvg wants
+    // stop-opacity rather than rgba() stop-color.
+    const scrim =
+      position === "center"
+        ? ""
+        : `<defs><linearGradient id="labelscrim" gradientUnits="userSpaceOnUse" x1="0" y1="${stripTop}" x2="0" y2="${stripTop + stripH}">` +
+          `<stop offset="0%" stop-color="#000000" stop-opacity="${position === "top" ? "0.6" : "0"}"/>` +
+          `<stop offset="100%" stop-color="#000000" stop-opacity="${position === "top" ? "0" : "0.6"}"/>` +
+          `</linearGradient></defs>` +
+          `<rect x="0" y="${stripTop}" width="${width}" height="${stripH}" fill="url(#labelscrim)"/>`;
+
+    const letterSpacing = (fontSize * -0.05).toFixed(2);
+    const textElements = lines
+      .map(
+        (line, i) =>
+          `<text x="50%" y="${stripTop + pad + i * lineH + lineH / 2}" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="900" letter-spacing="${letterSpacing}" fill="${color}" text-anchor="middle" dominant-baseline="central">${this.escapeXml(line)}</text>`,
+      )
+      .join("");
+
+    const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">${scrim}${textElements}</svg>`;
+
+    return sharp(Buffer.from(svg)).ensureAlpha().png().toBuffer();
   }
 
   async addLabelOverlay(

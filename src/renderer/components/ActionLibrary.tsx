@@ -14,6 +14,9 @@ import {
   Square,
   Timer as TimerIcon,
   Clock,
+  ToggleLeft,
+  ChevronsRight,
+  ChevronsLeft,
   Volume2,
   Zap,
   Puzzle,
@@ -274,6 +277,48 @@ const TEMPLATES: ActionTemplate[] = [
       layers: [
         { id: "bg-clock", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#1a2a5e", backgroundGradientEnd: "#0f1430", backgroundGradientDirection: 135 },
         { id: "text-clock", type: "text", order: 1, visible: true, text: "12:00", fontSize: 16, textColor: "#84b4f8", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "hotkeyswitch",
+    type: "hotkeyswitch",
+    label: "Hotkey Switch",
+    icon: <ToggleLeft size={18} />,
+    description: "Toggle two key combos",
+    payload: { onKeys: [], onModifiers: [], offKeys: [], offModifiers: [] },
+    appearance: {
+      layers: [
+        { id: "bg-hotkeyswitch", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#3e1a5e", backgroundGradientEnd: "#1e0f2e", backgroundGradientDirection: 135 },
+        { id: "text-hotkeyswitch", type: "text", order: 1, visible: true, text: "⇄", fontSize: 26, textColor: "#d884f8", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "page-next",
+    type: "page.next",
+    label: "Next Page",
+    icon: <ChevronsRight size={18} />,
+    description: "Go to next page",
+    payload: {},
+    appearance: {
+      layers: [
+        { id: "bg-page-next", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#2a4a5e", backgroundGradientEnd: "#142530", backgroundGradientDirection: 135 },
+        { id: "text-page-next", type: "text", order: 1, visible: true, text: "»", fontSize: 30, textColor: "#a8d8f8", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "page-previous",
+    type: "page.previous",
+    label: "Previous Page",
+    icon: <ChevronsLeft size={18} />,
+    description: "Go to previous page",
+    payload: {},
+    appearance: {
+      layers: [
+        { id: "bg-page-previous", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e4a2a", backgroundGradientEnd: "#302514", backgroundGradientDirection: 135 },
+        { id: "text-page-previous", type: "text", order: 1, visible: true, text: "«", fontSize: 30, textColor: "#f8d8a8", opacity: 1 },
       ],
     },
   },

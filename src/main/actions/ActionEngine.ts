@@ -66,6 +66,16 @@ export class ActionEngine {
     this.executor.onSwitchPage = handler;
   }
 
+  /** Relative page navigation (page.next / page.previous). */
+  setOnSwitchPageRelative(handler: (delta: number) => Promise<void>): void {
+    this.executor.onSwitchPageRelative = handler;
+  }
+
+  /** Forget all Hotkey Switch toggle states (profile switches). */
+  resetHotkeySwitchStates(): void {
+    this.executor.resetHotkeySwitchStates();
+  }
+
   setOnSdPluginDispatch(
     handler: (action: SdPluginAction, origin?: ActionOrigin) => Promise<void>,
   ): void {

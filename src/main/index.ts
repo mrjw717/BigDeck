@@ -932,6 +932,9 @@ if (!gotTheLock) {
 
       actionEngine.setOnSwitchProfile(async (profileId: string) => {
         try {
+          // Toggle states are per-key in-memory and never persisted — a
+          // fresh profile means fresh Hotkey Switch toggles.
+          actionEngine.resetHotkeySwitchStates();
           const newProfile = profileManager.activateProfile(profileId);
           mainWindow?.webContents.send(
             IPC_CHANNELS.PROFILE_CHANGED,
@@ -941,6 +944,11 @@ if (!gotTheLock) {
           for (const device of devices) {
             if (device.type === newProfile.deviceType) {
               await hardwareSync.applyProfileToDevice(device.id, newProfile);
+              actionEngine.syncClocks(
+                device.id,
+                device.type,
+                newProfile.pages[newProfile.activePage],
+              );
             }
           }
         } catch (err) {
@@ -981,6 +989,23 @@ if (!gotTheLock) {
           await switchToPageIndex(activeProfile.id, pageIndex);
         } catch (err) {
           logger.error("Failed to switch page:", err);
+        }
+      });
+
+      // Relative page navigation (Elgato page.next / page.previous):
+      // wrap-around rotation, so the last page's "next" lands on the first
+      // and the first page's "previous" lands on the last.
+      actionEngine.setOnSwitchPageRelative(async (delta: number) => {
+        try {
+          const activeProfile = profileManager.getActiveProfile();
+          if (!activeProfile) return;
+          const count = activeProfile.pages.length;
+          if (count === 0) return;
+          const target =
+            (((activeProfile.activePage + delta) % count) + count) % count;
+          await switchToPageIndex(activeProfile.id, target);
+        } catch (err) {
+          logger.error("Failed to switch page (relative):", err);
         }
       });
 

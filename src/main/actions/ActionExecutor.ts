@@ -34,6 +34,9 @@ import {
   SoundboardStopAction,
   TimerAction,
   ClockAction,
+  HotkeySwitchAction,
+  PageNextAction,
+  PagePreviousAction,
   Action,
   ActionOrigin,
 } from "../../shared/types";
@@ -93,6 +96,12 @@ export class ActionExecutor {
   onSwitchProfile: ((profileId: string) => Promise<void>) | null = null;
   onSwitchPage: ((pageIndex: number) => Promise<void>) | null = null;
   /**
+   * Relative page navigation (page.next / page.previous). The handler owns
+   * clamping/wrap-around — the app entry point rotates within the profile's
+   * page count.
+   */
+  onSwitchPageRelative: ((delta: number) => Promise<void>) | null = null;
+  /**
    * key-brightness actions go through the DeviceManager (it owns the
    * hardware backlight). `deviceId` is the originating device when known
    * (hardware press); null means "every connected device" (network API).
@@ -111,6 +120,13 @@ export class ActionExecutor {
     | null = null;
 
   private uinput: UinputInjector;
+  /**
+   * Hotkey Switch toggle state per key (`deviceId:keyIndex`, or the action
+   * id when triggered without a device origin). In-memory only: RESET ON
+   * PROFILE SWITCH (resetHotkeySwitchStates, called by the app entry
+   * point's onSwitchProfile wiring) and on app restart.
+   */
+  private readonly hotkeySwitchStates = new Map<string, boolean>();
   /**
    * Tick-render registry (timer/clock displays, future screensavers).
    * Constructed here; the image sink is wired from the app entry point via
@@ -290,6 +306,30 @@ export class ActionExecutor {
         case "clock":
           succeeded = await this.executeClock(action as ClockAction, origin);
           break;
+        case "hotkeyswitch":
+          succeeded = await this.executeHotkeySwitch(
+            action as HotkeySwitchAction,
+            origin,
+          );
+          break;
+        case "page.next":
+        case "page.previous": {
+          if (this.onSwitchPageRelative) {
+            try {
+              await this.onSwitchPageRelative(
+                action.type === "page.next" ? 1 : -1,
+              );
+              succeeded = true;
+            } catch (error) {
+              this.logger.error(`${action.type} handler failed:`, error);
+            }
+          } else {
+            this.logger.warn(
+              "No onSwitchPageRelative handler registered",
+            );
+          }
+          break;
+        }
         default:
           this.logger.warn(`Unknown action type: ${action.type}`);
       }
@@ -319,7 +359,11 @@ export class ActionExecutor {
       // a timer toggle or a hotkey switch would eat the second press.
       case "timer":
       case "clock":
+      case "hotkeyswitch":
         return 0;
+      case "page.next":
+      case "page.previous":
+        return 200;
       case "launch-app":
       case "open-url":
       case "open-folder":
@@ -1602,6 +1646,67 @@ export class ActionExecutor {
     for (const [keyIndex, clockAction] of wanted) {
       void this.executeClock(clockAction, { deviceId, keyIndex, deviceType });
     }
+  }
+
+  // ------------------------------------------------------------------
+  // hotkeyswitch (toggle between two combos, per-key state)
+  // ------------------------------------------------------------------
+
+  /**
+   * Toggle the key's on/off state and send the matching combo. The state
+   * only flips when the combo actually went out — a failed injection keeps
+   * the previous state so the toggle never lies.
+   */
+  private async executeHotkeySwitch(
+    action: HotkeySwitchAction,
+    origin?: ActionOrigin,
+  ): Promise<boolean> {
+    // With a device origin, state is per KEY (two keys with the same action
+    // toggle independently). Without one (network/API triggers), fall back
+    // to per-action-instance state.
+    const keyId = origin
+      ? `${origin.deviceId}:${origin.keyIndex}`
+      : `action:${action.id}`;
+
+    const wasOn = this.hotkeySwitchStates.get(keyId) ?? false;
+    const turningOn = !wasOn;
+    const keys = turningOn ? action.onKeys : action.offKeys;
+    const modifiers = turningOn ? action.onModifiers : action.offModifiers;
+
+    if (!keys || keys.length === 0) {
+      this.logger.warn(
+        `hotkeyswitch has no combo recorded for the ${turningOn ? "ON" : "OFF"} state — open this key's editor and record both combos.`,
+      );
+      return false;
+    }
+
+    const combo = [...(modifiers || []), ...keys].join("+");
+    if (!(await this.sendKeyCombo(combo))) {
+      this.logger.error(
+        `hotkeyswitch: ${turningOn ? "ON" : "OFF"} combo "${combo}" failed — state NOT toggled (reason logged above)`,
+      );
+      return false;
+    }
+
+    this.hotkeySwitchStates.set(keyId, turningOn);
+    this.logger.info(
+      `hotkeyswitch ${keyId}: ${turningOn ? "ON" : "OFF"} (sent "${combo}")`,
+    );
+    return true;
+  }
+
+  /**
+   * Forget all Hotkey Switch states. Called on profile switches by the app
+   * entry point — a fresh page means fresh toggles (documented behavior:
+   * state is in-memory only and never persisted).
+   */
+  resetHotkeySwitchStates(): void {
+    if (this.hotkeySwitchStates.size > 0) {
+      this.logger.debug(
+        `hotkeyswitch: resetting ${this.hotkeySwitchStates.size} toggle state(s)`,
+      );
+    }
+    this.hotkeySwitchStates.clear();
   }
 
   // ------------------------------------------------------------------

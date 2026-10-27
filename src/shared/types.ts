@@ -56,7 +56,10 @@ export type ActionType =
   | "soundboard"
   | "soundboard.stop"
   | "timer"
-  | "clock";
+  | "clock"
+  | "hotkeyswitch"
+  | "page.next"
+  | "page.previous";
 
 export interface BaseAction {
   type: ActionType;
@@ -216,6 +219,37 @@ export interface ClockAction extends BaseAction {
 }
 
 /**
+ * Toggle between two hotkey combos (Elgato com.elgato.streamdeck.system.
+ * hotkeyswitch): first press enters the ON state and sends the ON combo,
+ * the next press returns to OFF and sends the OFF combo. State is tracked
+ * per key IN MEMORY and RESETS ON PROFILE SWITCH (and app restart) — there
+ * is no persisted on/off image state; the key's static appearance is the
+ * user's business (style both states via layers if needed).
+ */
+export interface HotkeySwitchAction extends BaseAction {
+  type: "hotkeyswitch";
+  /** Combo sent when toggling ON (same shape as keyboard-shortcut). */
+  onKeys: string[];
+  onModifiers: ("ctrl" | "alt" | "shift" | "super")[];
+  /** Combo sent when toggling OFF. */
+  offKeys: string[];
+  offModifiers: ("ctrl" | "alt" | "shift" | "super")[];
+}
+
+/**
+ * Relative page navigation (Elgato page.next / page.previous): moves the
+ * active page by ±1 with wrap-around rotation (last page's "next" opens
+ * the first). Applied through the same path as `switch-page`.
+ */
+export interface PageNextAction extends BaseAction {
+  type: "page.next";
+}
+
+export interface PagePreviousAction extends BaseAction {
+  type: "page.previous";
+}
+
+/**
  * Suspend the machine via `systemctl suspend`. No configuration — mirrors
  * Elgato's Sleep action (com.elgato.streamdeck.system.sleep).
  */
@@ -293,7 +327,10 @@ export type Action =
   | SoundboardAction
   | SoundboardStopAction
   | TimerAction
-  | ClockAction;
+  | ClockAction
+  | HotkeySwitchAction
+  | PageNextAction
+  | PagePreviousAction;
 
 // Layer-based key appearance
 export type LayerType = "background" | "text" | "icon" | "image";
