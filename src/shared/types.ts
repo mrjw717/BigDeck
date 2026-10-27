@@ -52,7 +52,9 @@ export type ActionType =
   | "obs-action"
   | "system-command"
   | "plugin"
-  | "sdplugin";
+  | "sdplugin"
+  | "soundboard"
+  | "soundboard.stop";
 
 export interface BaseAction {
   type: ActionType;
@@ -152,6 +154,29 @@ export interface SwitchPageAction extends BaseAction {
 }
 
 /**
+ * Play an audio file on press (Elgato Soundboard —
+ * com.elgato.streamdeck.soundboard.playaudio). Backends are probed in
+ * order: paplay → pw-play → ffplay → cvlc; the first installed one carries
+ * playback. Re-pressing the same sample restarts it (Elgato behavior);
+ * `soundboard.stop` kills every playing sample.
+ */
+export interface SoundboardAction extends BaseAction {
+  type: "soundboard";
+  /** Path to the audio file (~ expanded). */
+  samplePath: string;
+  /** Playback volume 0-100; omitted/undefined = backend default (100%). */
+  volume?: number;
+}
+
+/**
+ * Stop all Soundboard playback started by `soundboard` actions
+ * (com.elgato.streamdeck.soundboard.stopaudioplay). No configuration.
+ */
+export interface SoundboardStopAction extends BaseAction {
+  type: "soundboard.stop";
+}
+
+/**
  * Suspend the machine via `systemctl suspend`. No configuration — mirrors
  * Elgato's Sleep action (com.elgato.streamdeck.system.sleep).
  */
@@ -222,7 +247,9 @@ export type Action =
   | CloseAppAction
   | KeyBrightnessAction
   | PluginAction
-  | SdPluginAction;
+  | SdPluginAction
+  | SoundboardAction
+  | SoundboardStopAction;
 
 // Layer-based key appearance
 export type LayerType = "background" | "text" | "icon" | "image";

@@ -11,7 +11,7 @@
 //   install hint instead of failing silently.
 // ============================================================================
 
-import { exec, execFile, spawn } from "child_process";
+import { exec, execFile, spawn, type ChildProcess } from "child_process";
 import { promisify } from "util";
 import { access, constants as fsConstants } from "fs/promises";
 import os from "os";
@@ -30,6 +30,8 @@ import {
   KeyBrightnessAction,
   MacroStep,
   SdPluginAction,
+  SoundboardAction,
+  SoundboardStopAction,
   Action,
   ActionOrigin,
 } from "../../shared/types";
@@ -236,6 +238,16 @@ export class ActionExecutor {
             );
           }
           break;
+        case "soundboard":
+          succeeded = await this.executeSoundboard(
+            action as SoundboardAction,
+          );
+          break;
+        case "soundboard.stop":
+          succeeded = await this.executeSoundboardStop(
+            action as SoundboardStopAction,
+          );
+          break;
         default:
           this.logger.warn(`Unknown action type: ${action.type}`);
       }
@@ -256,6 +268,8 @@ export class ActionExecutor {
     switch (actionType) {
       case "multimedia":
       case "key-brightness":
+      case "soundboard":
+      case "soundboard.stop":
         return 200;
       case "keyboard-shortcut":
         return 300;
@@ -1195,6 +1209,175 @@ export class ActionExecutor {
       this.logger.error(`Failed to open folder ${folderPath}:`, error);
       return false;
     }
+  }
+
+  // ------------------------------------------------------------------
+  // soundboard (paplay → pw-play → ffplay → cvlc)
+  // ------------------------------------------------------------------
+
+  /**
+   * Playing samples, keyed by resolved sample path. Elgato Soundboard
+   * semantics: a new press on the SAME sample stops and restarts it;
+   * different samples overlap. `soundboard.stop` terminates everything in
+   * this registry — without it, "stop" would be impossible.
+   */
+  private readonly soundboardChildren = new Map<string, ChildProcess>();
+
+  /**
+   * Terminate one playing sample. SIGTERM first; the process removes itself
+   * from the registry via its exit listener. Returns true when something
+   * was actually signalled.
+   */
+  private stopSoundboardChild(key: string, reason: string): boolean {
+    const child = this.soundboardChildren.get(key);
+    if (!child) return false;
+    this.soundboardChildren.delete(key);
+    try {
+      child.kill("SIGTERM");
+      // SIGKILL escalation: a wedged player must not keep the audio device.
+      const killed = child;
+      setTimeout(() => {
+        if (!killed.killed && killed.exitCode === null) {
+          this.logger.warn(`soundboard: SIGTERM ignored, sending SIGKILL (${reason})`);
+          killed.kill("SIGKILL");
+        }
+      }, 500).unref();
+    } catch (error) {
+      this.logger.warn(`soundboard: failed to stop "${reason}":`, error);
+    }
+    return true;
+  }
+
+  private async executeSoundboard(action: SoundboardAction): Promise<boolean> {
+    const raw = action.samplePath?.trim();
+    if (!raw) {
+      this.logger.warn(
+        "No audio file selected for soundboard action — open this key's editor and pick a sample.",
+      );
+      return false;
+    }
+
+    const samplePath = raw.startsWith("~")
+      ? path.join(os.homedir(), raw.slice(1))
+      : raw;
+    try {
+      await access(samplePath, fsConstants.F_OK);
+    } catch {
+      this.logger.error(
+        `Cannot play sound: file not found at "${samplePath}" (configured: "${raw}").`,
+      );
+      return false;
+    }
+
+    // Elgato behavior: re-press on the same sample = stop + restart.
+    const registryKey = path.resolve(samplePath);
+    if (this.stopSoundboardChild(registryKey, "restart")) {
+      this.logger.debug(`soundboard: restarting "${samplePath}"`);
+    }
+
+    const volume = Math.max(0, Math.min(100, Math.round(action.volume ?? 100)));
+
+    // Backend chain, first installed wins. Each entry knows how to turn
+    // (samplePath, volume) into argv for one player.
+    const backends: Array<{
+      name: string;
+      build: () => string[] | null;
+    }> = [
+      {
+        name: "paplay",
+        build: () => [`--volume=${volume}`, samplePath],
+      },
+      {
+        name: "pw-play",
+        build: () => {
+          // pw-play has no volume flag (PipeWire node volume is the
+          // proper knob and needs more wiring) — play at native volume.
+          this.logger.debug(
+            "soundboard: pw-play has no volume flag — playing at native volume",
+          );
+          return [samplePath];
+        },
+      },
+      {
+        name: "ffplay",
+        build: () => [
+          "-nodisp",
+          "-autoexit",
+          "-loglevel",
+          "quiet",
+          "-volume",
+          String(volume),
+          samplePath,
+        ],
+      },
+      {
+        name: "cvlc",
+        build: () => {
+          // --gain is a linear factor (1.0 = 100%); some output modules
+          // ignore it, which is why the volume slider keeps the honest
+          // "best effort" hint in the editor.
+          this.logger.debug(
+            "soundboard: cvlc volume uses --gain — some output modules ignore it",
+          );
+          return ["--play-and-exit", "--gain", (volume / 100).toFixed(2), samplePath];
+        },
+      },
+    ];
+
+    for (const backend of backends) {
+      if (!(await this.isToolAvailable(backend.name))) continue;
+      const args = backend.build();
+      if (!args) continue;
+
+      try {
+        const child = spawn(backend.name, args, {
+          detached: true,
+          stdio: "ignore",
+        });
+        // Spawn errors (ENOENT races, EACCES) arrive async — surface them.
+        child.on("error", (err) => {
+          this.logger.error(`soundboard: ${backend.name} failed to start:`, err);
+          this.soundboardChildren.delete(registryKey);
+        });
+        child.on("exit", () => {
+          if (this.soundboardChildren.get(registryKey) === child) {
+            this.soundboardChildren.delete(registryKey);
+          }
+        });
+        // Fire-and-forget on purpose (v1): playback outlives the press and
+        // is stopped via `soundboard.stop` or a re-press restart.
+        child.unref();
+        this.soundboardChildren.set(registryKey, child);
+        this.logger.info(
+          `Playing sound via ${backend.name}: ${samplePath} (volume ${volume}%)`,
+        );
+        return true;
+      } catch (error) {
+        this.logger.error(`soundboard: spawning ${backend.name} failed:`, error);
+      }
+    }
+
+    this.logger.error(
+      `Cannot play sound "${samplePath}": none of paplay, pw-play, ffplay or cvlc is installed. ` +
+        `Install one of them (e.g. 'sudo apt install pipewire-audio ffmpeg' provides paplay/pw-play/ffplay).`,
+    );
+    return false;
+  }
+
+  private async executeSoundboardStop(
+    _action: SoundboardStopAction,
+  ): Promise<boolean> {
+    if (this.soundboardChildren.size === 0) {
+      this.logger.debug("soundboard.stop: no sounds playing");
+      return true;
+    }
+
+    let stopped = 0;
+    for (const key of [...this.soundboardChildren.keys()]) {
+      if (this.stopSoundboardChild(key, "stop-all")) stopped++;
+    }
+    this.logger.info(`soundboard.stop: stopped ${stopped} playing sample(s)`);
+    return true;
   }
 
   // ------------------------------------------------------------------

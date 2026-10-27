@@ -805,4 +805,197 @@ describe("ActionExecutor", () => {
       );
     });
   });
+
+  describe("soundboard", () => {
+    beforeEach(() => {
+      delete process.env.WAYLAND_DISPLAY;
+      vi.stubEnv("XDG_SESSION_TYPE", "x11");
+      fsMocks.access.mockResolvedValue(undefined);
+    });
+
+    it("plays through paplay with the configured volume", async () => {
+      mockWhich(["paplay"]);
+      cp.spawn.mockReturnValue(spawnStub());
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav", volume: 80 }),
+      );
+
+      expect(cp.spawn).toHaveBeenCalledWith(
+        "paplay",
+        ["--volume=80", "/home/me/ding.wav"],
+        expect.objectContaining({ detached: true }),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Playing sound via paplay"),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: soundboard"),
+      );
+    });
+
+    it("falls back to pw-play (native volume, no flag) when paplay is missing", async () => {
+      mockWhich(["pw-play"]);
+      cp.spawn.mockReturnValue(spawnStub());
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav" }),
+      );
+
+      expect(cp.spawn).toHaveBeenCalledWith(
+        "pw-play",
+        ["/home/me/ding.wav"],
+        expect.anything(),
+      );
+    });
+
+    it("uses ffplay's -volume flag when only ffmpeg is installed", async () => {
+      mockWhich(["ffplay"]);
+      cp.spawn.mockReturnValue(spawnStub());
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav", volume: 45 }),
+      );
+
+      expect(cp.spawn).toHaveBeenCalledWith(
+        "ffplay",
+        ["-nodisp", "-autoexit", "-loglevel", "quiet", "-volume", "45", "/home/me/ding.wav"],
+        expect.anything(),
+      );
+    });
+
+    it("falls through to cvlc when everything else is missing", async () => {
+      mockWhich(["cvlc"]);
+      cp.spawn.mockReturnValue(spawnStub());
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav", volume: 50 }),
+      );
+
+      expect(cp.spawn).toHaveBeenCalledWith(
+        "cvlc",
+        ["--play-and-exit", "--gain", "0.50", "/home/me/ding.wav"],
+        expect.anything(),
+      );
+    });
+
+    it("fails with an install hint when no audio backend exists", async () => {
+      mockWhich([]);
+      fsMocks.access.mockResolvedValue(undefined); // file exists, backends missing
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav" }),
+      );
+
+      expect(fsMocks.access).toHaveBeenCalled();
+      expect(cp.spawn).not.toHaveBeenCalled();
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("none of paplay, pw-play, ffplay or cvlc is installed"),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: soundboard"),
+      );
+    });
+
+    it("rejects a missing sample file before probing any backend", async () => {
+      mockWhich(["paplay"]);
+      fsMocks.access.mockRejectedValue(new Error("ENOENT"));
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/gone/ding.wav" }),
+      );
+
+      expect(cp.spawn).not.toHaveBeenCalled();
+      expect(cp.exec).not.toHaveBeenCalledWith("which paplay", expect.anything());
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('file not found at "/gone/ding.wav"'),
+      );
+    });
+
+    it("restarts (SIGTERMs the previous child) when the same sample is pressed again", async () => {
+      mockWhich(["paplay"]);
+      const first = { ...spawnStub(), kill: vi.fn() };
+      const second = { ...spawnStub(), kill: vi.fn() };
+      cp.spawn.mockReturnValueOnce(first).mockReturnValueOnce(second);
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav" }),
+      );
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/ding.wav" }),
+      );
+
+      expect(cp.spawn).toHaveBeenCalledTimes(2);
+      expect(first.kill).toHaveBeenCalledWith("SIGTERM");
+      expect(logger.debug).toHaveBeenCalledWith(
+        expect.stringContaining("restart"),
+      );
+    });
+
+    it("overlaps different samples (no restart across different paths)", async () => {
+      mockWhich(["paplay"]);
+      const first = { ...spawnStub(), kill: vi.fn() };
+      const second = { ...spawnStub(), kill: vi.fn() };
+      cp.spawn.mockReturnValueOnce(first).mockReturnValueOnce(second);
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/a.wav" }),
+      );
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/b.wav" }),
+      );
+
+      expect(first.kill).not.toHaveBeenCalled();
+      expect(cp.spawn).toHaveBeenCalledTimes(2);
+    });
+
+    it("soundboard.stop SIGTERMs every playing child", async () => {
+      mockWhich(["paplay"]);
+      const a = { ...spawnStub(), kill: vi.fn() };
+      const b = { ...spawnStub(), kill: vi.fn() };
+      cp.spawn.mockReturnValueOnce(a).mockReturnValueOnce(b);
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/a.wav" }),
+      );
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "/home/me/b.wav" }),
+      );
+      await executor.executeAction(makeAction({ type: "soundboard.stop" }));
+
+      expect(a.kill).toHaveBeenCalledWith("SIGTERM");
+      expect(b.kill).toHaveBeenCalledWith("SIGTERM");
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("stopped 2 playing sample(s)"),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: soundboard.stop"),
+      );
+    });
+
+    it("soundboard.stop succeeds truthfully when nothing is playing", async () => {
+      mockWhich([]);
+
+      await executor.executeAction(makeAction({ type: "soundboard.stop" }));
+
+      expect(cp.spawn).not.toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Action succeeded: soundboard.stop"),
+      );
+    });
+
+    it("rejects an empty sample path before touching any tool", async () => {
+      mockWhich(["paplay"]);
+
+      await executor.executeAction(
+        makeAction({ type: "soundboard", samplePath: "  " }),
+      );
+
+      expect(cp.exec).not.toHaveBeenCalled();
+      expect(cp.spawn).not.toHaveBeenCalled();
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("No audio file selected"),
+      );
+    });
+  });
 });

@@ -11,6 +11,8 @@ import {
   Sun,
   XCircle,
   Search,
+  Square,
+  Volume2,
   Zap,
   Puzzle,
 } from "lucide-react";
@@ -214,6 +216,34 @@ const TEMPLATES: ActionTemplate[] = [
       layers: [
         { id: "bg-brightness", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e521a", backgroundGradientEnd: "#2e291a", backgroundGradientDirection: 135 },
         { id: "text-brightness", type: "text", order: 1, visible: true, text: "☀", fontSize: 26, textColor: "#f8e084", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "soundboard",
+    type: "soundboard",
+    label: "Soundboard",
+    icon: <Volume2 size={18} />,
+    description: "Play an audio file",
+    payload: { samplePath: "", volume: 80 },
+    appearance: {
+      layers: [
+        { id: "bg-soundboard", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#1a5e52", backgroundGradientEnd: "#0f2e28", backgroundGradientDirection: 135 },
+        { id: "text-soundboard", type: "text", order: 1, visible: true, text: "♫", fontSize: 26, textColor: "#84f8dc", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "soundboard-stop",
+    type: "soundboard.stop",
+    label: "Stop Sounds",
+    icon: <Square size={18} />,
+    description: "Stop all playback",
+    payload: {},
+    appearance: {
+      layers: [
+        { id: "bg-soundboard-stop", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e1a4a", backgroundGradientEnd: "#2e0f24", backgroundGradientDirection: 135 },
+        { id: "text-soundboard-stop", type: "text", order: 1, visible: true, text: "■", fontSize: 24, textColor: "#f884c8", opacity: 1 },
       ],
     },
   },

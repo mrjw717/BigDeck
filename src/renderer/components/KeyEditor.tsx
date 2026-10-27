@@ -29,6 +29,7 @@ import {
   Upload,
   X,
   XCircle,
+  Volume2,
   Zap,
   Layers,
 } from "lucide-react";
@@ -135,6 +136,18 @@ const ACTION_OPTIONS: ActionOption[] = [
     label: "Brightness",
     icon: <Sun size={18} />,
     description: "Set Stream Deck key brightness",
+  },
+  {
+    type: "soundboard",
+    label: "Soundboard",
+    icon: <Volume2 size={18} />,
+    description: "Play an audio file",
+  },
+  {
+    type: "soundboard.stop",
+    label: "Stop Sounds",
+    icon: <Square size={18} />,
+    description: "Stop all sound playback",
   },
 ];
 
@@ -347,6 +360,12 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
         break;
       case "key-brightness":
         (baseAction as any).brightness = 50;
+        break;
+      case "soundboard":
+        (baseAction as any).samplePath = "";
+        (baseAction as any).volume = 80;
+        break;
+      case "soundboard.stop":
         break;
     }
 
@@ -898,6 +917,68 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                   {(keyConfig.action as any).brightness ?? 50}%
                 </span>
               </div>
+            </div>
+          )}
+
+          {keyConfig.action.type === "soundboard" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Volume2 size={14} className="text-primary" />
+                Audio File
+              </label>
+              <PathPicker
+                type="file"
+                placeholder="Pick a sound sample (wav, mp3, ogg...)"
+                value={(keyConfig.action as any).samplePath || ""}
+                onChange={(samplePath) =>
+                  setKeyAction(keyIndex, {
+                    ...keyConfig.action,
+                    samplePath,
+                  } as Action)
+                }
+              />
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Volume
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={(keyConfig.action as any).volume ?? 100}
+                    onChange={(e) =>
+                      setKeyAction(keyIndex, {
+                        ...keyConfig.action,
+                        volume: Number(e.target.value),
+                      } as Action)
+                    }
+                    className="flex-1 accent-primary"
+                  />
+                  <span className="w-12 text-right text-sm font-bold tabular-nums">
+                    {(keyConfig.action as any).volume ?? 100}%
+                  </span>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Pressing the key again restarts the same sample. Playback goes
+                through paplay → pw-play → ffplay → cvlc (first installed
+                wins); volume support varies slightly per backend.
+              </p>
+            </div>
+          )}
+
+          {keyConfig.action.type === "soundboard.stop" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Square size={14} className="text-primary" />
+                Stop All Sounds
+              </label>
+              <p className="text-[11px] text-muted-foreground">
+                Stops every sound started by Soundboard keys — nothing to
+                configure.
+              </p>
             </div>
           )}
 
