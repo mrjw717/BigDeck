@@ -458,7 +458,7 @@ describe("convertElgatoProfile", () => {
     expect(layers).toHaveLength(2);
     expect(layers[0]).toMatchObject({
       type: "image",
-      source: "elgato-ABCDEF.png",
+      source: "bigdeck-asset://elgato-ABCDEF.png",
       order: 0,
       fit: "contain",
     });

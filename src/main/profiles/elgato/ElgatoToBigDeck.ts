@@ -146,8 +146,11 @@ export interface ElgatoConvertOptions {
   /**
    * Import a referenced PNG into BigDeck's asset store. Receives the absolute
    * path inside the extraction dir and a suggested file name; returns the
-   * stored asset reference (bare file name, per the ASSET_UPLOAD convention —
-   * the renderer resolves it over bigdeck-asset://), or null on failure.
+   * stored asset reference (bare file name, per the ASSET_UPLOAD convention),
+   * or null on failure. The converter wraps it as
+   * `bigdeck-asset://<encodeURIComponent(name)>` — KeyRenderer only resolves
+   * that scheme (or absolute paths), so a bare name would fall through to a
+   * CWD-relative open and the layer would silently render nothing.
    */
   importImage: (
     absolutePath: string,
@@ -616,7 +619,10 @@ export async function convertElgatoProfile(
             visible: true,
             opacity: 1,
             order: 0,
-            source: stored,
+            // Managed-asset URL form: resolveAssetPath joins the decoded
+            // name onto <userData>/assets, where importImage copied it.
+            // A bare filename would resolve CWD-relative and fail.
+            source: `bigdeck-asset://${encodeURIComponent(stored)}`,
             x: 50,
             y: 50,
             width: 100,
