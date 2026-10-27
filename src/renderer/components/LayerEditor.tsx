@@ -32,6 +32,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { KeyLayer, LayerType } from "../../shared/types";
 import { AssetImage } from "./AssetImage";
+import { IconPackPicker } from "./IconPackPicker";
 
 interface LayerEditorProps {
   layers: KeyLayer[];
@@ -243,6 +244,34 @@ function SortableLayer({
         );
 
       case "icon":
+        return (
+          <div className="space-y-3">
+            <IconPackPicker
+              source={layer.source || ""}
+              onApply={(source) => onUpdate({ source })}
+              onClear={() => onUpdate({ source: "" })}
+            />
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">
+                Fit
+              </label>
+              <select
+                value={layer.fit || "contain"}
+                onChange={(e) =>
+                  onUpdate({
+                    fit: e.target.value as "contain" | "cover" | "fill",
+                  })
+                }
+                className="w-full h-9 px-3 bg-muted/40 border-2 border-border rounded-lg text-sm outline-none"
+              >
+                <option value="contain">Contain</option>
+                <option value="cover">Cover</option>
+                <option value="fill">Fill</option>
+              </select>
+            </div>
+          </div>
+        );
+
       case "image":
         return (
           <div className="space-y-3">

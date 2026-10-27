@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { AppSettings } from '../../shared/types';
+import type { IconPackSummary, IconEntry, IconFile } from '../../main/assets/IconPack';
 
 interface AppState {
   theme: 'light' | 'dark' | 'system';
@@ -111,6 +112,11 @@ declare global {
       dialog: {
         openFile: (options: any) => Promise<string[] | undefined>;
         openDirectory: (options: any) => Promise<string[] | undefined>;
+      };
+      assets: {
+        listIconPacks: () => Promise<IconPackSummary[]>;
+        listIcons: (packId: string) => Promise<IconEntry[]>;
+        getIcon: (packId: string, iconId: string) => Promise<IconFile | null>;
       };
       settings: {
         get: () => Promise<any>;
