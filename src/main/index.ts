@@ -115,7 +115,12 @@ if (!gotTheLock) {
     // Load the app
     if (isDev) {
       await mainWindow.loadURL("http://localhost:5173");
-      mainWindow.webContents.openDevTools();
+      // DevTools are OPT-IN: set BIGDECK_DEVTOOLS=1 when you want them
+      // (e.g. `cross-env NODE_ENV=development BIGDECK_DEVTOOLS=1 electron .`).
+      // Launching with the deck attached should not pop an inspector.
+      if (process.env.BIGDECK_DEVTOOLS === "1") {
+        mainWindow.webContents.openDevTools({ mode: "detach" });
+      }
     } else {
       // Correct path for production load
       await mainWindow.loadFile(
