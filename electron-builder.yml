@@ -24,6 +24,12 @@ extraResources:
   # resources/iconpacks dir directly (src/main/index.ts iconPackSeedDir).
   - from: resources/iconpacks
     to: iconpacks
+  # Bundled example SD plugin (product content). Seeded into
+  # <userData>/sdplugins at startup when absent (ExamplePluginSeed.ts) —
+  # packaged builds read <resources>/example-plugin here, dev runs read the
+  # repo resources/example-plugin dir directly.
+  - from: resources/example-plugin
+    to: example-plugin
 
 linux:
   target:

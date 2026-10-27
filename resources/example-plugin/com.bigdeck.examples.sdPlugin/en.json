@@ -1,0 +1,12 @@
+{
+  "Name": "BigDeck Examples",
+  "Description": "BigDeck's bundled example Stream Deck plugin: two working actions that show how the compatibility host drives a real .sdPlugin.",
+  "com.bigdeck.examples.log": {
+    "Name": "Log Timestamp",
+    "Tooltip": "Appends a timestamp line to plugin.log inside this plugin's folder"
+  },
+  "com.bigdeck.examples.openassets": {
+    "Name": "Open Test Assets",
+    "Tooltip": "Opens BigDeck's test-assets folder in the system file manager"
+  }
+}

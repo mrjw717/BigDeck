@@ -1,0 +1,31 @@
+{
+  "Name": "BigDeck Examples",
+  "UUID": "com.bigdeck.examples",
+  "Version": "1.0.0",
+  "Author": "BigDeck Team",
+  "Description": "BigDeck's bundled example Stream Deck plugin: two working actions that show how the compatibility host drives a real .sdPlugin.",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.0"
+  },
+  "OS": [
+    { "Platform": "linux" }
+  ],
+  "CodePath": "plugin.js",
+  "Actions": [
+    {
+      "UUID": "com.bigdeck.examples.log",
+      "Name": "Log Timestamp",
+      "Controllers": ["Keypad"],
+      "States": [{}],
+      "Tooltip": "Appends a timestamp line to plugin.log inside this plugin's folder"
+    },
+    {
+      "UUID": "com.bigdeck.examples.openassets",
+      "Name": "Open Test Assets",
+      "Controllers": ["Keypad"],
+      "States": [{}],
+      "Tooltip": "Opens BigDeck's test-assets folder in the system file manager"
+    }
+  ]
+}

@@ -27,6 +27,10 @@ import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
 import { SDPluginHost, type SDPluginSummary } from "./plugins/sd/SDPluginHost";
+import {
+  seedExamplePlugin,
+  EXAMPLE_PLUGIN_UUID,
+} from "./plugins/sd/ExamplePluginSeed";
 import { wireSdPlacements, wireSdProfileSwitching } from "./plugins/sd/SdBridge";
 import { IconPackManager } from "./assets/IconPack";
 import { NetworkServer } from "./network/NetworkServer";
@@ -968,6 +972,20 @@ if (!gotTheLock) {
         await sdPluginHost?.dispatchAction(action, origin);
       });
 
+      // Bundled example plugin (resources/example-plugin): ONE-TIME seed
+      // into <userData>/sdplugins — an installed copy wins, a missing seed
+      // source is a no-op (same discipline as icon pack seeding). Runs
+      // BEFORE the host-start flag check below, so the freshly seeded
+      // example plugin is what flips "sdplugins dir exists" on first boot.
+      await seedExamplePlugin({
+        logger,
+        pluginsDir: sdPluginsDir,
+        resourceDirs: [
+          path.join(process.resourcesPath, "example-plugin"), // packaged (extraResources)
+          path.join(app.getAppPath(), "resources", "example-plugin"), // dev checkout
+        ],
+      });
+
       // Simple flag for the backend phase: always-on when the sdplugins dir
       // exists (something was installed) or any profile already carries an
       // SD action. Otherwise the host stays down (and the dir is not created).
@@ -984,6 +1002,23 @@ if (!gotTheLock) {
         );
       if (sdPluginsDirExists || anySdActionConfigured) {
         await sdPluginHost.start();
+
+        // Point the example plugin at the repo's test-assets folder (dev
+        // checkouts only — packaged builds have none). Global settings are
+        // the SDK-correct channel for plugin configuration; the host
+        // persists them and pushes them when the plugin registers.
+        const testAssetsDir = path.join(app.getAppPath(), "test-assets");
+        if (sdPluginHost.isRunning() && existsSync(testAssetsDir)) {
+          try {
+            sdPluginHost.setGlobalSettings(EXAMPLE_PLUGIN_UUID, {
+              testAssetsDir,
+            });
+          } catch (err) {
+            // Example plugin not installed/broken — the action simply stays
+            // unconfigured; never let this block startup.
+            logger.debug("example plugin global settings not set:", err);
+          }
+        }
       } else {
         logger.info("SD plugin host not started (no sdplugins dir, no SD actions)");
       }
