@@ -16,6 +16,7 @@ import type {
 import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
 import type { ElgatoImportReport } from "../main/profiles/elgato/ElgatoProfileImporter";
 import type { SDPluginSummary } from "../main/plugins/sd/SDPluginHost";
+import type { KeyboardInjectionStatus } from "../main/actions/ActionExecutor";
 
 // Type-safe API exposed to renderer
 const api = {
@@ -243,6 +244,13 @@ const api = {
   sd: {
     listPlugins: (): Promise<SDPluginSummary[]> =>
       ipcRenderer.invoke(IPC_CHANNELS.SD_LIST_PLUGINS),
+  },
+
+  // Keyboard injection diagnostics (Linux)
+  keybind: {
+    status: (): Promise<KeyboardInjectionStatus> =>
+      ipcRenderer.invoke(IPC_CHANNELS.KEYBIND_STATUS),
+    test: (): Promise<boolean> => ipcRenderer.invoke(IPC_CHANNELS.KEYBIND_TEST),
   },
 
   // Error handler

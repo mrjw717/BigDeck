@@ -124,6 +124,11 @@ export class UinputInjector {
 
   constructor(private logger: Logger) {}
 
+  /** Whether the helper process is up and accepting events (diagnostics). */
+  get isReady(): boolean {
+    return this.ready;
+  }
+
   /** Cheap precondition checks (no side effects). Requires WRITE access —
    * existence alone is not enough (uinput is root:input 0660 by default). */
   static isEnvironmentCapable(): boolean {

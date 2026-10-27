@@ -508,6 +508,16 @@ if (!gotTheLock) {
       },
     );
 
+    // Keyboard injection diagnostics (Settings panel): backend availability
+    // plus a harmless modifiers-only tap through the real injection chain.
+    ipcMain.handle(IPC_CHANNELS.KEYBIND_STATUS, () => {
+      return actionEngine.getKeyboardInjectionStatus();
+    });
+
+    ipcMain.handle(IPC_CHANNELS.KEYBIND_TEST, () => {
+      return actionEngine.testKeyboardInjection();
+    });
+
     // Elgato .sdPlugin host summaries for the renderer action catalog. When
     // the host is DOWN (no sdplugins dir at boot / no sdplugin actions yet)
     // the plugin map is empty — a manifest-only rescan (loadPlugins does not

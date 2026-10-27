@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Sun,
   Moon,
@@ -8,8 +8,227 @@ import {
   HardDrive,
   RotateCcw,
   ExternalLink,
+  Keyboard,
+  Play,
+  Copy,
+  Check,
 } from "lucide-react";
 import { useAppStore } from "../stores/appStore";
+import type { KeyboardInjectionStatus } from "../../main/actions/ActionExecutor";
+
+/** Copyable fix command for one unavailable injection backend. */
+const KEYBIND_FIXES: Record<
+  string,
+  { title: string; command: string; note?: string }
+> = {
+  uinput: {
+    title: "Enable native uinput injection (works on X11 + every Wayland compositor)",
+    command:
+      "sudo cp udev/70-streamdeck.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger",
+    note: "Run from the BigDeck repo, then log out and back in.",
+  },
+  ydotool: {
+    title: "Install ydotool + start its daemon",
+    command:
+      "sudo apt install ydotool && systemctl --user enable --now ydotool",
+    note: "Also add your user to the input group, then re-login.",
+  },
+  wtype: {
+    title: "Install wtype (Wayland virtual-keyboard injection)",
+    command: "sudo apt install wtype",
+    note: "KDE/GNOME Wayland may still reject it — prefer the uinput rule.",
+  },
+  xdotool: {
+    title: "Install xdotool (X11 injection)",
+    command: "sudo apt install xdotool",
+  },
+};
+
+/** Settings card: keyboard injection backends, live test, and fix hints. */
+function KeyboardInjectionCard() {
+  const [status, setStatus] = useState<KeyboardInjectionStatus | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const refresh = async () => {
+    try {
+      setStatus(await window.bigdeck?.keybind.status());
+    } catch (error) {
+      console.error("Failed to load keyboard injection status:", error);
+    }
+  };
+
+  useEffect(() => {
+    void refresh();
+  }, []);
+
+  const runTest = async () => {
+    setIsTesting(true);
+    setTestResult(null);
+    try {
+      const ok = await window.bigdeck?.keybind.test();
+      setTestResult({
+        ok: Boolean(ok),
+        message: ok
+          ? "Test passed — the backend delivered a modifier tap (see bigdeck.log for which one)."
+          : "Test failed — no backend carried the tap. Check the fixes below; details are in bigdeck.log.",
+      });
+    } catch (error) {
+      setTestResult({ ok: false, message: String(error) });
+    } finally {
+      setIsTesting(false);
+      await refresh();
+    }
+  };
+
+  const copyCommand = async (key: string, command: string) => {
+    try {
+      await navigator.clipboard.writeText(command);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 1500);
+    } catch {
+      // Clipboard may be unavailable (non-secure context) — ignore.
+    }
+  };
+
+  const availableCount =
+    status?.backends.filter((b) => b.available).length ?? 0;
+  const unavailable = status?.backends.filter((b) => !b.available) ?? [];
+
+  return (
+    <section className="bg-card border border-border rounded-xl p-6">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Keyboard size={18} />
+            Keyboard Shortcuts (Linux injection)
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            How BigDeck sends keyboard shortcuts on this session
+            {status ? ` (${status.session})` : ""}
+          </p>
+        </div>
+        <button
+          onClick={() => void runTest()}
+          disabled={isTesting}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm disabled:opacity-50 flex-none"
+        >
+          <Play size={14} />
+          {isTesting ? "Testing..." : "Run test"}
+        </button>
+      </div>
+
+      {!status ? (
+        <p className="text-sm text-muted-foreground">Loading status...</p>
+      ) : (
+        <div className="space-y-4">
+          {/* Overall verdict */}
+          <div className="flex items-center gap-2 text-sm">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                availableCount > 0 ? "bg-green-500" : "bg-red-500"
+              }`}
+            />
+            {availableCount > 0 ? (
+              <span>
+                {availableCount} backend{availableCount !== 1 ? "s" : ""}{" "}
+                available — keyboard shortcut actions can fire
+              </span>
+            ) : (
+              <span className="text-destructive">
+                No injection backend available — keyboard shortcut actions will
+                not fire
+              </span>
+            )}
+          </div>
+
+          {/* Backend chips */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {status.backends.map((backend) => (
+              <div
+                key={backend.name}
+                className="flex items-start gap-2 p-3 rounded-lg bg-muted/40 border border-border"
+              >
+                <span
+                  className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-none ${
+                    backend.available
+                      ? "bg-green-500/20 text-green-500"
+                      : "bg-red-500/20 text-red-500"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      backend.available ? "bg-green-500" : "bg-red-500"
+                    }`}
+                  />
+                  {backend.name}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {backend.detail}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Test result */}
+          {testResult && (
+            <p
+              className={`text-xs ${testResult.ok ? "text-green-500" : "text-destructive"}`}
+            >
+              {testResult.message}
+            </p>
+          )}
+
+          {/* Fix commands for whatever is missing */}
+          {unavailable.length > 0 && (
+            <div className="space-y-2 pt-1 border-t border-border">
+              {unavailable.map((backend) => {
+                const fix = KEYBIND_FIXES[backend.name];
+                if (!fix) return null;
+                return (
+                  <div
+                    key={backend.name}
+                    className="p-3 rounded-lg bg-muted/20 border border-border"
+                  >
+                    <div className="text-xs font-medium mb-1">{fix.title}</div>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-[11px] font-mono bg-muted/60 border border-border rounded px-2 py-1.5 overflow-x-auto whitespace-nowrap">
+                        {fix.command}
+                      </code>
+                      <button
+                        onClick={() =>
+                          void copyCommand(backend.name, fix.command)
+                        }
+                        className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-border hover:bg-accent transition-colors text-xs flex-none"
+                        aria-label={`Copy fix command for ${backend.name}`}
+                      >
+                        {copiedKey === backend.name ? (
+                          <Check size={12} className="text-green-500" />
+                        ) : (
+                          <Copy size={12} />
+                        )}
+                        {copiedKey === backend.name ? "Copied" : "Copy"}
+                      </button>
+                    </div>
+                    {fix.note && (
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {fix.note}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
 
 export function SettingsPanel() {
   const { settings, theme, setTheme, updateSettings } = useAppStore();
@@ -113,6 +332,9 @@ export function SettingsPanel() {
             </div>
           </div>
         </section>
+
+        {/* Keyboard Shortcuts (Linux injection) */}
+        <KeyboardInjectionCard />
 
         {/* Startup */}
         <section className="bg-card border border-border rounded-xl p-6">

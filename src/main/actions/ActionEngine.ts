@@ -13,7 +13,10 @@ import type {
   ActionOrigin,
 } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
-import { ActionExecutor } from "./ActionExecutor";
+import {
+  ActionExecutor,
+  type KeyboardInjectionStatus,
+} from "./ActionExecutor";
 import { KeyRenderer, type RenderedKey } from "./KeyRenderer";
 
 export class ActionEngine {
@@ -71,6 +74,16 @@ export class ActionEngine {
 
   async getMediaPlayers(): Promise<MediaPlayerInfo[]> {
     return this.renderer.getMediaPlayers();
+  }
+
+  /** Injection backend availability for the Settings diagnostics card. */
+  async getKeyboardInjectionStatus(): Promise<KeyboardInjectionStatus> {
+    return this.executor.getKeyboardInjectionStatus();
+  }
+
+  /** Harmless modifiers-only tap through the real injection chain. */
+  async testKeyboardInjection(): Promise<boolean> {
+    return this.executor.testKeyboardInjection();
   }
 
   startMacroRecording(): void {

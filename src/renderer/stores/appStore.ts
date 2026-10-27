@@ -121,6 +121,10 @@ declare global {
       sd: {
         listPlugins: () => Promise<any[]>;
       };
+      keybind: {
+        status: () => Promise<any>;
+        test: () => Promise<boolean>;
+      };
       settings: {
         get: () => Promise<any>;
         update: (settings: any) => Promise<any>;

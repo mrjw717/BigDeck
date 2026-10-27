@@ -55,6 +55,7 @@ vi.mock("fs/promises", () => ({
 }));
 
 import { ActionExecutor } from "./ActionExecutor";
+import { UinputInjector } from "./UinputInjector";
 import type { Logger } from "../utils/Logger";
 import type { Action } from "../../shared/types";
 
@@ -727,6 +728,80 @@ describe("ActionExecutor", () => {
       expect(logger.warn).toHaveBeenCalledWith("Unknown action type: does-not-exist");
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining("Action failed: does-not-exist"),
+      );
+    });
+  });
+
+  describe("keyboard injection diagnostics", () => {
+    it("reports the Wayland session and per-backend availability", async () => {
+      vi.stubEnv("WAYLAND_DISPLAY", "wayland-0");
+      vi.stubEnv("XDG_SESSION_TYPE", "wayland");
+      mockWhich(["wtype"]);
+      vi.spyOn(UinputInjector, "isEnvironmentCapable").mockReturnValue(true);
+
+      const status = await executor.getKeyboardInjectionStatus();
+
+      expect(status.session).toBe("wayland");
+      const byName = Object.fromEntries(
+        status.backends.map((b) => [b.name, b]),
+      );
+      expect(byName.uinput.available).toBe(true);
+      expect(byName.ydotool.available).toBe(false);
+      expect(byName.wtype.available).toBe(true);
+      expect(byName.xdotool.available).toBe(false);
+      // Unavailable backends carry a human-readable detail for the card.
+      expect(byName.ydotool.detail).toContain("not installed");
+    });
+
+    it("reports the X11 session and marks uinput incapable without /dev/uinput", async () => {
+      // The file-level fs mock makes /dev/uinput inaccessible; the static
+      // spy flips the capability back on for the Wayland test above only.
+      vi.stubEnv("WAYLAND_DISPLAY", "");
+      delete process.env.WAYLAND_DISPLAY;
+      vi.stubEnv("XDG_SESSION_TYPE", "x11");
+      mockWhich([]);
+
+      const status = await executor.getKeyboardInjectionStatus();
+
+      expect(status.session).toBe("x11");
+      const byName = Object.fromEntries(
+        status.backends.map((b) => [b.name, b]),
+      );
+      expect(byName.uinput.available).toBe(false);
+      expect(byName.uinput.detail).toContain("udev");
+      expect(byName.xdotool.available).toBe(false);
+    });
+
+    it("testKeyboardInjection taps ctrl through the real chain (wtype success)", async () => {
+      vi.stubEnv("WAYLAND_DISPLAY", "wayland-0");
+      vi.stubEnv("XDG_SESSION_TYPE", "wayland");
+      mockWhich(["wtype"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "" });
+      });
+
+      await expect(executor.testKeyboardInjection()).resolves.toBe(true);
+
+      // A lone modifier: no -M hold needed, just press+release "ctrl".
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "wtype",
+        ["-P", "ctrl", "-p", "ctrl"],
+        expect.any(Function),
+      );
+    });
+
+    it("testKeyboardInjection resolves false when no backend can carry the tap", async () => {
+      vi.stubEnv("WAYLAND_DISPLAY", "");
+      delete process.env.WAYLAND_DISPLAY;
+      vi.stubEnv("XDG_SESSION_TYPE", "x11");
+      mockWhich([]);
+
+      await expect(executor.testKeyboardInjection()).resolves.toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("neither xdotool nor ydotool is installed"),
       );
     });
   });

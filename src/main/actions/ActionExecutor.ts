@@ -39,6 +39,19 @@ import { UinputInjector } from "./UinputInjector";
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
 
+/** One injection backend's availability for the settings diagnostics card. */
+export interface KeyboardInjectionBackendStatus {
+  name: "uinput" | "ydotool" | "wtype" | "xdotool";
+  available: boolean;
+  detail: string;
+}
+
+/** What the Settings panel's "Keyboard Shortcuts (Linux injection)" card renders. */
+export interface KeyboardInjectionStatus {
+  session: "wayland" | "x11";
+  backends: KeyboardInjectionBackendStatus[];
+}
+
 export class ActionExecutor {
   private logger: Logger;
   private isRecordingMacro = false;
@@ -267,6 +280,77 @@ export class ActionExecutor {
     } catch {
       return false;
     }
+  }
+
+  // ------------------------------------------------------------------
+  // Keyboard injection diagnostics (Settings panel, Linux)
+  // ------------------------------------------------------------------
+
+  /**
+   * Report which injection backends are usable in THIS session, for the
+   * settings diagnostics card. uinput counts as available when /dev/uinput
+   * is writable (UinputInjector.isEnvironmentCapable) — the helper process
+   * starts lazily on first use, so its ready-state is reported in the detail
+   * string instead of failing the chip before any shortcut was ever sent.
+   * The end-to-end verdict comes from testKeyboardInjection().
+   */
+  async getKeyboardInjectionStatus(): Promise<KeyboardInjectionStatus> {
+    const session: "wayland" | "x11" = this.isWaylandSession()
+      ? "wayland"
+      : "x11";
+
+    const uinputCapable = UinputInjector.isEnvironmentCapable();
+    const uinputReady = this.uinput.isReady;
+    const [ydotool, wtype, xdotool] = await Promise.all([
+      this.isToolAvailable("ydotool"),
+      this.isToolAvailable("wtype"),
+      this.isToolAvailable("xdotool"),
+    ]);
+
+    const backends: KeyboardInjectionBackendStatus[] = [
+      {
+        name: "uinput",
+        available: uinputCapable,
+        detail: uinputCapable
+          ? uinputReady
+            ? "/dev/uinput writable — native helper running"
+            : "/dev/uinput writable — helper starts on first use"
+          : "/dev/uinput is not writable — install BigDeck's udev rules and re-login (or add your user to the input group)",
+      },
+      {
+        name: "ydotool",
+        available: ydotool,
+        detail: ydotool
+          ? "installed — needs the ydotoold daemon running"
+          : "not installed",
+      },
+      {
+        name: "wtype",
+        available: wtype,
+        detail: wtype
+          ? "installed — needs compositor virtual-keyboard support (KDE/GNOME Wayland may reject it)"
+          : "not installed",
+      },
+      {
+        name: "xdotool",
+        available: xdotool,
+        detail: xdotool
+          ? "installed (X11 sessions only)"
+          : "not installed (X11 sessions only)",
+      },
+    ];
+
+    return { session, backends };
+  }
+
+  /**
+   * Diagnostics test: tap Ctrl down+up through the SAME chain real shortcuts
+   * use (uinput → ydotool/wtype on Wayland, uinput → xdotool/ydotool on
+   * X11). A lone modifier press types nothing, so the test is harmless no
+   * matter which window has focus. Returns the chain's verdict.
+   */
+  async testKeyboardInjection(): Promise<boolean> {
+    return this.sendKeyCombo("ctrl");
   }
 
   private isWaylandSession(): boolean {
