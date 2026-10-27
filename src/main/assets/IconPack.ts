@@ -118,6 +118,15 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/**
+ * Strip a UTF-8 BOM — the Elgato logo packs (black/white) ship icons.json
+ * WITH one, and JSON.parse throws on a leading U+FEFF. Same treatment the
+ * official app applies when reading packaged JSON.
+ */
+function stripBom(text: string): string {
+  return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
 function parseManifest(raw: unknown, fallbackName: string): IconPackManifest {
   const obj = isPlainObject(raw) ? raw : {};
   const truthy = (v: unknown): boolean => v === true || v === "true";
@@ -204,7 +213,7 @@ export class IconPackManager {
     const packDir = this.packDir(packId);
     try {
       const manifest = parseManifest(
-        JSON.parse(await fsp.readFile(path.join(packDir, "manifest.json"), "utf-8")),
+        JSON.parse(stripBom(await fsp.readFile(path.join(packDir, "manifest.json"), "utf-8"))),
         packId,
       );
       const icons = await this.readIconIndex(packDir);
@@ -235,7 +244,9 @@ export class IconPackManager {
    */
   private async readIconIndex(packDir: string): Promise<IconEntry[] | null> {
     try {
-      const raw = JSON.parse(await fsp.readFile(path.join(packDir, "icons.json"), "utf-8"));
+      const raw = JSON.parse(
+        stripBom(await fsp.readFile(path.join(packDir, "icons.json"), "utf-8")),
+      );
       return parseIconIndex(raw);
     } catch {
       return null;

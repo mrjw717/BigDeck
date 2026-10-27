@@ -178,6 +178,17 @@ describe("listIcons", () => {
     expect(await manager.listIcons("com.test.noindex.sdIconPack")).toEqual([]);
   });
 
+  it("tolerates a UTF-8 BOM in icons.json (Elgato logo packs ship one)", async () => {
+    await writePack(packsDir, "com.test.bom.sdIconPack", { icons: null });
+    await fsp.writeFile(
+      path.join(packsDir, "com.test.bom.sdIconPack", "icons.json"),
+      "\uFEFF" + JSON.stringify([{ path: "LogoX.svg", name: "X", tags: ["x"] }]),
+    );
+    expect(await manager.listIcons("com.test.bom.sdIconPack")).toEqual([
+      { id: "LogoX.svg", name: "X", tags: ["x"] },
+    ]);
+  });
+
   it("rejects path-traversal pack ids", async () => {
     expect(await manager.listIcons("../outside")).toEqual([]);
     expect(await manager.listIcons("a/b")).toEqual([]);

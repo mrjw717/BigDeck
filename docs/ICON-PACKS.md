@@ -62,6 +62,9 @@ com.elgato.defaulticonswhite.sdIconPack/
 ]
 ```
 
+- **Some packs ship this file with a UTF-8 BOM** (`com.elgato.logoiconsblack`
+  / `…white` do) — `JSON.parse` rejects a leading U+FEFF, so strip it before
+  parsing (BigDeck does, in `stripBom`).
 - `path` is relative to the pack's **`icons/`** subdirectory (not the pack root).
 - `name` is a display name; some packs (e.g. `com.elgato.elgato.sdIconPack`)
   lazily leave `name` equal to the filename and `tags` empty.
