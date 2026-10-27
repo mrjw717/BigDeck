@@ -9,6 +9,7 @@ import type {
   DeviceType,
   MacroStep,
   MediaPlayerInfo,
+  ProfilePage,
   SdPluginAction,
   ActionOrigin,
 } from "../../shared/types";
@@ -18,14 +19,43 @@ import {
   type KeyboardInjectionStatus,
 } from "./ActionExecutor";
 import { KeyRenderer, type RenderedKey } from "./KeyRenderer";
+import {
+  ActionTickService,
+  type TickImageSink,
+} from "./ActionTickService";
 
 export class ActionEngine {
   private executor: ActionExecutor;
   private renderer: KeyRenderer;
+  /** Per-key tick renderer registry (timer/clock displays). */
+  readonly tickService: ActionTickService;
 
   constructor(logger: Logger, userDataPath: string) {
-    this.executor = new ActionExecutor(logger);
+    this.tickService = new ActionTickService(logger);
+    this.executor = new ActionExecutor(logger, this.tickService);
     this.renderer = new KeyRenderer(logger, userDataPath);
+  }
+
+  /**
+   * Wire the tick pipeline into the hardware (called by the app entry point
+   * where DeviceManager + HardwareSync live — see ActionTickService).
+   */
+  setTickSink(sink: TickImageSink): void {
+    this.tickService.setSink(sink);
+  }
+
+  /** Stop the tick interval (app shutdown cleanup). */
+  stopTickService(): void {
+    this.tickService.stop();
+  }
+
+  /** Keep clock displays in sync with a page's placements (page applies). */
+  syncClocks(
+    deviceId: string,
+    deviceType: DeviceType,
+    page: ProfilePage | undefined,
+  ): void {
+    this.executor.syncClocks(deviceId, deviceType, page);
   }
 
   setOnSwitchProfile(handler: (profileId: string) => Promise<void>): void {

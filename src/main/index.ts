@@ -717,6 +717,11 @@ if (!gotTheLock) {
 
       if (activeProfile && activeProfile.deviceType === device.type) {
         hardwareSync.applyProfileToDevice(device.id, activeProfile);
+        actionEngine.syncClocks(
+          device.id,
+          device.type,
+          activeProfile.pages[activeProfile.activePage],
+        );
       }
     });
 
@@ -791,9 +796,10 @@ if (!gotTheLock) {
       ensurePressedCached(deviceId, keyIndex);
 
       // Execute key action. The origin lets SD-plugin actions resolve the
-      // action-instance context for this exact key. Every "no dispatch"
-      // outcome is logged with its reason — a press that silently produces
-      // no action line is impossible to diagnose from the log alone.
+      // action-instance context for this exact key; deviceType gives on-key
+      // renderers (timer/clock ticks) the right pixel geometry. Every "no
+      // dispatch" outcome is logged with its reason — a press that silently
+      // produces no action line is impossible to diagnose from the log alone.
       const info = profileManager.getActiveKeyConfig(keyIndex);
       if (info?.keyConfig?.action) {
         logger.info(
@@ -802,6 +808,7 @@ if (!gotTheLock) {
         actionEngine.executeAction(info!.keyConfig.action, {
           deviceId,
           keyIndex,
+          deviceType: deviceManager.getDevice(deviceId)?.type,
         });
       } else if (!info) {
         const activeProfile = profileManager.getActiveProfile();
@@ -846,6 +853,11 @@ if (!gotTheLock) {
       for (const device of devices) {
         if (device.type === profile.deviceType) {
           hardwareSync.applyProfileToDevice(device.id, profile);
+          actionEngine.syncClocks(
+            device.id,
+            device.type,
+            profile.pages[profile.activePage],
+          );
         }
       }
     });
@@ -864,6 +876,13 @@ if (!gotTheLock) {
         // Diff against last-rendered state and re-render only changed keys,
         // each with its own trailing debounce (single owner: HardwareSync).
         hardwareSync.syncChangedKeys(device.id, profile);
+        // Clock placements are diffed separately (ActionTickService) —
+        // every config edit re-homes the passive clock displays.
+        actionEngine.syncClocks(
+          device.id,
+          device.type,
+          profile.pages[profile.activePage],
+        );
       }
     });
 
@@ -896,6 +915,21 @@ if (!gotTheLock) {
       // (audit #1).
       hardwareSync = new HardwareSync(deviceManager, actionEngine, logger);
 
+      // Tick-rendered keys (timer countdowns, live clocks — see
+      // ActionTickService) push frames straight to the device; a finished
+      // display hands the key back to its cached static appearance.
+      actionEngine.setTickSink({
+        pushImage: async (deviceId, keyIndex, image) => {
+          await deviceManager.setKeyImage(deviceId, keyIndex, image);
+        },
+        restoreIdle: async (deviceId, keyIndex) => {
+          const cached = hardwareSync.getCachedImages(deviceId, keyIndex);
+          if (!cached) return false;
+          await deviceManager.setKeyImage(deviceId, keyIndex, cached.idle);
+          return true;
+        },
+      });
+
       actionEngine.setOnSwitchProfile(async (profileId: string) => {
         try {
           const newProfile = profileManager.activateProfile(profileId);
@@ -914,21 +948,37 @@ if (!gotTheLock) {
         }
       });
 
+      /**
+       * Apply a page switch end to end: persist the active page, notify the
+       * renderer, push the page to matching devices, and sync clock displays
+       * (passive keys re-home on every page apply — see ActionTickService).
+       */
+      const switchToPageIndex = async (
+        profileId: string,
+        pageIndex: number,
+      ): Promise<void> => {
+        const updated = profileManager.setActivePage(profileId, pageIndex);
+        mainWindow?.webContents.send(IPC_CHANNELS.PROFILE_PAGE_CHANGED, {
+          profileId: updated.id,
+          pageIndex,
+        });
+        for (const device of deviceManager.getDevices()) {
+          if (device.type === updated.deviceType) {
+            await hardwareSync.applyProfileToDevice(device.id, updated);
+            actionEngine.syncClocks(
+              device.id,
+              device.type,
+              updated.pages[pageIndex],
+            );
+          }
+        }
+      };
+
       actionEngine.setOnSwitchPage(async (pageIndex: number) => {
         try {
           const activeProfile = profileManager.getActiveProfile();
           if (!activeProfile) return;
-          const updated = profileManager.setActivePage(activeProfile.id, pageIndex);
-          mainWindow?.webContents.send(
-            IPC_CHANNELS.PROFILE_PAGE_CHANGED,
-            { profileId: updated.id, pageIndex },
-          );
-          const devices = deviceManager.getDevices();
-          for (const device of devices) {
-            if (device.type === updated.deviceType) {
-              await hardwareSync.applyProfileToDevice(device.id, updated);
-            }
-          }
+          await switchToPageIndex(activeProfile.id, pageIndex);
         } catch (err) {
           logger.error("Failed to switch page:", err);
         }
@@ -1253,6 +1303,9 @@ if (!gotTheLock) {
       quitCleanup = (async () => {
         profileManager?.flush();
         hardwareSync?.dispose();
+        // Stops the 1s tick interval (timer/clock displays) — must not
+        // outlive the device manager it pushes images through.
+        actionEngine?.stopTickService();
         await Promise.race([
           (async () => {
             await sdPluginHost?.stop();

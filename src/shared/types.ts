@@ -54,7 +54,9 @@ export type ActionType =
   | "plugin"
   | "sdplugin"
   | "soundboard"
-  | "soundboard.stop";
+  | "soundboard.stop"
+  | "timer"
+  | "clock";
 
 export interface BaseAction {
   type: ActionType;
@@ -177,6 +179,43 @@ export interface SoundboardStopAction extends BaseAction {
 }
 
 /**
+ * Countdown timer rendered LIVE on its key as MM:SS via ActionTickService
+ * (Elgato com.elgato.streamdeck.system.timer). Press starts the countdown;
+ * pressing again stops (default) or restarts it per `pressAgain`. At zero
+ * the key returns to its static appearance and the optional
+ * `onCompleteAction` fires (reuse of the action pipeline).
+ */
+export interface TimerAction extends BaseAction {
+  type: "timer";
+  /** Countdown minutes (0-...). Combined with `seconds`; total must be > 0. */
+  minutes: number;
+  /** Countdown seconds (0-59). */
+  seconds: number;
+  /**
+   * What another press does while the timer runs. "stop" (default) ends the
+   * countdown and restores the key; "restart" begins the full duration again.
+   */
+  pressAgain?: "stop" | "restart";
+  /** Optional action executed once when the countdown hits zero. */
+  onCompleteAction?: Action;
+}
+
+/**
+ * Live digital clock on the key, re-rendered through ActionTickService
+ * (Elgato com.elgato.streamdeck.system.digitaltime). Minute clocks tick on
+ * the minute bucket; `showSeconds` upgrades the key to a 1s tick. The key
+ * goes live when its page is applied (index.ts syncs clock placements) and
+ * pressing the key re-registers/refreshes it.
+ */
+export interface ClockAction extends BaseAction {
+  type: "clock";
+  /** 24-hour display (default true); false renders 12h with AM/PM suffix. */
+  use24h?: boolean;
+  /** Show ":SS" seconds — switches the key to a 1-second tick. */
+  showSeconds?: boolean;
+}
+
+/**
  * Suspend the machine via `systemctl suspend`. No configuration — mirrors
  * Elgato's Sleep action (com.elgato.streamdeck.system.sleep).
  */
@@ -215,10 +254,13 @@ export interface PluginAction extends BaseAction {
  * Where an executed action came from when the caller knows it (hardware key
  * press). Lets the SD plugin host resolve/mint the right action-instance
  * context; flows without device context (network API) omit it.
+ * `deviceType` is optional extra context (the key's pixel geometry for
+ * on-key rendering); the press wiring in the app entry point supplies it.
  */
 export interface ActionOrigin {
   deviceId: string;
   keyIndex: number;
+  deviceType?: DeviceType;
 }
 
 /**
@@ -249,7 +291,9 @@ export type Action =
   | PluginAction
   | SdPluginAction
   | SoundboardAction
-  | SoundboardStopAction;
+  | SoundboardStopAction
+  | TimerAction
+  | ClockAction;
 
 // Layer-based key appearance
 export type LayerType = "background" | "text" | "icon" | "image";

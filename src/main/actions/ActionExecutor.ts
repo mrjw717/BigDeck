@@ -32,14 +32,43 @@ import {
   SdPluginAction,
   SoundboardAction,
   SoundboardStopAction,
+  TimerAction,
+  ClockAction,
   Action,
   ActionOrigin,
 } from "../../shared/types";
+import type { DeviceType, ProfilePage } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 import { UinputInjector } from "./UinputInjector";
+import {
+  ActionTickService,
+  renderTickTextFrame,
+  tickKeySize,
+} from "./ActionTickService";
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
+
+/**
+ * Format wall-clock time for a clock key: "HH:MM" (24h) / "H:MM AM|PM"
+ * (12h), optional ":SS" seconds suffix.
+ */
+export function formatClockTime(
+  now: Date,
+  use24h: boolean,
+  showSeconds: boolean,
+): string {
+  const hours24 = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  if (use24h) {
+    const hours = String(hours24).padStart(2, "0");
+    return `${hours}:${minutes}${showSeconds ? `:${seconds}` : ""}`;
+  }
+  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  const suffix = hours24 < 12 ? " AM" : " PM";
+  return `${hours12}:${minutes}${showSeconds ? `:${seconds}` : ""}${suffix}`;
+}
 
 /** One injection backend's availability for the settings diagnostics card. */
 export interface KeyboardInjectionBackendStatus {
@@ -82,10 +111,17 @@ export class ActionExecutor {
     | null = null;
 
   private uinput: UinputInjector;
+  /**
+   * Tick-render registry (timer/clock displays, future screensavers).
+   * Constructed here; the image sink is wired from the app entry point via
+   * tickService.setSink(...). Tests inject a fake service.
+   */
+  readonly tickService: ActionTickService;
 
-  constructor(logger: Logger) {
+  constructor(logger: Logger, tickService?: ActionTickService) {
     this.logger = logger;
     this.uinput = new UinputInjector(logger);
+    this.tickService = tickService ?? new ActionTickService(logger);
 
     uIOhook.on("keydown", (e: UiohookKeyboardEvent) => {
       if (this.isRecordingMacro) {
@@ -248,6 +284,12 @@ export class ActionExecutor {
             action as SoundboardStopAction,
           );
           break;
+        case "timer":
+          succeeded = await this.executeTimer(action as TimerAction, origin);
+          break;
+        case "clock":
+          succeeded = await this.executeClock(action as ClockAction, origin);
+          break;
         default:
           this.logger.warn(`Unknown action type: ${action.type}`);
       }
@@ -273,6 +315,11 @@ export class ActionExecutor {
         return 200;
       case "keyboard-shortcut":
         return 300;
+      // Toggle/start-stop semantics: EVERY press must arrive — debouncing
+      // a timer toggle or a hotkey switch would eat the second press.
+      case "timer":
+      case "clock":
+        return 0;
       case "launch-app":
       case "open-url":
       case "open-folder":
@@ -1378,6 +1425,183 @@ export class ActionExecutor {
     }
     this.logger.info(`soundboard.stop: stopped ${stopped} playing sample(s)`);
     return true;
+  }
+
+  // ------------------------------------------------------------------
+  // timer + clock (ActionTickService display actions)
+  //
+  // Both own their key: registering with the tick service renders frames
+  // through DeviceManager each bucket (DeviceManager hash-skips unchanged
+  // images, so a minute clock's 1s render loop is free at the hardware).
+  // Countdowns are wall-clock based (endTime vs Date.now()) so a suspended
+  // machine doesn't drift the timer. A render returning null is the generic
+  // "display finished" signal — the service unregisters the key and
+  // restores its static appearance from HardwareSync's cache.
+  // ------------------------------------------------------------------
+
+  /** Start (or restart) the countdown for one key. */
+  private startTimer(
+    action: TimerAction,
+    origin: ActionOrigin,
+    keyId: string,
+    durationMs: number,
+  ): void {
+    const { width, height } = tickKeySize(origin.deviceType ?? "original");
+    const endTime = Date.now() + durationMs;
+    this.tickService.register({
+      keyId,
+      deviceId: origin.deviceId,
+      keyIndex: origin.keyIndex,
+      intervalMs: 1000,
+      kind: "timer",
+      render: async () => {
+        const remainingMs = endTime - Date.now();
+        if (remainingMs <= 0) {
+          this.logger.info(
+            `timer on ${keyId} finished — restoring key` +
+              (action.onCompleteAction ? ", running completion action" : ""),
+          );
+          // Returning null unregisters + restores the static appearance;
+          // the chained action is fired without blocking the tick loop.
+          if (action.onCompleteAction) {
+            void this.executeAction(action.onCompleteAction, origin);
+          }
+          return null;
+        }
+        const totalSeconds = Math.ceil(remainingMs / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        const text = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        return renderTickTextFrame(text, width, height);
+      },
+    });
+  }
+
+  private async executeTimer(
+    action: TimerAction,
+    origin?: ActionOrigin,
+  ): Promise<boolean> {
+    if (!origin) {
+      this.logger.warn(
+        "timer action needs a device key origin to render its countdown (hardware presses provide it) — press ignored",
+      );
+      return false;
+    }
+
+    const minutes = Math.max(0, Math.floor(action.minutes ?? 0));
+    const seconds = Math.max(0, Math.floor(action.seconds ?? 0));
+    const durationMs = (minutes * 60 + seconds) * 1000;
+    if (durationMs <= 0) {
+      this.logger.warn(
+        "timer has a zero duration — set minutes or seconds in the key editor",
+      );
+      return false;
+    }
+
+    const keyId = `${origin.deviceId}:${origin.keyIndex}`;
+    const running = this.tickService.kindOf(keyId);
+
+    if (running === "timer") {
+      if ((action.pressAgain ?? "stop") === "restart") {
+        this.logger.info(
+          `timer on ${keyId}: restarted (${minutes}m ${seconds}s)`,
+        );
+        this.startTimer(action, origin, keyId, durationMs);
+        return true;
+      }
+      await this.tickService.unregister(keyId);
+      this.logger.info(`timer on ${keyId}: stopped, key restored`);
+      return true;
+    }
+
+    // A clock (or another display) may own the key from an earlier config —
+    // take the key over before starting the countdown.
+    if (running) await this.tickService.unregister(keyId);
+    this.logger.info(
+      `timer on ${keyId}: started (${minutes}m ${seconds}s, press again to ${
+        (action.pressAgain ?? "stop") === "restart" ? "restart" : "stop"
+      })`,
+    );
+    this.startTimer(action, origin, keyId, durationMs);
+    return true;
+  }
+
+  private async executeClock(
+    action: ClockAction,
+    origin?: ActionOrigin,
+  ): Promise<boolean> {
+    if (!origin) {
+      this.logger.warn(
+        "clock action needs a device key origin to render the time (hardware presses provide it) — press ignored",
+      );
+      return false;
+    }
+
+    const keyId = `${origin.deviceId}:${origin.keyIndex}`;
+    const { width, height } = tickKeySize(origin.deviceType ?? "original");
+    const use24h = action.use24h !== false;
+    const showSeconds = action.showSeconds === true;
+
+    // Render every second (exact minute flips) but memoize the last frame:
+    // an unchanged text returns the same buffer, which DeviceManager
+    // hash-skips — no re-encode, no hardware write.
+    let lastText = "";
+    let lastFrame: Buffer | null = null;
+    this.tickService.register({
+      keyId,
+      deviceId: origin.deviceId,
+      keyIndex: origin.keyIndex,
+      intervalMs: 1000,
+      kind: "clock",
+      render: async () => {
+        const text = formatClockTime(new Date(Date.now()), use24h, showSeconds);
+        if (text === lastText && lastFrame) return lastFrame;
+        lastText = text;
+        lastFrame = await renderTickTextFrame(text, width, height);
+        return lastFrame;
+      },
+    });
+    this.logger.info(
+      `clock live on ${keyId} (${use24h ? "24h" : "12h"}${
+        showSeconds ? ", seconds" : ""
+      })`,
+    );
+    return true;
+  }
+
+  /**
+   * Keep clock displays in sync with a page's placements. Called by the app
+   * entry point after every page apply/activation/update so clocks show the
+   * time WITHOUT a press (Elgato's Digital Time is passive). Registers keys
+   * carrying a clock action, refreshes existing ones, and stops displays on
+   * keys whose clock action went away. Timers are deliberately untouched —
+   * they are press-started and keep counting across page switches.
+   */
+  syncClocks(
+    deviceId: string,
+    deviceType: DeviceType,
+    page: ProfilePage | undefined,
+  ): void {
+    const wanted = new Map<number, ClockAction>();
+    for (const key of page?.keys ?? []) {
+      if (key.action?.type === "clock") {
+        wanted.set(key.keyIndex, key.action as ClockAction);
+      }
+    }
+
+    for (const entry of this.tickService.listKeys()) {
+      if (
+        entry.deviceId === deviceId &&
+        entry.kind === "clock" &&
+        !wanted.has(entry.keyIndex)
+      ) {
+        void this.tickService.unregister(entry.keyId);
+      }
+    }
+
+    for (const [keyIndex, clockAction] of wanted) {
+      void this.executeClock(clockAction, { deviceId, keyIndex, deviceType });
+    }
   }
 
   // ------------------------------------------------------------------

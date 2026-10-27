@@ -12,6 +12,8 @@ import {
   XCircle,
   Search,
   Square,
+  Timer as TimerIcon,
+  Clock,
   Volume2,
   Zap,
   Puzzle,
@@ -244,6 +246,34 @@ const TEMPLATES: ActionTemplate[] = [
       layers: [
         { id: "bg-soundboard-stop", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e1a4a", backgroundGradientEnd: "#2e0f24", backgroundGradientDirection: 135 },
         { id: "text-soundboard-stop", type: "text", order: 1, visible: true, text: "■", fontSize: 24, textColor: "#f884c8", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "timer",
+    type: "timer",
+    label: "Timer",
+    icon: <TimerIcon size={18} />,
+    description: "Countdown on the key",
+    payload: { minutes: 5, seconds: 0, pressAgain: "stop" },
+    appearance: {
+      layers: [
+        { id: "bg-timer", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#5e3a1a", backgroundGradientEnd: "#2e1c0f", backgroundGradientDirection: 135 },
+        { id: "text-timer", type: "text", order: 1, visible: true, text: "05:00", fontSize: 16, textColor: "#f8c884", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "clock",
+    type: "clock",
+    label: "Clock",
+    icon: <Clock size={18} />,
+    description: "Live time on the key",
+    payload: { use24h: true, showSeconds: false },
+    appearance: {
+      layers: [
+        { id: "bg-clock", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#1a2a5e", backgroundGradientEnd: "#0f1430", backgroundGradientDirection: 135 },
+        { id: "text-clock", type: "text", order: 1, visible: true, text: "12:00", fontSize: 16, textColor: "#84b4f8", opacity: 1 },
       ],
     },
   },

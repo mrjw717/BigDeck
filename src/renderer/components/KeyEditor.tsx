@@ -30,6 +30,7 @@ import {
   X,
   XCircle,
   Volume2,
+  Timer as TimerIcon,
   Zap,
   Layers,
 } from "lucide-react";
@@ -148,6 +149,18 @@ const ACTION_OPTIONS: ActionOption[] = [
     label: "Stop Sounds",
     icon: <Square size={18} />,
     description: "Stop all sound playback",
+  },
+  {
+    type: "timer",
+    label: "Timer",
+    icon: <TimerIcon size={18} />,
+    description: "Countdown rendered on the key",
+  },
+  {
+    type: "clock",
+    label: "Clock",
+    icon: <Clock size={18} />,
+    description: "Live time on the key",
   },
 ];
 
@@ -366,6 +379,15 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
         (baseAction as any).volume = 80;
         break;
       case "soundboard.stop":
+        break;
+      case "timer":
+        (baseAction as any).minutes = 5;
+        (baseAction as any).seconds = 0;
+        (baseAction as any).pressAgain = "stop";
+        break;
+      case "clock":
+        (baseAction as any).use24h = true;
+        (baseAction as any).showSeconds = false;
         break;
     }
 
@@ -978,6 +1000,135 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
               <p className="text-[11px] text-muted-foreground">
                 Stops every sound started by Soundboard keys — nothing to
                 configure.
+              </p>
+            </div>
+          )}
+
+          {keyConfig.action.type === "timer" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <TimerIcon size={14} className="text-primary" />
+                Countdown
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    Minutes
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={999}
+                    value={(keyConfig.action as any).minutes ?? 0}
+                    onChange={(e) =>
+                      setKeyAction(keyIndex, {
+                        ...keyConfig.action,
+                        minutes: Math.max(0, Math.floor(Number(e.target.value) || 0)),
+                      } as Action)
+                    }
+                    className="w-full h-11 px-4 bg-muted/40 border-2 border-border rounded-xl text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none font-bold tabular-nums"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    Seconds
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={(keyConfig.action as any).seconds ?? 0}
+                    onChange={(e) =>
+                      setKeyAction(keyIndex, {
+                        ...keyConfig.action,
+                        seconds: Math.min(59, Math.max(0, Math.floor(Number(e.target.value) || 0))),
+                      } as Action)
+                    }
+                    className="w-full h-11 px-4 bg-muted/40 border-2 border-border rounded-xl text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none font-bold tabular-nums"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Press while running
+                </label>
+                <div className="relative">
+                  <select
+                    value={(keyConfig.action as any).pressAgain || "stop"}
+                    onChange={(e) =>
+                      setKeyAction(keyIndex, {
+                        ...keyConfig.action,
+                        pressAgain: e.target.value,
+                      } as Action)
+                    }
+                    className="w-full h-11 px-4 pr-10 bg-muted/40 border-2 border-border rounded-xl text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none cursor-pointer font-medium"
+                  >
+                    <option value="stop">Stops the timer</option>
+                    <option value="restart">Restarts from full time</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                The remaining MM:SS renders live on the key; when it hits zero
+                the key returns to its normal look.
+              </p>
+            </div>
+          )}
+
+          {keyConfig.action.type === "clock" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Clock size={14} className="text-primary" />
+                Digital Time
+              </label>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setKeyAction(keyIndex, {
+                      ...keyConfig.action,
+                      use24h: (keyConfig.action as any).use24h === false,
+                    } as Action)
+                  }
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-border hover:border-primary/40 bg-muted/20 transition-colors"
+                >
+                  <span className="text-sm font-medium">24-hour time</span>
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full ${
+                      (keyConfig.action as any).use24h !== false
+                        ? "bg-primary/15 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {(keyConfig.action as any).use24h !== false ? "On" : "Off"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setKeyAction(keyIndex, {
+                      ...keyConfig.action,
+                      showSeconds: !(keyConfig.action as any).showSeconds === true,
+                    } as Action)
+                  }
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-border hover:border-primary/40 bg-muted/20 transition-colors"
+                >
+                  <span className="text-sm font-medium">Show seconds</span>
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full ${
+                      (keyConfig.action as any).showSeconds === true
+                        ? "bg-primary/15 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {(keyConfig.action as any).showSeconds === true ? "On" : "Off"}
+                  </span>
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                The clock updates itself on the key (per minute, or every
+                second with seconds shown).
               </p>
             </div>
           )}

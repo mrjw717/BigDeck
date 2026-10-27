@@ -56,6 +56,8 @@ vi.mock("fs/promises", () => ({
 
 import { ActionExecutor } from "./ActionExecutor";
 import { UinputInjector } from "./UinputInjector";
+import { formatClockTime } from "./ActionExecutor";
+import type { ActionTickService } from "./ActionTickService";
 import type { Logger } from "../utils/Logger";
 import type { Action } from "../../shared/types";
 
@@ -65,6 +67,43 @@ const logger: Logger = {
   warn: vi.fn(),
   error: vi.fn(),
 } as unknown as Logger;
+
+/**
+ * Structural stand-in for the tick registry: records registrations so
+ * timer/clock tests can drive the render closures directly. Cast through
+ * unknown (ActionTickService has private state, making it nominally typed).
+ */
+function makeFakeTickService() {
+  const entries = new Map<string, any>();
+  const registered: any[] = [];
+  const unregistered: Array<{ keyId: string; restore: boolean }> = [];
+  const fake = {
+    register: (entry: any) => {
+      entries.set(entry.keyId, entry);
+      registered.push(entry);
+    },
+    unregister: async (keyId: string, restore = true) => {
+      entries.delete(keyId);
+      unregistered.push({ keyId, restore });
+    },
+    has: (keyId: string) => entries.has(keyId),
+    kindOf: (keyId: string) => entries.get(keyId)?.kind,
+    listKeys: () =>
+      [...entries.values()].map(({ keyId, deviceId, keyIndex, kind }) => ({
+        keyId,
+        deviceId,
+        keyIndex,
+        kind,
+      })),
+    stop: () => entries.clear(),
+  };
+  return {
+    fake,
+    registered,
+    unregistered,
+    service: fake as unknown as ActionTickService,
+  };
+}
 
 /** Stub the `which <tool>` probes; any other shell command rejects. */
 function mockWhich(tools: string[]): void {
@@ -996,6 +1035,313 @@ describe("ActionExecutor", () => {
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining("No audio file selected"),
       );
+    });
+  });
+
+  describe("timer", () => {
+    const origin = { deviceId: "dev-1", keyIndex: 3, deviceType: "original" as const };
+
+    it("starts a countdown registered on the pressed key", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 5, seconds: 30 }),
+        origin,
+      );
+
+      expect(tick.registered).toHaveLength(1);
+      const reg = tick.registered[0];
+      expect(reg.keyId).toBe("dev-1:3");
+      expect(reg.deviceId).toBe("dev-1");
+      expect(reg.keyIndex).toBe(3);
+      expect(reg.kind).toBe("timer");
+      expect(reg.intervalMs).toBe(1000);
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("timer on dev-1:3: started (5m 30s"),
+      );
+    });
+
+    it("renders MM:SS frames while counting down", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 5, seconds: 0 }),
+        origin,
+      );
+      const frame = await tick.registered[0].render();
+      expect(Buffer.isBuffer(frame)).toBe(true);
+    });
+
+    it("pressing again stops the timer and restores the key (default)", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 1 }),
+        origin,
+      );
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 1 }),
+        origin,
+      );
+
+      expect(tick.registered).toHaveLength(1);
+      expect(tick.unregistered).toEqual([
+        { keyId: "dev-1:3", restore: true },
+      ]);
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("timer on dev-1:3: stopped"),
+      );
+    });
+
+    it("pressAgain=restart re-registers instead of stopping", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+      const action = () =>
+        makeAction({ type: "timer", minutes: 1, pressAgain: "restart" });
+
+      await exec.executeAction(action(), origin);
+      await exec.executeAction(action(), origin);
+
+      expect(tick.registered).toHaveLength(2);
+      expect(tick.unregistered).toHaveLength(0);
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("restarted (1m 0s)"),
+      );
+    });
+
+    it("fires the completion action once and hands the key back at zero", async () => {
+      mockWhich(["systemctl"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "" });
+      });
+
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({
+          type: "timer",
+          minutes: 0,
+          seconds: 1,
+          onCompleteAction: makeAction({ type: "system-sleep" }),
+        }),
+        origin,
+      );
+
+      const entry = tick.registered[0];
+      const first = await entry.render();
+      expect(Buffer.isBuffer(first)).toBe(true); // 00:01
+
+      // Time travel past the deadline: the render reports "finished".
+      const nowSpy = vi.spyOn(Date, "now").mockReturnValue(Date.now() + 5000);
+      const finished = await entry.render();
+      nowSpy.mockRestore();
+
+      expect(finished).toBeNull();
+      // The chained action is fired without blocking the tick loop — give
+      // its microtask chain (which probe → systemctl) room to settle.
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      // The chained action went through the real pipeline (systemctl suspend).
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "systemctl",
+        ["suspend"],
+        expect.any(Function),
+      );
+    });
+
+    it("rejects a zero duration", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 0, seconds: 0 }),
+        origin,
+      );
+
+      expect(tick.registered).toHaveLength(0);
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("zero duration"),
+      );
+    });
+
+    it("rejects presses without a device origin (cannot render anywhere)", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(makeAction({ type: "timer", minutes: 1 }));
+
+      expect(tick.registered).toHaveLength(0);
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("needs a device key origin"),
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Action failed: timer"),
+      );
+    });
+
+    it("takes the key over from a clock when started on the same key", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(
+        makeAction({ type: "clock" }),
+        origin,
+      );
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 2 }),
+        origin,
+      );
+
+      expect(tick.unregistered).toEqual([
+        { keyId: "dev-1:3", restore: true },
+      ]);
+      expect(tick.registered.map((r) => r.kind)).toEqual(["clock", "timer"]);
+    });
+  });
+
+  describe("clock", () => {
+    const origin = { deviceId: "dev-1", keyIndex: 1, deviceType: "original" as const };
+
+    it("registers a self-updating clock on the pressed key", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(makeAction({ type: "clock" }), origin);
+
+      expect(tick.registered).toHaveLength(1);
+      const reg = tick.registered[0];
+      expect(reg.keyId).toBe("dev-1:1");
+      expect(reg.kind).toBe("clock");
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("clock live on dev-1:1 (24h)"),
+      );
+    });
+
+    it("re-renders when the minute changes and memoizes unchanged minutes", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+      await exec.executeAction(makeAction({ type: "clock" }), origin);
+      const render = tick.registered[0].render;
+
+      const base = new Date(2026, 9, 27, 12, 0, 0).getTime();
+      const nowSpy = vi.spyOn(Date, "now").mockReturnValue(base);
+      const frame1 = await render();
+      // Same minute → memoized (identical buffer, DeviceManager hash-skips).
+      nowSpy.mockReturnValue(base + 30_000);
+      const frame1again = await render();
+      // Next minute → new frame.
+      nowSpy.mockReturnValue(base + 90_000);
+      const frame2 = await render();
+      nowSpy.mockRestore();
+
+      expect(frame1again).toBe(frame1);
+      expect(frame2).not.toBe(frame1);
+    });
+
+    it("showSeconds upgrades the display text with :SS", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+      await exec.executeAction(
+        makeAction({ type: "clock", showSeconds: true }),
+        origin,
+      );
+
+      const nowSpy = vi
+        .spyOn(Date, "now")
+        .mockReturnValue(new Date(2026, 9, 27, 8, 5, 9).getTime());
+      const frame = await tick.registered[0].render();
+      nowSpy.mockRestore();
+      expect(Buffer.isBuffer(frame)).toBe(true);
+    });
+
+    it("rejects presses without a device origin", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      await exec.executeAction(makeAction({ type: "clock" }));
+
+      expect(tick.registered).toHaveLength(0);
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("needs a device key origin"),
+      );
+    });
+
+    it("syncClocks registers page clocks and stops clocks that left the page", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+
+      const clockKey = {
+        id: "k1",
+        keyIndex: 2,
+        action: { type: "clock", id: "c1", name: "Clock" },
+      };
+      await exec.syncClocks("dev-1", "original", {
+        id: "p1",
+        name: "P",
+        keys: [clockKey as any],
+      } as any);
+      expect(tick.registered).toHaveLength(1);
+      expect(tick.registered[0].keyId).toBe("dev-1:2");
+
+      // Same page again: refresh (re-register), no removals.
+      await exec.syncClocks("dev-1", "original", {
+        id: "p1",
+        name: "P",
+        keys: [clockKey as any],
+      } as any);
+      expect(tick.unregistered).toHaveLength(0);
+
+      // Clock removed from the page → its display stops.
+      await exec.syncClocks("dev-1", "original", {
+        id: "p1",
+        name: "P",
+        keys: [],
+      } as any);
+      expect(tick.unregistered).toEqual([
+        { keyId: "dev-1:2", restore: true },
+      ]);
+    });
+
+    it("syncClocks never touches running timers", async () => {
+      const tick = makeFakeTickService();
+      const exec = new ActionExecutor(logger, tick.service);
+      const origin = { deviceId: "dev-1", keyIndex: 4, deviceType: "original" as const };
+
+      await exec.executeAction(
+        makeAction({ type: "timer", minutes: 3 }),
+        origin,
+      );
+      await exec.syncClocks("dev-1", "original", {
+        id: "p1",
+        name: "P",
+        keys: [],
+      } as any);
+
+      expect(tick.unregistered).toHaveLength(0);
+      expect(tick.registered[0].kind).toBe("timer");
+    });
+  });
+
+  describe("formatClockTime", () => {
+    it("formats 24h zero-padded by default", () => {
+      expect(formatClockTime(new Date(2026, 0, 1, 9, 5), true, false)).toBe("09:05");
+      expect(formatClockTime(new Date(2026, 0, 1, 23, 59), true, false)).toBe("23:59");
+    });
+
+    it("formats 12h with AM/PM and no leading zero on the hour", () => {
+      expect(formatClockTime(new Date(2026, 0, 1, 0, 5), false, false)).toBe("12:05 AM");
+      expect(formatClockTime(new Date(2026, 0, 1, 14, 5), false, false)).toBe("2:05 PM");
+    });
+
+    it("appends seconds when enabled", () => {
+      expect(formatClockTime(new Date(2026, 0, 1, 9, 5, 7), true, true)).toBe("09:05:07");
+      expect(formatClockTime(new Date(2026, 0, 1, 15, 2, 42), false, true)).toBe("3:02:42 PM");
     });
   });
 });
