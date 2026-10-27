@@ -80,6 +80,16 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
+  // Frameless shell, part 1 of 2 (frame: false in createWindow is part 2):
+  // suppress the application menu entirely. Without this Electron auto-creates
+  // its default menu, whose roles register OS-level accelerators (Ctrl+R
+  // reload, Ctrl+Q quit, Alt accelerators for the File/Edit menu bar, ...).
+  // Passing null kills BOTH the Linux menu bar and those accelerators before
+  // any window exists. The shortcut recorder's
+  // `webContents.setIgnoreMenuShortcuts` IPC stays — it becomes a harmless
+  // no-op with no menu, and its pairing contract is untouched.
+  Menu.setApplicationMenu(null);
+
   app.on("second-instance", () => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
@@ -113,10 +123,23 @@ if (!gotTheLock) {
         contextIsolation: true,
         preload: path.join(app.getAppPath(), "dist/preload/preload.js"),
       },
-      frame: true,
+      frame: false,
       show: false,
       backgroundColor: "#0f0f0f",
     });
+
+    // Keep the renderer's maximize/restore button honest: the window state
+    // can change outside the TitleBar (double-click is handled in the
+    // renderer, but super+up / tiling shortcuts are not).
+    const pushMaximized = () => {
+      if (!mainWindow) return;
+      mainWindow.webContents.send(
+        IPC_CHANNELS.WINDOW_MAXIMIZED_CHANGED,
+        mainWindow.isMaximized(),
+      );
+    };
+    mainWindow.on("maximize", pushMaximized);
+    mainWindow.on("unmaximize", pushMaximized);
 
     // Load the app
     if (isDev) {
@@ -342,13 +365,10 @@ if (!gotTheLock) {
 
     // Shortcut recorder: while the in-app recorder listens for keys, the
     // renderer asks main to ignore application-menu shortcuts for its
-    // webContents. The app never calls Menu.setApplicationMenu, so Electron
-    // auto-creates its default menu whose Edit roles register OS-level
-    // accelerators (Copy=Ctrl+C, Paste=Ctrl+V, Reload=Ctrl+R, ...). Those
-    // accelerators consume the key event in the main process before any page
-    // keydown listener runs, which silently blocked recording paste-style
-    // combos. `setIgnoreMenuShortcuts` is scoped to the focused webContents
-    // and is always paired with a reset in the recorder's effect cleanup.
+    // webContents. The app calls Menu.setApplicationMenu(null) at startup
+    // (frameless shell), so there are no menu accelerators left — this stays
+    // wired as a harmless no-op that is always paired with a reset in the
+    // recorder's effect cleanup.
     ipcMain.handle(
       IPC_CHANNELS.SHORTCUT_RECORD_MODE,
       (event, active: boolean) => {
@@ -487,6 +507,29 @@ if (!gotTheLock) {
         }
       },
     );
+
+    // Window control handlers (frameless custom titlebar — TitleBar.tsx).
+    ipcMain.handle(IPC_CHANNELS.WINDOW_MINIMIZE, () => {
+      mainWindow?.minimize();
+    });
+
+    ipcMain.handle(IPC_CHANNELS.WINDOW_MAXIMIZE, () => {
+      if (!mainWindow) return;
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      } else {
+        mainWindow.maximize();
+      }
+    });
+
+    ipcMain.handle(IPC_CHANNELS.WINDOW_CLOSE, () => {
+      // Routes through the close handler above (minimize-to-tray honored).
+      mainWindow?.close();
+    });
+
+    ipcMain.handle(IPC_CHANNELS.WINDOW_IS_MAXIMIZED, () => {
+      return mainWindow?.isMaximized() ?? false;
+    });
 
     // Dialog IPC handlers
     ipcMain.handle(IPC_CHANNELS.DIALOG_OPEN_FILE, async (_, options) => {

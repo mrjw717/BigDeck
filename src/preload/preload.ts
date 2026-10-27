@@ -217,6 +217,24 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.ASSETS_GET_ICON, packId, iconId),
   },
 
+  // Window controls (frameless custom titlebar)
+  window: {
+    minimize: (): Promise<void> =>
+      ipcRenderer.invoke(IPC_CHANNELS.WINDOW_MINIMIZE),
+    maximize: (): Promise<void> =>
+      ipcRenderer.invoke(IPC_CHANNELS.WINDOW_MAXIMIZE),
+    close: (): Promise<void> => ipcRenderer.invoke(IPC_CHANNELS.WINDOW_CLOSE),
+    isMaximized: (): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.WINDOW_IS_MAXIMIZED),
+    onMaximizedChanged: (callback: (maximized: boolean) => void) => {
+      const handler = (_: Electron.IpcRendererEvent, maximized: boolean) =>
+        callback(maximized);
+      ipcRenderer.on(IPC_CHANNELS.WINDOW_MAXIMIZED_CHANGED, handler);
+      return () =>
+        ipcRenderer.removeListener(IPC_CHANNELS.WINDOW_MAXIMIZED_CHANGED, handler);
+    },
+  },
+
   // Error handler
   onError: (callback: (error: { message: string; code: string }) => void) => {
     const handler = (

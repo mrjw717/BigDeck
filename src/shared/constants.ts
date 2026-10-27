@@ -181,6 +181,15 @@ export const IPC_CHANNELS = {
   // Shortcut recorder
   SHORTCUT_RECORD_MODE: "shortcut:record-mode",
 
+  // Window controls (frameless custom titlebar; renderer → main invoke).
+  // `WINDOW_MAXIMIZED_CHANGED` is the main → renderer push that keeps the
+  // maximize/restore button icon in sync (double-click titlebar, super+up, ...).
+  WINDOW_MINIMIZE: "window.minimize",
+  WINDOW_MAXIMIZE: "window.maximize",
+  WINDOW_CLOSE: "window.close",
+  WINDOW_IS_MAXIMIZED: "window.isMaximized",
+  WINDOW_MAXIMIZED_CHANGED: "window:maximized-changed",
+
   // Asset
   ASSET_UPLOAD: "asset:upload",
   ASSET_LIST: "asset:list",

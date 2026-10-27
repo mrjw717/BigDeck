@@ -100,6 +100,13 @@ declare global {
         /** Ignore/restore application-menu shortcuts while recording. */
         setRecordMode: (active: boolean) => Promise<void>;
       };
+      window: {
+        minimize: () => Promise<void>;
+        maximize: () => Promise<void>;
+        close: () => Promise<void>;
+        isMaximized: () => Promise<boolean>;
+        onMaximizedChanged: (callback: (maximized: boolean) => void) => () => void;
+      };
       settings: {
         get: () => Promise<any>;
         update: (settings: any) => Promise<any>;

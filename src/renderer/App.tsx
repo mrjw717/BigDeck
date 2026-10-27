@@ -6,6 +6,7 @@ import { ProfileManager } from "./components/ProfileManager";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { PluginsPanel } from "./components/PluginsPanel";
 import { Header } from "./components/Header";
+import { TitleBar } from "./components/TitleBar";
 import { ActionLibrary } from "./components/ActionLibrary";
 import { useAppStore } from "./stores/appStore";
 import { useDeviceStore } from "./stores/deviceStore";
@@ -144,18 +145,25 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <Sidebar
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        devices={devices}
-        activeDevice={activeDevice}
-      />
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
+      {/* Custom titlebar for the frameless shell — spans every view. Only
+          mounted with the Electron bridge present (bare `vite` dev in a
+          browser has no window controls to drive). */}
+      {window.bigdeck && <TitleBar />}
 
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Header activeProfile={activeProfile} profiles={profiles} />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          devices={devices}
+          activeDevice={activeDevice}
+        />
 
-        <main className="flex-1 overflow-auto">{renderMainContent()}</main>
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <Header activeProfile={activeProfile} profiles={profiles} />
+
+          <main className="flex-1 overflow-auto">{renderMainContent()}</main>
+        </div>
       </div>
 
       <Toaster />
