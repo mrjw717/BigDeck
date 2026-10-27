@@ -33,6 +33,7 @@ import {
 } from "@dnd-kit/sortable";
 import { ContextMenu } from "./ContextMenu";
 import { SortableKey } from "./SortableKey";
+import { ProfileSelector } from "./ProfileSelector";
 import type {
   DeviceInfo,
   Profile,
@@ -734,11 +735,19 @@ export function StreamdeckView({
       className="flex flex-col items-center justify-center w-full h-full relative p-8"
       ref={containerRef}
     >
-      {/* Device Header */}
+      {/* Device Header — ghost deck name centered, profile selector right.
+          The container stays pointer-events-none so it never blocks deck
+          interactions; only the selector opts back in (pointer-events-auto
+          inside ProfileSelector). */}
       <div className="absolute top-4 left-0 right-0 z-10 animate-in fade-in duration-700 pointer-events-none">
-        <h2 className="text-2xl font-black tracking-tighter uppercase text-center opacity-10">
-          {specs.name}
-        </h2>
+        <div className="relative flex items-center justify-center">
+          <h2 className="text-2xl font-black tracking-tighter uppercase text-center opacity-10">
+            {specs.name}
+          </h2>
+          <div className="absolute right-6 top-1/2 -translate-y-1/2">
+            <ProfileSelector />
+          </div>
+        </div>
       </div>
 
       <DndContext

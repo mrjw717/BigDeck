@@ -5,7 +5,6 @@ import { KeyEditor } from "./components/KeyEditor";
 import { ProfileManager } from "./components/ProfileManager";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { PluginsPanel } from "./components/PluginsPanel";
-import { Header } from "./components/Header";
 import { TitleBar } from "./components/TitleBar";
 import { ActionLibrary } from "./components/ActionLibrary";
 import { useAppStore } from "./stores/appStore";
@@ -159,8 +158,6 @@ function App() {
         />
 
         <div className="flex flex-col flex-1 overflow-hidden">
-          <Header />
-
           <main className="flex-1 overflow-auto">{renderMainContent()}</main>
         </div>
       </div>

@@ -8,8 +8,12 @@ import {
   Usb,
   Unplug,
   ChevronDown,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 import type { DeviceInfo } from "../../shared/types";
+import { useAppStore } from "../stores/appStore";
 
 interface SidebarProps {
   currentView: string;
@@ -37,6 +41,23 @@ export function Sidebar({
   devices,
   activeDevice,
 }: SidebarProps) {
+  const { theme, setTheme } = useAppStore();
+
+  // light → dark → system cycle (same behavior the Header toggle had).
+  const themes: ("light" | "dark" | "system")[] = ["light", "dark", "system"];
+  const nextTheme = themes[(themes.indexOf(theme) + 1) % themes.length];
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case "light":
+        return <Sun size={14} />;
+      case "dark":
+        return <Moon size={14} />;
+      default:
+        return <Monitor size={14} />;
+    }
+  };
+
   return (
     <aside className="w-52 bg-card border-r border-border flex flex-col">
       <div className="p-4 border-b border-border">
@@ -116,16 +137,24 @@ export function Sidebar({
         </ul>
       </nav>
 
-      <div className="p-3 border-t border-border">
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-          <span>v1.0.0</span>
-          <div className="flex items-center gap-1">
+      <div className="p-3 border-t border-border space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <div
               className={`w-1.5 h-1.5 rounded-full ${devices.length > 0 ? "bg-green-500" : "bg-muted"}`}
             />
             <span>{devices.length > 0 ? "Connected" : "Disconnected"}</span>
           </div>
+          <button
+            onClick={() => setTheme(nextTheme)}
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            aria-label={`Current theme: ${theme}, switch to ${nextTheme}`}
+            title={`Theme: ${nextTheme}`}
+          >
+            {getThemeIcon()}
+          </button>
         </div>
+        <div className="text-[10px] text-muted-foreground">v1.0.0</div>
       </div>
     </aside>
   );
