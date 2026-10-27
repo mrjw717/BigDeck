@@ -192,6 +192,8 @@ export interface SDPluginSummary {
   uuid: string;
   name: string;
   version: string;
+  /** Manifest Author (null when the package declares none). */
+  author: string | null;
   status: SDPluginStatus;
   enabled: boolean;
   platformStatus: "verified" | "unverified";
@@ -703,6 +705,7 @@ export class SDPluginHost extends EventEmitter {
       // Locale Name wins over the manifest name (official app behavior).
       name: entry.locale?.Name ?? entry.manifest.Name,
       version: entry.manifest.Version,
+      author: entry.manifest.Author ?? null,
       status: entry.status,
       enabled: entry.enabled,
       platformStatus: entry.platformStatus,

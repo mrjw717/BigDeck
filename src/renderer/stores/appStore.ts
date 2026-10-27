@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { AppSettings } from '../../shared/types';
 import type { IconPackSummary, IconEntry, IconFile } from '../../main/assets/IconPack';
+import type { SDPluginSummary } from '../../main/plugins/sd/SDPluginHost';
 
 interface AppState {
   theme: 'light' | 'dark' | 'system';
@@ -119,7 +120,9 @@ declare global {
         getIcon: (packId: string, iconId: string) => Promise<IconFile | null>;
       };
       sd: {
-        listPlugins: () => Promise<any[]>;
+        listPlugins: () => Promise<SDPluginSummary[]>;
+        installFromFile: (filePath: string) => Promise<SDPluginSummary>;
+        setPluginEnabled: (uuid: string, enabled: boolean) => Promise<void>;
       };
       keybind: {
         status: () => Promise<any>;

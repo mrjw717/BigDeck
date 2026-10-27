@@ -221,6 +221,12 @@ export const IPC_CHANNELS = {
   // renderer action catalog (KeyEditor picker + ActionLibrary).
   SD_LIST_PLUGINS: "sd.listPlugins",
 
+  // Elgato .sdPlugin host management (Plugins view): install a
+  // .streamDeckPlugin/.zip distributable via the host, and toggle a plugin's
+  // enabled state (persists in the host's state dir; spawns/kills now).
+  SD_INSTALL_FROM_FILE: "sd.installFromFile",
+  SD_SET_PLUGIN_ENABLED: "sd.setPluginEnabled",
+
   // Keyboard injection diagnostics (Linux backends)
   KEYBIND_STATUS: "keybind.status",
   KEYBIND_TEST: "keybind.test",

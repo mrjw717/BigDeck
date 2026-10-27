@@ -240,10 +240,14 @@ const api = {
     },
   },
 
-  // Elgato .sdPlugin host (localized plugin/action summaries)
+  // Elgato .sdPlugin host (localized plugin/action summaries + management)
   sd: {
     listPlugins: (): Promise<SDPluginSummary[]> =>
       ipcRenderer.invoke(IPC_CHANNELS.SD_LIST_PLUGINS),
+    installFromFile: (filePath: string): Promise<SDPluginSummary> =>
+      ipcRenderer.invoke(IPC_CHANNELS.SD_INSTALL_FROM_FILE, filePath),
+    setPluginEnabled: (uuid: string, enabled: boolean): Promise<void> =>
+      ipcRenderer.invoke(IPC_CHANNELS.SD_SET_PLUGIN_ENABLED, uuid, enabled),
   },
 
   // Keyboard injection diagnostics (Linux)

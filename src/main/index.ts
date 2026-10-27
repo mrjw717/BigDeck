@@ -26,7 +26,7 @@ import {
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
-import { SDPluginHost } from "./plugins/sd/SDPluginHost";
+import { SDPluginHost, type SDPluginSummary } from "./plugins/sd/SDPluginHost";
 import { wireSdPlacements, wireSdProfileSwitching } from "./plugins/sd/SdBridge";
 import { IconPackManager } from "./assets/IconPack";
 import { NetworkServer } from "./network/NetworkServer";
@@ -553,6 +553,33 @@ if (!gotTheLock) {
       }
       return sdPluginHost.getPlugins();
     });
+
+    // Install a .streamDeckPlugin/.zip distributable through the host (the
+    // renderer collected the path via the shared dialog IPC, mirroring the
+    // Elgato profile import flow). The host replaces an installed copy of
+    // the same plugin in place and spawns it when the host is running.
+    ipcMain.handle(
+      IPC_CHANNELS.SD_INSTALL_FROM_FILE,
+      async (_, filePath: string): Promise<SDPluginSummary> => {
+        if (!sdPluginHost) throw new Error("SD plugin host unavailable");
+        return sdPluginHost.installFromFile(filePath);
+      },
+    );
+
+    // Enable/disable toggle from the Plugins view. The enabled map lives in
+    // the host's state store (created by start()), so make sure the host is
+    // up before persisting — otherwise the toggle would look applied but be
+    // forgotten on restart.
+    ipcMain.handle(
+      IPC_CHANNELS.SD_SET_PLUGIN_ENABLED,
+      async (_, uuid: string, enabled: boolean) => {
+        if (!sdPluginHost) throw new Error("SD plugin host unavailable");
+        if (!sdPluginHost.isRunning()) {
+          await sdPluginHost.start();
+        }
+        await sdPluginHost.setPluginEnabled(uuid, enabled);
+      },
+    );
 
     // Window control handlers (frameless custom titlebar — TitleBar.tsx).
     ipcMain.handle(IPC_CHANNELS.WINDOW_MINIMIZE, () => {
