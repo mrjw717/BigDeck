@@ -28,7 +28,6 @@ function App() {
   const activeDevice = useDeviceStore((s) => s.activeDevice);
   const initDevices = useDeviceStore((s) => s.initialize);
   const subscribeToEvents = useDeviceStore((s) => s.subscribeToEvents);
-  const profiles = useProfileStore((s) => s.profiles);
   const activeProfile = useProfileStore((s) => s.activeProfile);
   const initProfiles = useProfileStore((s) => s.initialize);
 
@@ -160,7 +159,7 @@ function App() {
         />
 
         <div className="flex flex-col flex-1 overflow-hidden">
-          <Header activeProfile={activeProfile} profiles={profiles} />
+          <Header />
 
           <main className="flex-1 overflow-auto">{renderMainContent()}</main>
         </div>
