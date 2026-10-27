@@ -943,6 +943,13 @@ export class ActionExecutor {
       return false;
     }
 
+    // System mic/output mute via pactl — the Linux-native "Discord mute/
+    // deafen": mutes the real capture/playback device, works regardless of
+    // which window has focus (unlike Discord's X11 global keybinds).
+    if (mediaCommand === "mute-mic" || mediaCommand === "mute-output") {
+      return this.tryPactlMute(mediaCommand);
+    }
+
     if (await this.tryVolumeControl(mediaCommand)) return true;
     if (await this.tryPlayerctl(mediaCommand)) return true;
     if (await this.tryDbusSend(mediaCommand)) return true;
@@ -955,6 +962,43 @@ export class ActionExecutor {
         `(or make sure a running player exposes MPRIS on the session bus).`,
     );
     return false;
+  }
+
+  /**
+   * System-level mic/output mute via pactl (PipeWire/PulseAudio). Toggles
+   * the DEFAULT source (microphone) or sink (speakers/headphones) and logs
+   * the resulting state truthfully — this is what Discord mute/deafen keys
+   * should map to on Linux: it works no matter which app is focused.
+   */
+  private async tryPactlMute(mediaCommand: string): Promise<boolean> {
+    if (!(await this.isToolAvailable("pactl"))) {
+      this.logger.error(
+        "Cannot toggle mute: pactl is not installed (PipeWire/PulseAudio systems ship it by default).",
+      );
+      return false;
+    }
+    const isMic = mediaCommand === "mute-mic";
+    const target = isMic ? "@DEFAULT_SOURCE@" : "@DEFAULT_SINK@";
+    const what = isMic ? "microphone" : "speakers/headphones";
+    try {
+      await execFileAsync(
+        "pactl",
+        [isMic ? "set-source-mute" : "set-sink-mute", target, "toggle"],
+      );
+      const state = await execFileAsync(
+        isMic ? "get-source-mute" : "get-sink-mute",
+        [target],
+        { timeout: 3000 },
+      )
+        .then((r) => String((r as { stdout: string }).stdout))
+        .catch(() => "");
+      const muted = /mute:\s*yes/i.test(state);
+      this.logger.info(`System ${what} is now ${muted ? "MUTED" : "unmuted"}.`);
+      return true;
+    } catch (error) {
+      this.logger.error(`pactl ${mediaCommand} toggle failed:`, error);
+      return false;
+    }
   }
 
   private async tryVolumeControl(mediaCommand: string): Promise<boolean> {

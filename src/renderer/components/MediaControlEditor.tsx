@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Monitor,
   Check,
+  Mic,
 } from "lucide-react";
 import type { MultimediaAction } from "../../shared/types";
 
@@ -35,6 +36,8 @@ const VOLUME_ACTIONS = [
   { command: "volume-up" as const, label: "Volume Up", icon: Volume2 },
   { command: "volume-down" as const, label: "Volume Down", icon: Volume2 },
   { command: "mute" as const, label: "Mute", icon: VolumeX },
+  { command: "mute-mic" as const, label: "Mute Mic", icon: Mic },
+  { command: "mute-output" as const, label: "Mute Speakers", icon: VolumeX },
 ];
 
 const PLAYBACK_ACTIONS = [

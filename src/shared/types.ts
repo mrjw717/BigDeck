@@ -91,7 +91,9 @@ export interface MultimediaAction extends BaseAction {
     | "stop"
     | "volume-up"
     | "volume-down"
-    | "mute";
+    | "mute"
+    | "mute-mic"
+    | "mute-output";
   target?: "system" | "global" | string;
 }
 

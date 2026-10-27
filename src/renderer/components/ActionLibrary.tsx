@@ -20,6 +20,8 @@ import {
   Volume2,
   Zap,
   Puzzle,
+  Mic,
+  VolumeX,
 } from "lucide-react";
 import { ActionType, KeyLayer } from "../../shared/types";
 import {
@@ -123,6 +125,36 @@ const TEMPLATES: ActionTemplate[] = [
       layers: [
         { id: "bg-media", type: "background", order: 0, visible: true, opacity: 1, backgroundGradientStart: "#3a1a5e", backgroundGradientEnd: "#1a0f2e", backgroundGradientDirection: 135 },
         { id: "text-media", type: "text", order: 1, visible: true, text: "♪", fontSize: 28, textColor: "#c084fc", opacity: 1 },
+      ],
+    },
+  },
+  {
+    id: "mute-mic",
+    type: "multimedia",
+    label: "Mute Mic",
+    icon: <Mic size={18} />,
+    description: "Toggle the system microphone (works in every app)",
+    payload: { name: "Mute Mic", mediaCommand: "mute-mic" },
+    appearance: {
+      layers: [
+        { id: "bg-mic", type: "background", visible: true, opacity: 1, order: 0,
+          backgroundGradientStart: "#7a1020", backgroundGradientEnd: "#2a050a", backgroundGradientDirection: 135 },
+        { id: "tx-mic", type: "text", visible: true, opacity: 1, order: 1, text: "MIC", fontSize: 18, textColor: "#ffd7d7" },
+      ],
+    },
+  },
+  {
+    id: "mute-speakers",
+    type: "multimedia",
+    label: "Mute Speakers",
+    icon: <VolumeX size={18} />,
+    description: "Toggle speaker/headphone output (deafen)",
+    payload: { name: "Mute Speakers", mediaCommand: "mute-output" },
+    appearance: {
+      layers: [
+        { id: "bg-spk", type: "background", visible: true, opacity: 1, order: 0,
+          backgroundGradientStart: "#123d1a", backgroundGradientEnd: "#05140a", backgroundGradientDirection: 135 },
+        { id: "tx-spk", type: "text", visible: true, opacity: 1, order: 1, text: "SPK", fontSize: 16, textColor: "#c9f7d2" },
       ],
     },
   },

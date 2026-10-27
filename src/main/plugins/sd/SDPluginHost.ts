@@ -921,6 +921,20 @@ export class SDPluginHost extends EventEmitter {
     action: SdPluginAction,
     origin?: { deviceId: string; keyIndex: number },
   ): Promise<void> {
+    // Honest failure: dispatching into a plugin that is not installed,
+    // enabled, or running must NOT report success — the deck key would stay
+    // dead while the log claimed otherwise (2026-10-27 Discord test).
+    const entry = this.plugins.get(action.pluginUUID);
+    if (!entry) {
+      throw new Error(
+        `SD plugin "${action.pluginUUID}" is not installed — install it in the Plugins view`,
+      );
+    }
+    if (entry.status !== "running") {
+      throw new Error(
+        `SD plugin "${action.pluginUUID}" is ${entry.status} — enable/start it in the Plugins view`,
+      );
+    }
     if (origin) {
       const key = slotKey(origin.deviceId, "Keypad", origin.keyIndex);
       const existing = this.slots.get(key);

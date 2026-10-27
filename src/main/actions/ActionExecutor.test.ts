@@ -455,6 +455,61 @@ describe("ActionExecutor", () => {
     });
   });
 
+  describe("multimedia (pactl mic/output mute)", () => {
+    it("toggles the default source via pactl for mute-mic", async () => {
+      mockWhich(["pactl"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "Mute: yes" });
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "multimedia", mediaCommand: "mute-mic" }),
+      );
+
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "pactl",
+        ["set-source-mute", "@DEFAULT_SOURCE@", "toggle"],
+        expect.any(Function),
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining("microphone is now MUTED"),
+      );
+    });
+
+    it("toggles the default sink via pactl for mute-output", async () => {
+      mockWhich(["pactl"]);
+      cp.execFile.mockImplementation((...callArgs: unknown[]) => {
+        const cb = callArgs.find((a) => typeof a === "function") as
+          | ((err: unknown, out?: { stdout: string }) => void)
+          | undefined;
+        cb?.(null, { stdout: "Mute: no" });
+      });
+
+      await executor.executeAction(
+        makeAction({ type: "multimedia", mediaCommand: "mute-output" }),
+      );
+
+      expect(cp.execFile).toHaveBeenCalledWith(
+        "pactl",
+        ["set-sink-mute", "@DEFAULT_SINK@", "toggle"],
+        expect.any(Function),
+      );
+    });
+
+    it("fails with an install hint when pactl is missing", async () => {
+      mockWhich([]);
+      await executor.executeAction(
+        makeAction({ type: "multimedia", mediaCommand: "mute-mic" }),
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining("pactl is not installed"),
+      );
+    });
+  });
+
   describe("macro (Wayland text typing)", () => {
     it("does NOT use xdotool for text steps on Wayland", async () => {
       vi.stubEnv("WAYLAND_DISPLAY", "wayland-0");
