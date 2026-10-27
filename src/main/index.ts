@@ -319,12 +319,12 @@ if (!gotTheLock) {
       return profileManager.importProfile(profileJson);
     });
 
-    // Elgato .streamDeckProfile import (official profile files). No shared
-    // channel constant / preload binding yet — renderer wiring is a later
-    // phase, so this handler is only reachable over raw ipcRenderer.invoke.
+    // Elgato .streamDeckProfile import (official profile files). Registered
+    // through the shared channel constant; the preload exposes it as
+    // profile.importElgato and the Profiles view drives it (import UI).
     const elgatoImporter = new ElgatoProfileImporter(profileManager, logger);
     ipcMain.handle(
-      "profile.importElgato",
+      IPC_CHANNELS.PROFILE_IMPORT_ELGATO,
       async (_, zipPath: string): Promise<ElgatoImportReport> => {
         return elgatoImporter.importFile(zipPath, {
           assetsDir: path.join(app.getPath("userData"), "assets"),

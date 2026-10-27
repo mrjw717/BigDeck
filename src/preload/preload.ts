@@ -14,6 +14,7 @@ import type {
   KeyConfig,
 } from "../shared/types";
 import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
+import type { ElgatoImportReport } from "../main/profiles/elgato/ElgatoProfileImporter";
 
 // Type-safe API exposed to renderer
 const api = {
@@ -110,6 +111,8 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_EXPORT, profileId),
     import: (profileJson: string): Promise<Profile> =>
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT, profileJson),
+    importElgato: (filePath: string): Promise<ElgatoImportReport> =>
+      ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT_ELGATO, filePath),
 
     // Event listeners
     onChanged: (callback: (profile: Profile) => void) => {

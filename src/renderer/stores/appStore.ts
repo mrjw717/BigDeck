@@ -88,6 +88,7 @@ declare global {
         activate: (profileId: string) => Promise<void>;
         export: (profileId: string) => Promise<string>;
         import: (profileJson: string) => Promise<any>;
+        importElgato: (filePath: string) => Promise<any>;
         onChanged: (callback: (profile: any) => void) => () => void;
         onPageChanged: (callback: (data: { profileId: string; pageIndex: number }) => void) => () => void;
       };
@@ -106,6 +107,10 @@ declare global {
         close: () => Promise<void>;
         isMaximized: () => Promise<boolean>;
         onMaximizedChanged: (callback: (maximized: boolean) => void) => () => void;
+      };
+      dialog: {
+        openFile: (options: any) => Promise<string[] | undefined>;
+        openDirectory: (options: any) => Promise<string[] | undefined>;
       };
       settings: {
         get: () => Promise<any>;

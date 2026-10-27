@@ -9,10 +9,26 @@ import {
   MoreVertical,
   Layers,
   ChevronDown,
+  FileUp,
+  X,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { useProfileStore } from "../stores/profileStore";
 import { DEVICE_SPECS } from "../../shared/constants";
 import type { Profile, DeviceType } from "../../shared/types";
+import type { ElgatoImportReport } from "../../main/profiles/elgato/ElgatoProfileImporter";
+
+const EMPTY_ELGATO_REPORT: ElgatoImportReport = {
+  ok: false,
+  profileId: null,
+  profileName: "",
+  deviceType: null,
+  importedKeys: 0,
+  skippedKeys: [],
+  warnings: [],
+  errors: [],
+};
 
 export function ProfileManager() {
   const {
@@ -23,11 +39,16 @@ export function ProfileManager() {
     activateProfile,
     exportProfile,
     importProfile,
+    initialize,
   } = useProfileStore();
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState("");
   const [newProfileDevice, setNewProfileDevice] =
     useState<DeviceType>("original");
+  const [isImportingElgato, setIsImportingElgato] = useState(false);
+  const [elgatoReport, setElgatoReport] = useState<ElgatoImportReport | null>(
+    null,
+  );
 
   const handleCreate = async () => {
     if (newProfileName.trim()) {
@@ -64,6 +85,48 @@ export function ProfileManager() {
     input.click();
   };
 
+  /**
+   * Import an official Elgato `.streamDeckProfile` zip: native file dialog
+   * (dialog:open-file spreads renderer options over the openFile properties,
+   * so filters ride along — no dedicated IPC needed) → main-process importer
+   * → report card. On success the profile list is refreshed from main (the
+   * import writes through ProfileManager, which the store doesn't observe).
+   */
+  const handleImportElgato = async () => {
+    let filePaths: string[] | undefined;
+    try {
+      filePaths = await window.bigdeck?.dialog.openFile({
+        title: "Import Elgato Profile",
+        filters: [
+          {
+            name: "Elgato Stream Deck Profile",
+            extensions: ["streamDeckProfile"],
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Elgato profile dialog failed:", error);
+      return;
+    }
+    if (!filePaths || filePaths.length === 0) return;
+
+    setIsImportingElgato(true);
+    try {
+      const report = await window.bigdeck?.profile.importElgato(filePaths[0]);
+      if (report) {
+        setElgatoReport(report);
+        if (report.ok) await initialize();
+      }
+    } catch (error) {
+      setElgatoReport({
+        ...EMPTY_ELGATO_REPORT,
+        errors: [String(error)],
+      });
+    } finally {
+      setIsImportingElgato(false);
+    }
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -83,6 +146,15 @@ export function ProfileManager() {
             Import
           </button>
           <button
+            onClick={handleImportElgato}
+            disabled={isImportingElgato}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+            title="Import an official Elgato .streamDeckProfile export"
+          >
+            <FileUp size={18} />
+            {isImportingElgato ? "Importing..." : "Import Elgato Profile"}
+          </button>
+          <button
             onClick={() => setIsCreating(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
@@ -91,6 +163,14 @@ export function ProfileManager() {
           </button>
         </div>
       </div>
+
+      {/* Elgato import result card */}
+      {elgatoReport && (
+        <ElgatoImportResultCard
+          report={elgatoReport}
+          onDismiss={() => setElgatoReport(null)}
+        />
+      )}
 
       {/* Create New Profile Modal */}
       {isCreating && (
@@ -187,6 +267,113 @@ export function ProfileManager() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+interface ElgatoImportResultCardProps {
+  report: ElgatoImportReport;
+  onDismiss: () => void;
+}
+
+/**
+ * Result card for an Elgato `.streamDeckProfile` import — success summary
+ * (name, device, imported key count) plus the full skipped/warning/error
+ * detail the importer reports, so a partial import is never silent.
+ */
+function ElgatoImportResultCard({
+  report,
+  onDismiss,
+}: ElgatoImportResultCardProps) {
+  const deviceName = report.deviceType
+    ? DEVICE_SPECS[report.deviceType as DeviceType]?.name ?? report.deviceType
+    : "Unknown device";
+
+  return (
+    <div
+      className={`mb-6 bg-card border rounded-xl p-4 ${
+        report.ok ? "border-green-500/40" : "border-destructive/40"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          {report.ok ? (
+            <CheckCircle2 size={18} className="text-green-500" />
+          ) : (
+            <AlertTriangle size={18} className="text-destructive" />
+          )}
+          <div>
+            <h3 className="font-semibold text-sm">
+              {report.ok
+                ? `Imported "${report.profileName}"`
+                : "Elgato profile import failed"}
+            </h3>
+            {report.ok && (
+              <p className="text-xs text-muted-foreground">
+                {deviceName} • {report.importedKeys} key
+                {report.importedKeys !== 1 ? "s" : ""} imported
+              </p>
+            )}
+          </div>
+        </div>
+        <button
+          onClick={onDismiss}
+          className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          aria-label="Dismiss import report"
+        >
+          <X size={14} />
+        </button>
+      </div>
+
+      {report.skippedKeys.length > 0 && (
+        <div className="mt-3">
+          <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+            Skipped keys ({report.skippedKeys.length})
+          </div>
+          <div className="max-h-24 overflow-y-auto space-y-0.5">
+            {report.skippedKeys.map((skip, i) => (
+              <div
+                key={`${skip.keyIndex}-${skip.uuid}-${i}`}
+                className="text-xs text-muted-foreground"
+              >
+                <span className="font-mono">#{skip.keyIndex}</span>{" "}
+                {skip.reason}{" "}
+                <span className="text-muted-foreground/60">({skip.uuid})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {report.warnings.length > 0 && (
+        <div className="mt-3">
+          <div className="text-[10px] font-medium text-yellow-500 uppercase tracking-wider mb-1">
+            Warnings ({report.warnings.length})
+          </div>
+          <div className="space-y-0.5">
+            {report.warnings.map((warning, i) => (
+              <div key={i} className="text-xs text-yellow-500/90">
+                {warning}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {report.errors.length > 0 && (
+        <div className="mt-3">
+          <div className="text-[10px] font-medium text-destructive uppercase tracking-wider mb-1">
+            Errors ({report.errors.length})
+          </div>
+          <div className="space-y-0.5">
+            {report.errors.map((error, i) => (
+              <div key={i} className="text-xs text-destructive">
+                {error}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
