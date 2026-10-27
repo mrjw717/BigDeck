@@ -107,12 +107,39 @@ for line in sys.stdin:
         emit(EV_SYN, 0, 0)
 `.trim();
 
+/** US-layout printable ASCII -> [evdev keycode, needsShift]. */
+export const CHAR_KEYS: Record<string, [number, boolean]> = {
+  " ": [57, false],
+  "\n": [28, false],
+  a: [30, false], b: [48, false], c: [46, false], d: [32, false], e: [18, false],
+  f: [33, false], g: [34, false], h: [35, false], i: [23, false], j: [36, false],
+  k: [37, false], l: [38, false], m: [50, false], n: [49, false], o: [24, false],
+  p: [25, false], q: [16, false], r: [19, false], s: [31, false], t: [20, false],
+  u: [22, false], v: [47, false], w: [17, false], x: [45, false], y: [21, false],
+  z: [44, false],
+  "1": [2, false], "2": [3, false], "3": [4, false], "4": [5, false],
+  "5": [6, false], "6": [7, false], "7": [8, false], "8": [9, false],
+  "9": [10, false], "0": [11, false],
+  "-": [12, false], "=": [13, false], "[": [26, false], "]": [27, false],
+  ";": [39, false], "'": [40, false], ",": [51, false], ".": [52, false],
+  "/": [53, false], "\\": [43, false], "`": [41, false],
+  "!": [2, true], "@": [3, true], "#": [4, true], "$": [5, true],
+  "%": [6, true], "^": [7, true], "&": [8, true], "*": [9, true],
+  "(": [10, true], ")": [11, true], "_": [12, true], "+": [13, true],
+  "{": [26, true], "}": [27, true], "|": [43, true], ":": [39, true],
+  '"': [40, true], "<": [51, true], ">": [52, true], "?": [53, true],
+  "~": [41, true],
+  A: [30, true], B: [48, true], C: [46, true], D: [32, true], E: [18, true],
+  F: [33, true], G: [34, true], H: [35, true], I: [23, true], J: [36, true],
+  K: [37, true], L: [38, true], M: [50, true], N: [49, true], O: [24, true],
+  P: [25, true], Q: [16, true], R: [19, true], S: [31, true], T: [20, true],
+  U: [22, true], V: [47, true], W: [17, true], X: [45, true], Y: [21, true],
+  Z: [44, true],
+};
+
 export interface UinputCombo {
-  /** Key codes held down before the main key (modifiers). */
   down: number[];
-  /** The main key's code. */
   press: number;
-  /** Release order: main key first, then modifiers (LIFO). */
   up: number[];
 }
 
@@ -222,6 +249,42 @@ export class UinputInjector {
     // Up order: main key first, then modifiers LIFO.
     const up = [press, ...[...down].reverse()];
     return { down, press, up };
+  }
+
+  /**
+   * Type literal text character-by-character (US layout). Unknown characters
+   * are skipped with a warning; returns false only when the helper is not
+   * running (caller falls back to wtype/ydotool/xdotool).
+   */
+  async sendText(text: string): Promise<boolean> {
+    if (!(await this.ensureStarted()) || !this.child || !this.ready) {
+      return false;
+    }
+    try {
+      const send = (code: number, value: number) =>
+        this.child!.stdin.write(
+          JSON.stringify({ type: "key", code, value }) + "\n",
+        );
+      for (const ch of text) {
+        const mapped = CHAR_KEYS[ch];
+        if (!mapped) {
+          this.logger.warn(
+            `uinput text: no key mapping for ${JSON.stringify(ch)} — skipped`,
+          );
+          continue;
+        }
+        const [code, needsShift] = mapped;
+        if (needsShift) send(42, 1); // left shift down
+        send(code, 1);
+        send(code, 0);
+        if (needsShift) send(42, 0); // left shift up
+      }
+      return true;
+    } catch (error) {
+      this.ready = false;
+      this.logger.error("uinput text typing failed:", error);
+      return false;
+    }
   }
 
   /**

@@ -694,6 +694,10 @@ export class ActionExecutor {
    * which is X11-only and silently did nothing on Wayland sessions.
    */
   private async typeText(text: string): Promise<boolean> {
+    // uinput first: native kernel injection, works on every compositor
+    // (KDE/GNOME Wayland reject wtype's virtual-keyboard protocol).
+    if (await this.uinput.sendText(text)) return true;
+
     if (this.isWaylandSession()) {
       // Same fall-through contract as sendKeyCombo: an installed-but-failing
       // backend must not block the next one.
@@ -985,6 +989,10 @@ export class ActionExecutor {
         "pactl",
         [isMic ? "set-source-mute" : "set-sink-mute", target, "toggle"],
       );
+      // PipeWire applies the mute asynchronously — an immediate state query
+      // races ahead and reads the STALE pre-toggle state (logged "unmuted"
+      // after a successful mute). Settle before reading back.
+      await new Promise((resolve) => setTimeout(resolve, 150));
       const state = await execFileAsync(
         isMic ? "get-source-mute" : "get-sink-mute",
         [target],

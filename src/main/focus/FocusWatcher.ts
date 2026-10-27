@@ -167,7 +167,7 @@ export class FocusWatcher extends EventEmitter {
         if (idx === -1) continue;
         const payload = line.slice(idx + JOURNAL_MARK.length);
         const [appClass = "", name = "", caption = ""] = payload.split("|");
-        this.emitFocus(appClass, name || caption);
+        this.emitFocus(appClass, caption || name); // title = CAPTION (the window title, e.g. "codex" in a terminal tab)
       }
     });
     child.on("exit", () => {
