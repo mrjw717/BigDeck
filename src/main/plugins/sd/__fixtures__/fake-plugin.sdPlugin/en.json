@@ -1,0 +1,8 @@
+{
+  "Name": "Fake SD Plugin",
+  "Description": "Minimal fake Stream Deck plugin used by SDPluginHost integration tests",
+  "com.bigdeck.test.fake.action": {
+    "Name": "Fake Action",
+    "Tooltip": "Echoes host events back as logMessage"
+  }
+}

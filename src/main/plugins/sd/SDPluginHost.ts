@@ -75,6 +75,7 @@ import {
   type SDManifest,
 } from "./SDManifest";
 import { SDPluginProcess, type SDProcessStatus } from "./SDPluginProcess";
+import { loadSdLocale, normalizeSdLanguage, type SDLocale } from "./SDLocales";
 
 // Re-exported for consumers of the host's public API.
 export type { SDController, SDManifest };
@@ -131,6 +132,11 @@ export interface SDPluginHostOptions {
   appVersion?: string;
   /** Respawn crashed plugin processes. Default false (v1). */
   respawn?: boolean;
+  /**
+   * App language for plugin locale files (<lang>.json, "en" fallback).
+   * Localized names surface in SDPluginSummary for the UI action catalog.
+   */
+  language?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +181,13 @@ export type SDPluginStatus =
   | "unsupported"
   | "disabled";
 
+export interface SDActionSummary {
+  uuid: string;
+  /** Locale Name for the host language, falling back to the manifest name. */
+  name: string;
+  tooltip?: string;
+}
+
 export interface SDPluginSummary {
   uuid: string;
   name: string;
@@ -183,12 +196,19 @@ export interface SDPluginSummary {
   enabled: boolean;
   platformStatus: "verified" | "unverified";
   codePathSource: SDCodePathSource;
+  /** Language file the summary's localized strings came from (null = none). */
+  localeLanguage: string | null;
+  /** Actions with localized names — the UI action catalog's data source. */
+  actions: SDActionSummary[];
 }
 
 interface SDPluginEntry {
   uuid: string;
   dir: string;
   manifest: SDManifest;
+  /** Loaded <lang>.json for the host language (null when none found). */
+  locale: SDLocale | null;
+  localeLanguage: string | null;
   codePath: string | null;
   codePathSource: SDCodePathSource;
   platformStatus: "verified" | "unverified";
@@ -379,6 +399,7 @@ export class SDPluginHost extends EventEmitter {
   private readonly stateDir: string;
   private readonly appVersion: string;
   private readonly respawn: boolean;
+  private readonly language: string;
 
   private wss: WebSocketServer | null = null;
   private port: number | null = null;
@@ -401,6 +422,7 @@ export class SDPluginHost extends EventEmitter {
     this.stateDir = opts.stateDir;
     this.appVersion = opts.appVersion ?? "1.0.0";
     this.respawn = opts.respawn ?? false;
+    this.language = normalizeSdLanguage(opts.language);
   }
 
   getPort(): number | null {
@@ -568,12 +590,18 @@ export class SDPluginHost extends EventEmitter {
       fileExists: (p) => fs.existsSync(p),
     });
 
+    // Localized plugin/action names for the app language (docs in
+    // SDLocales.ts). Never fails — falls back to manifest names.
+    const { locale, language: localeLanguage } = loadSdLocale(dir, this.language, this.logger);
+
     const enabled = this.readEnabledMap()[manifest.UUID] !== false;
 
     return {
       uuid: manifest.UUID,
       dir,
       manifest,
+      locale,
+      localeLanguage,
       codePath: resolution.codePath,
       codePathSource: resolution.source,
       platformStatus: resolution.platformStatus,
@@ -672,12 +700,19 @@ export class SDPluginHost extends EventEmitter {
   private summarize(entry: SDPluginEntry): SDPluginSummary {
     return {
       uuid: entry.uuid,
-      name: entry.manifest.Name,
+      // Locale Name wins over the manifest name (official app behavior).
+      name: entry.locale?.Name ?? entry.manifest.Name,
       version: entry.manifest.Version,
       status: entry.status,
       enabled: entry.enabled,
       platformStatus: entry.platformStatus,
       codePathSource: entry.codePathSource,
+      localeLanguage: entry.localeLanguage,
+      actions: entry.manifest.Actions.map((action) => ({
+        uuid: action.UUID,
+        name: entry.locale?.actions[action.UUID]?.Name ?? action.Name,
+        tooltip: entry.locale?.actions[action.UUID]?.Tooltip ?? action.Tooltip,
+      })),
     };
   }
 
@@ -1139,7 +1174,7 @@ export class SDPluginHost extends EventEmitter {
 
     const info = {
       application: {
-        language: "en",
+        language: this.language,
         platform: "linux",
         version: this.appVersion,
       },

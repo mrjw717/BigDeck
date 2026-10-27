@@ -1,0 +1,8 @@
+{
+  "Name": "Fake-SD-Plugin",
+  "Description": "Minimales Fake-Stream-Deck-Plugin für BigDeck-Integrationstests",
+  "com.bigdeck.test.fake.action": {
+    "Name": "Fake-Aktion",
+    "Tooltip": "Gibt Host-Events als logMessage zurück"
+  }
+}
