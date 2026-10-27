@@ -23,6 +23,7 @@ import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
 import { SDPluginHost } from "./plugins/sd/SDPluginHost";
 import { wireSdPlacements, wireSdProfileSwitching } from "./plugins/sd/SdBridge";
+import { IconPackManager } from "./assets/IconPack";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
 import { Logger } from "./utils/Logger";
@@ -41,6 +42,7 @@ let profileManager: ProfileManager;
 let actionEngine: ActionEngine;
 let hardwareSync: HardwareSync;
 let pluginManager: PluginManager;
+let iconPackManager: IconPackManager;
 let sdPluginHost: SDPluginHost | null = null;
 let networkServer: NetworkServer;
 let settingsManager: SettingsManager;
@@ -361,6 +363,22 @@ if (!gotTheLock) {
     ipcMain.handle(IPC_CHANNELS.PLUGIN_DISABLE, (_, pluginId: string) => {
       return pluginManager.disablePlugin(pluginId);
     });
+
+    // Icon pack IPC handlers (Elgato .sdIconPack libraries)
+    ipcMain.handle(IPC_CHANNELS.ASSETS_LIST_ICON_PACKS, () => {
+      return iconPackManager.listIconPacks();
+    });
+
+    ipcMain.handle(IPC_CHANNELS.ASSETS_LIST_ICONS, (_, packId: string) => {
+      return iconPackManager.listIcons(packId);
+    });
+
+    ipcMain.handle(
+      IPC_CHANNELS.ASSETS_GET_ICON,
+      (_, packId: string, iconId: string) => {
+        return iconPackManager.getIconSvgOrFile(packId, iconId);
+      },
+    );
 
     // Asset IPC handlers
     ipcMain.handle(IPC_CHANNELS.ASSET_UPLOAD, async (_, filePath: string) => {
@@ -762,6 +780,20 @@ if (!gotTheLock) {
       });
 
       pluginManager = new PluginManager(logger);
+
+      // Icon pack library (Elgato .sdIconPack). Packs are imported into
+      // <userData>/iconpacks; at startup we seed it from the app's bundled
+      // pack directory when one exists (assets/iconpacks — see
+      // docs/ICON-PACKS.md). Already-installed packs are never overwritten,
+      // and a missing seed dir imports nothing.
+      iconPackManager = new IconPackManager({
+        logger,
+        packsDir: path.join(app.getPath("userData"), "iconpacks"),
+      });
+      void iconPackManager.importAllFrom(
+        path.join(app.getAppPath(), "assets", "iconpacks"),
+      );
+
       networkServer = new NetworkServer(
         logger,
         deviceManager,

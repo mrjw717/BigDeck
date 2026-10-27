@@ -13,6 +13,7 @@ import type {
   PluginInfo,
   KeyConfig,
 } from "../shared/types";
+import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
 
 // Type-safe API exposed to renderer
 const api = {
@@ -204,6 +205,16 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.PLUGIN_ENABLE, pluginId),
     disable: (pluginId: string): Promise<void> =>
       ipcRenderer.invoke(IPC_CHANNELS.PLUGIN_DISABLE, pluginId),
+  },
+
+  // Icon pack APIs (Elgato .sdIconPack libraries)
+  assets: {
+    listIconPacks: (): Promise<IconPackSummary[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.ASSETS_LIST_ICON_PACKS),
+    listIcons: (packId: string): Promise<IconEntry[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.ASSETS_LIST_ICONS, packId),
+    getIcon: (packId: string, iconId: string): Promise<IconFile | null> =>
+      ipcRenderer.invoke(IPC_CHANNELS.ASSETS_GET_ICON, packId, iconId),
   },
 
   // Error handler

@@ -1,0 +1,11 @@
+{
+  "Name": "BigDeck Test Icons",
+  "Version": "1.0.0",
+  "Description": "Minimal .sdIconPack for hand-testing the icon pack catalog (see docs/ICON-PACKS.md). Drop the parent folder's packs into the app via assets.listIconPacks / importAllFrom, or copy into <userData>/iconpacks/.",
+  "Author": "BigDeck Test",
+  "URL": "https://github.com/",
+  "Icon": "icon.svg",
+  "License": "license.txt",
+  "pinned": "false",
+  "canhide": "true"
+}

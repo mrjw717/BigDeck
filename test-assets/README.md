@@ -11,6 +11,7 @@ edit freely. Ask the agent to add more folders as new test needs appear.
 | `images/`   | Appearance/layer tests — PNGs, GIFs (static + animated), fit-mode tests, chroma-key art (e.g. a logo on a solid background to knock out). |
 | `sounds/`   | Soundboard tests (audio playback actions). |
 | `plugins/`  | `.streamDeckPlugin` install tests for the SD plugin host. |
+| `iconpacks/` | `.sdIconPack` icon-library tests (`com.bigdeck.test.sdIconPack`) — copy into `<userData>/iconpacks/` (or point the seed import at this folder) and check `window.bigdeck.assets.listIconPacks()` / `listIcons()` / `getIcon()`. |
 
 ## Notes
 

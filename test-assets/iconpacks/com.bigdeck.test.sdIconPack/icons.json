@@ -1,0 +1,5 @@
+[
+  { "path": "TestAdd.svg", "name": "Add", "tags": ["add", "plus", "create"] },
+  { "path": "TestRemove.svg", "name": "Remove", "tags": ["remove", "minus", "delete"] },
+  { "path": "TestStar.svg", "name": "Star", "tags": ["star", "favorite", "rating"] }
+]

@@ -202,6 +202,11 @@ export const IPC_CHANNELS = {
   PLUGIN_ENABLE: "plugin:enable",
   PLUGIN_DISABLE: "plugin:disable",
 
+  // Icon packs (Elgato .sdIconPack libraries) — new "assets" namespace
+  ASSETS_LIST_ICON_PACKS: "assets.listIconPacks",
+  ASSETS_LIST_ICONS: "assets.listIcons",
+  ASSETS_GET_ICON: "assets.getIcon",
+
   // General
   ERROR: "error",
 } as const;
