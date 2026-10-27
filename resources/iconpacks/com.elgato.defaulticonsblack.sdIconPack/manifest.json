@@ -1,0 +1,11 @@
+{
+    "Name": "Elgato Icons (Black)",
+    "Version": "2.0.0",
+    "Description": "A collection of Elgato icons in black, suitable for light backgrounds.",
+    "Author": "Elgato Systems",
+    "URL": "https://www.elgato.com",
+    "Icon": "icon.svg",
+    "License": "license.txt",
+    "pinned": "true",
+    "canhide": "true"
+}

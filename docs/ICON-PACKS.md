@@ -113,9 +113,10 @@ here so the two extensions aren't confused.
 
 Packs are **imported** (recursive copy) into `<userData>/iconpacks/`, mirroring
 the `sdplugins` directory pattern. At startup the app seeds this folder from
-`<appPath>/assets/iconpacks/` if that seed directory exists (ship packs there
-via electron-builder `extraResources` to bundle them); user-imported packs are
-never overwritten by a re-seed.
+the bundled `resources/iconpacks/` directory — packaged builds embed it via
+electron-builder `extraResources` (`resources/iconpacks` →
+`<resources>/iconpacks`, see electron-builder.yml); dev runs read the repo
+checkout directly. User-imported packs are never overwritten by a re-seed.
 
 ### API (`src/main/assets/IconPack.ts` — `IconPackManager`)
 

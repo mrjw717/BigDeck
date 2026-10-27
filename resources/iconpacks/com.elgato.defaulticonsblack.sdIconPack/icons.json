@@ -1,0 +1,4275 @@
+[
+  {
+    "path": "IconAccessibility-Black.svg",
+    "name": "Accessibility icon (Outlined, Black)",
+    "tags": ["accessibility", "inclusive", "assistive", "universal design"]
+  },
+  {
+    "path": "IconAccessibility-Filled-Black.svg",
+    "name": "Accessibility icon (Filled, Black)",
+    "tags": ["accessibility", "inclusive", "assistive", "universal design"]
+  },
+  {
+    "path": "IconAccessories-Black.svg",
+    "name": "Accessories icon (Outlined, Black)",
+    "tags": ["accessories", "gear", "peripherals", "add-ons", "equipment"]
+  },
+  {
+    "path": "IconAction-Black.svg",
+    "name": "Action icon (Outlined, Black)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconAction-Filled-Black.svg",
+    "name": "Action icon (Filled, Black)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconActionWheel-Black.svg",
+    "name": "Action Wheel icon (Outlined, Black)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconActionWheel-Filled-Black.svg",
+    "name": "Action Wheel icon (Filled, Black)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconAddCircle-Black.svg",
+    "name": "Add Circle icon (Outlined, Black)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAddCircle-Filled-Black.svg",
+    "name": "Add Circle icon (Filled, Black)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAdd-Black.svg",
+    "name": "Add icon (Outlined, Black)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAdjustHorizontal-Black.svg",
+    "name": "Adjust Horizontal icon (Outlined, Black)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustHorizontal-Filled-Black.svg",
+    "name": "Adjust Horizontal icon (Filled, Black)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustVertical-Black.svg",
+    "name": "Adjust Vertical icon (Outlined, Black)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustVertical-Filled-Black.svg",
+    "name": "Adjust Vertical icon (Filled, Black)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAlignBottom-Black.svg",
+    "name": "Align Bottom icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignBottom-Filled-Black.svg",
+    "name": "Align Bottom icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignHorizontalCenter-Black.svg",
+    "name": "Align Horizontal Center icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignHorizontalCenter-Filled-Black.svg",
+    "name": "Align Horizontal Center icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignLeft-Black.svg",
+    "name": "Align Left icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignLeft-Filled-Black.svg",
+    "name": "Align Left icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignRight-Black.svg",
+    "name": "Align Right icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignRight-Filled-Black.svg",
+    "name": "Align Right icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignTop-Black.svg",
+    "name": "Align Top icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignTop-Filled-Black.svg",
+    "name": "Align Top icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignVerticalCenter-Black.svg",
+    "name": "Align Vertical Center icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignVerticalCenter-Filled-Black.svg",
+    "name": "Align Vertical Center icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAnalytics-Black.svg",
+    "name": "Analytics icon (Outlined, Black)",
+    "tags": ["analytics", "insights", "metrics", "data", "reporting"]
+  },
+  {
+    "path": "IconAnalytics-Filled-Black.svg",
+    "name": "Analytics icon (Filled, Black)",
+    "tags": ["analytics", "insights", "metrics", "data", "reporting"]
+  },
+  {
+    "path": "IconAppsAdd-Black.svg",
+    "name": "Apps Add icon (Outlined, Black)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconAppsAdd-Filled-Black.svg",
+    "name": "Apps Add icon (Filled, Black)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconApps-Black.svg",
+    "name": "Apps icon (Outlined, Black)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconApps-Filled-Black.svg",
+    "name": "Apps icon (Filled, Black)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconArCheck-Black.svg",
+    "name": "Ar Check icon (Outlined, Black)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconArCheck-Filled-Black.svg",
+    "name": "Ar Check icon (Filled, Black)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconAr-Black.svg",
+    "name": "Ar icon (Outlined, Black)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconAr-Filled-Black.svg",
+    "name": "Ar icon (Filled, Black)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconArrowDown-Black.svg",
+    "name": "Arrow Down icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowDownToRight-Black.svg",
+    "name": "Arrow Down To Right icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowHorizontal-Black.svg",
+    "name": "Arrow Horizontal icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowLeft-Black.svg",
+    "name": "Arrow Left icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowRight-Black.svg",
+    "name": "Arrow Right icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowUp-Black.svg",
+    "name": "Arrow Up icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowVertical-Black.svg",
+    "name": "Arrow Vertical icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArticle-Black.svg",
+    "name": "Article icon (Outlined, Black)",
+    "tags": ["article", "story", "write-up", "content", "publication"]
+  },
+  {
+    "path": "IconArticle-Filled-Black.svg",
+    "name": "Article icon (Filled, Black)",
+    "tags": ["article", "story", "write-up", "content", "publication"]
+  },
+  {
+    "path": "IconAspectRatio-Black.svg",
+    "name": "Aspect Ratio icon (Outlined, Black)",
+    "tags": ["aspect ratio", "dimensions", "framing", "proportion", "layout"]
+  },
+  {
+    "path": "IconAspectRatio-Filled-Black.svg",
+    "name": "Aspect Ratio icon (Filled, Black)",
+    "tags": ["aspect ratio", "dimensions", "framing", "proportion", "layout"]
+  },
+  {
+    "path": "IconAttachment-Black.svg",
+    "name": "Attachment icon (Outlined, Black)",
+    "tags": ["attachment", "paperclip", "file", "document", "include"]
+  },
+  {
+    "path": "IconAutoScrollDecrease-Black.svg",
+    "name": "Auto Scroll Decrease icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDecrease-Filled-Black.svg",
+    "name": "Auto Scroll Decrease icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDown-Black.svg",
+    "name": "Auto Scroll Down icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDown-Filled-Black.svg",
+    "name": "Auto Scroll Down icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScroll-Black.svg",
+    "name": "Auto Scroll icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScroll-Filled-Black.svg",
+    "name": "Auto Scroll icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollIncrease-Black.svg",
+    "name": "Auto Scroll Increase icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollIncrease-Filled-Black.svg",
+    "name": "Auto Scroll Increase icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollSet-Black.svg",
+    "name": "Auto Scroll Set icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollSet-Filled-Black.svg",
+    "name": "Auto Scroll Set icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollUp-Black.svg",
+    "name": "Auto Scroll Up icon (Outlined, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollUp-Filled-Black.svg",
+    "name": "Auto Scroll Up icon (Filled, Black)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAuxiliaryAdd-Black.svg",
+    "name": "Auxiliary Add icon (Outlined, Black)",
+    "tags": ["auxiliary", "audio channel", "input", "routing", "mix"]
+  },
+  {
+    "path": "IconAuxiliary-Black.svg",
+    "name": "Auxiliary icon (Outlined, Black)",
+    "tags": ["auxiliary", "audio channel", "input", "routing", "mix"]
+  },
+  {
+    "path": "IconAvatar-Black.svg",
+    "name": "Avatar icon (Outlined, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconAvatar-Filled-Black.svg",
+    "name": "Avatar icon (Filled, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconBackgroundRemove-Black.svg",
+    "name": "Background Remove icon (Outlined, Black)",
+    "tags": ["background", "layer", "backdrop", "canvas", "scene"]
+  },
+  {
+    "path": "IconBackgroundRemove-Filled-Black.svg",
+    "name": "Background Remove icon (Filled, Black)",
+    "tags": ["background", "layer", "backdrop", "canvas", "scene"]
+  },
+  {
+    "path": "IconBackspace-Black.svg",
+    "name": "Backspace icon (Outlined, Black)",
+    "tags": ["backspace", "delete", "erase", "keyboard", "typing"]
+  },
+  {
+    "path": "IconBackspace-Filled-Black.svg",
+    "name": "Backspace icon (Filled, Black)",
+    "tags": ["backspace", "delete", "erase", "keyboard", "typing"]
+  },
+  {
+    "path": "IconBadge-Black.svg",
+    "name": "Badge icon (Outlined, Black)",
+    "tags": ["badge", "award", "achievement", "label", "status"]
+  },
+  {
+    "path": "IconBadge-Filled-Black.svg",
+    "name": "Badge icon (Filled, Black)",
+    "tags": ["badge", "award", "achievement", "label", "status"]
+  },
+  {
+    "path": "IconBlinds-Black.svg",
+    "name": "Blinds icon (Outlined, Black)",
+    "tags": ["blinds", "window covering", "shade", "home decor", "privacy"]
+  },
+  {
+    "path": "IconBlinds-Filled-Black.svg",
+    "name": "Blinds icon (Filled, Black)",
+    "tags": ["blinds", "window covering", "shade", "home decor", "privacy"]
+  },
+  {
+    "path": "IconBlockQuote-Black.svg",
+    "name": "Block Quote icon (Outlined, Black)",
+    "tags": ["block", "deny", "restrict", "stop", "prevent"]
+  },
+  {
+    "path": "IconBluetooth-Black.svg",
+    "name": "Bluetooth icon (Outlined, Black)",
+    "tags": ["bluetooth", "wireless", "connect", "pair", "device"]
+  },
+  {
+    "path": "IconBlurBackground-Black.svg",
+    "name": "Blur Background icon (Outlined, Black)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconBlur-Black.svg",
+    "name": "Blur icon (Outlined, Black)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconBoard-Black.svg",
+    "name": "Board icon (Outlined, Black)",
+    "tags": ["board", "whiteboard", "planning", "collaboration", "workspace"]
+  },
+  {
+    "path": "IconBoard-Filled-Black.svg",
+    "name": "Board icon (Filled, Black)",
+    "tags": ["board", "whiteboard", "planning", "collaboration", "workspace"]
+  },
+  {
+    "path": "IconBold-Black.svg",
+    "name": "Bold icon (Outlined, Black)",
+    "tags": ["formatting", "text style", "typography", "emphasis", "font"]
+  },
+  {
+    "path": "IconBookClosed-Black.svg",
+    "name": "Book Closed icon (Outlined, Black)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBook-Black.svg",
+    "name": "Book icon (Outlined, Black)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBook-Filled-Black.svg",
+    "name": "Book icon (Filled, Black)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBriefcase-Black.svg",
+    "name": "Briefcase icon (Outlined, Black)",
+    "tags": ["briefcase", "business", "work", "office", "professional"]
+  },
+  {
+    "path": "IconBriefcase-Filled-Black.svg",
+    "name": "Briefcase icon (Filled, Black)",
+    "tags": ["briefcase", "business", "work", "office", "professional"]
+  },
+  {
+    "path": "IconBrightnessDecrease-Black.svg",
+    "name": "Brightness Decrease icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessDecrease-Filled-Black.svg",
+    "name": "Brightness Decrease icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightness-Black.svg",
+    "name": "Brightness icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightness-Filled-Black.svg",
+    "name": "Brightness icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessIncrease-Black.svg",
+    "name": "Brightness Increase icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessIncrease-Filled-Black.svg",
+    "name": "Brightness Increase icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessOff-Black.svg",
+    "name": "Brightness Off icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessOff-Filled-Black.svg",
+    "name": "Brightness Off icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessReset-Black.svg",
+    "name": "Brightness Reset icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessReset-Filled-Black.svg",
+    "name": "Brightness Reset icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessSet-Black.svg",
+    "name": "Brightness Set icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessSet-Filled-Black.svg",
+    "name": "Brightness Set icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBug-Black.svg",
+    "name": "Bug icon (Outlined, Black)",
+    "tags": ["bug", "issue", "problem", "debug", "report"]
+  },
+  {
+    "path": "IconBug-Filled-Black.svg",
+    "name": "Bug icon (Filled, Black)",
+    "tags": ["bug", "issue", "problem", "debug", "report"]
+  },
+  {
+    "path": "IconCalendar-Black.svg",
+    "name": "Calendar icon (Outlined, Black)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendar-Filled-Black.svg",
+    "name": "Calendar icon (Filled, Black)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendarToday-Black.svg",
+    "name": "Calendar Today icon (Outlined, Black)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendarToday-Filled-Black.svg",
+    "name": "Calendar Today icon (Filled, Black)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCamcorder-Black.svg",
+    "name": "Camcorder icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamcorder-Filled-Black.svg",
+    "name": "Camcorder icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFlip-Black.svg",
+    "name": "Camera Flip icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFlip-Filled-Black.svg",
+    "name": "Camera Flip icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetCheck-Black.svg",
+    "name": "Camera Frame Preset Check icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetCheck-Filled-Black.svg",
+    "name": "Camera Frame Preset Check icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePreset-Black.svg",
+    "name": "Camera Frame Preset icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePreset-Filled-Black.svg",
+    "name": "Camera Frame Preset icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetReset-Black.svg",
+    "name": "Camera Frame Preset Reset icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetReset-Filled-Black.svg",
+    "name": "Camera Frame Preset Reset icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetSet-Black.svg",
+    "name": "Camera Frame Preset Set icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetSet-Filled-Black.svg",
+    "name": "Camera Frame Preset Set icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamera-Black.svg",
+    "name": "Camera icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamera-Filled-Black.svg",
+    "name": "Camera icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInputCheck-Black.svg",
+    "name": "Camera Input Check icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInputCheck-Filled-Black.svg",
+    "name": "Camera Input Check icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInput-Black.svg",
+    "name": "Camera Input icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInput-Filled-Black.svg",
+    "name": "Camera Input icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraMonitorMountAlt-Black.svg",
+    "name": "Camera Monitor Mount Alt icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraMonitorMount-Black.svg",
+    "name": "Camera Monitor Mount icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraOff-Black.svg",
+    "name": "Camera Off icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraOff-Filled-Black.svg",
+    "name": "Camera Off icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraPreviewToPrompter-Black.svg",
+    "name": "Camera Preview To Prompter icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraPreviewToPrompter-Filled-Black.svg",
+    "name": "Camera Preview To Prompter icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraSensor-Black.svg",
+    "name": "Camera Sensor icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCapture-Black.svg",
+    "name": "Capture icon (Outlined, Black)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconCapture-Filled-Black.svg",
+    "name": "Capture icon (Filled, Black)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconCarousel-Black.svg",
+    "name": "Carousel icon (Outlined, Black)",
+    "tags": ["carousel", "gallery", "slideshow", "rotate", "images"]
+  },
+  {
+    "path": "IconCartAdd-Black.svg",
+    "name": "Cart Add icon (Outlined, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCart-Black.svg",
+    "name": "Cart icon (Outlined, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCart-Filled-Black.svg",
+    "name": "Cart icon (Filled, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCartRemove-Black.svg",
+    "name": "Cart Remove icon (Outlined, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCathedral-Black.svg",
+    "name": "Cathedral icon (Outlined, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCathedral-Filled-Black.svg",
+    "name": "Cathedral icon (Filled, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCave-Black.svg",
+    "name": "Cave icon (Outlined, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCave-Filled-Black.svg",
+    "name": "Cave icon (Filled, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconChairDesk-Black.svg",
+    "name": "Chair Desk icon (Outlined, Black)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconChapterCheck-Black.svg",
+    "name": "Chapter Check icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterCheck-Filled-Black.svg",
+    "name": "Chapter Check icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterDownToBottom-Black.svg",
+    "name": "Chapter Down To Bottom icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterDownToBottom-Filled-Black.svg",
+    "name": "Chapter Down To Bottom icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapter-Black.svg",
+    "name": "Chapter icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapter-Filled-Black.svg",
+    "name": "Chapter icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarker-Black.svg",
+    "name": "Chapter Marker icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarker-Filled-Black.svg",
+    "name": "Chapter Marker icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarkerOff-Black.svg",
+    "name": "Chapter Marker Off icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarkerOff-Filled-Black.svg",
+    "name": "Chapter Marker Off icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterSet-Black.svg",
+    "name": "Chapter Set icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterSet-Filled-Black.svg",
+    "name": "Chapter Set icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterUpToTop-Black.svg",
+    "name": "Chapter Up To Top icon (Outlined, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterUpToTop-Filled-Black.svg",
+    "name": "Chapter Up To Top icon (Filled, Black)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconCheckmarkCircle-Black.svg",
+    "name": "Checkmark Circle icon (Outlined, Black)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconCheckmarkCircle-Filled-Black.svg",
+    "name": "Checkmark Circle icon (Filled, Black)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconCheckmark-Black.svg",
+    "name": "Checkmark icon (Outlined, Black)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconChevronDown-Black.svg",
+    "name": "Chevron Down icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronLeft-Black.svg",
+    "name": "Chevron Left icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronRight-Black.svg",
+    "name": "Chevron Right icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronUp-Black.svg",
+    "name": "Chevron Up icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownDecrease-Black.svg",
+    "name": "Chevrons Down Decrease icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDown-Black.svg",
+    "name": "Chevrons Down icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownIncrease-Black.svg",
+    "name": "Chevrons Down Increase icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownSet-Black.svg",
+    "name": "Chevrons Down Set icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsLeft-Black.svg",
+    "name": "Chevrons Left icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsLeftRight-Black.svg",
+    "name": "Chevrons Left Right icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsRight-Black.svg",
+    "name": "Chevrons Right icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsUpDown-Black.svg",
+    "name": "Chevrons Up Down icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsUp-Black.svg",
+    "name": "Chevrons Up icon (Outlined, Black)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconCircle-Black.svg",
+    "name": "Circle icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCircle-Filled-Black.svg",
+    "name": "Circle icon (Filled, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCity-Black.svg",
+    "name": "City icon (Outlined, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCity-Filled-Black.svg",
+    "name": "City icon (Filled, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconClamp-Black.svg",
+    "name": "Clamp icon (Outlined, Black)",
+    "tags": ["clamp", "mount", "secure", "hardware", "hold"]
+  },
+  {
+    "path": "IconClipboard-Black.svg",
+    "name": "Clipboard icon (Outlined, Black)",
+    "tags": ["clipboard", "notes", "documents", "office", "copy"]
+  },
+  {
+    "path": "IconClipboard-Filled-Black.svg",
+    "name": "Clipboard icon (Filled, Black)",
+    "tags": ["clipboard", "notes", "documents", "office", "copy"]
+  },
+  {
+    "path": "IconClipguard-Black.svg",
+    "name": "Clipguard icon (Outlined, Black)",
+    "tags": ["clipguard", "limiter", "microphone", "safety", "audio"]
+  },
+  {
+    "path": "IconCloseCircle-Black.svg",
+    "name": "Close Circle icon (Outlined, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseCircle-Filled-Black.svg",
+    "name": "Close Circle icon (Filled, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconClose-Black.svg",
+    "name": "Close icon (Outlined, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseSquare-Black.svg",
+    "name": "Close Square icon (Outlined, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseSquare-Filled-Black.svg",
+    "name": "Close Square icon (Filled, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloud-Black.svg",
+    "name": "Cloud icon (Outlined, Black)",
+    "tags": ["cloud", "storage", "online", "sync", "backup"]
+  },
+  {
+    "path": "IconCloud-Filled-Black.svg",
+    "name": "Cloud icon (Filled, Black)",
+    "tags": ["cloud", "storage", "online", "sync", "backup"]
+  },
+  {
+    "path": "IconCodeBlock-Black.svg",
+    "name": "Code Block icon (Outlined, Black)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCodeBlock-Filled-Black.svg",
+    "name": "Code Block icon (Filled, Black)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCodeBuild-Black.svg",
+    "name": "Code Build icon (Outlined, Black)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCode-Black.svg",
+    "name": "Code icon (Outlined, Black)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCollab-Black.svg",
+    "name": "Collab icon (Outlined, Black)",
+    "tags": ["collaboration", "team", "contact", "group", "partners"]
+  },
+  {
+    "path": "IconColorWheel-Black.svg",
+    "name": "Color Wheel icon (Outlined, Black)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconCompany-Black.svg",
+    "name": "Company icon (Outlined, Black)",
+    "tags": ["brand", "identity", "company", "organization", "logo"]
+  },
+  {
+    "path": "IconCompany-Filled-Black.svg",
+    "name": "Company icon (Filled, Black)",
+    "tags": ["brand", "identity", "company", "organization", "logo"]
+  },
+  {
+    "path": "IconCompass-Black.svg",
+    "name": "Compass icon (Outlined, Black)",
+    "tags": ["compass", "navigation", "direction", "orientation", "map"]
+  },
+  {
+    "path": "IconCompass-Filled-Black.svg",
+    "name": "Compass icon (Filled, Black)",
+    "tags": ["compass", "navigation", "direction", "orientation", "map"]
+  },
+  {
+    "path": "IconCompose-Black.svg",
+    "name": "Compose icon (Outlined, Black)",
+    "tags": ["compose", "write", "message", "draft", "create"]
+  },
+  {
+    "path": "IconCompose-Filled-Black.svg",
+    "name": "Compose icon (Filled, Black)",
+    "tags": ["compose", "write", "message", "draft", "create"]
+  },
+  {
+    "path": "IconCopy-Black.svg",
+    "name": "Copy icon (Outlined, Black)",
+    "tags": ["copy", "duplicate", "clone", "clipboard", "replicate"]
+  },
+  {
+    "path": "IconCopy-Filled-Black.svg",
+    "name": "Copy icon (Filled, Black)",
+    "tags": ["copy", "duplicate", "clone", "clipboard", "replicate"]
+  },
+  {
+    "path": "IconCouch-Black.svg",
+    "name": "Couch icon (Outlined, Black)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconCouch-Filled-Black.svg",
+    "name": "Couch icon (Filled, Black)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconCpu-Black.svg",
+    "name": "Cpu icon (Outlined, Black)",
+    "tags": ["cpu", "processor", "hardware", "computer", "performance"]
+  },
+  {
+    "path": "IconCpu-Filled-Black.svg",
+    "name": "Cpu icon (Filled, Black)",
+    "tags": ["cpu", "processor", "hardware", "computer", "performance"]
+  },
+  {
+    "path": "IconCrop-Black.svg",
+    "name": "Crop icon (Outlined, Black)",
+    "tags": ["crop", "trim", "resize", "cut", "edit"]
+  },
+  {
+    "path": "IconCrossfade-Black.svg",
+    "name": "Crossfade icon (Outlined, Black)",
+    "tags": ["crossfade", "transition", "audio", "blend", "mix"]
+  },
+  {
+    "path": "IconCrosshairCheck-Black.svg",
+    "name": "Crosshair Check icon (Outlined, Black)",
+    "tags": ["crosshair", "aim", "target", "precision", "focus"]
+  },
+  {
+    "path": "IconCrosshair-Black.svg",
+    "name": "Crosshair icon (Outlined, Black)",
+    "tags": ["crosshair", "aim", "target", "precision", "focus"]
+  },
+  {
+    "path": "IconCrown-Black.svg",
+    "name": "Crown icon (Outlined, Black)",
+    "tags": ["crown", "premium", "vip", "status", "reward"]
+  },
+  {
+    "path": "IconCrown-Filled-Black.svg",
+    "name": "Crown icon (Filled, Black)",
+    "tags": ["crown", "premium", "vip", "status", "reward"]
+  },
+  {
+    "path": "IconCube-Black.svg",
+    "name": "Cube icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCube-Filled-Black.svg",
+    "name": "Cube icon (Filled, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCurrencyDollar-Black.svg",
+    "name": "Currency Dollar icon (Outlined, Black)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyEuro-Black.svg",
+    "name": "Currency Euro icon (Outlined, Black)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyPound-Black.svg",
+    "name": "Currency Pound icon (Outlined, Black)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyYen-Black.svg",
+    "name": "Currency Yen icon (Outlined, Black)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCursor-Black.svg",
+    "name": "Cursor icon (Outlined, Black)",
+    "tags": ["cursor", "pointer", "mouse", "select", "point"]
+  },
+  {
+    "path": "IconCursor-Filled-Black.svg",
+    "name": "Cursor icon (Filled, Black)",
+    "tags": ["cursor", "pointer", "mouse", "select", "point"]
+  },
+  {
+    "path": "IconCut-Black.svg",
+    "name": "Cut icon (Outlined, Black)",
+    "tags": ["cut", "scissors", "trim", "remove", "edit"]
+  },
+  {
+    "path": "IconDatabase-Black.svg",
+    "name": "Database icon (Outlined, Black)",
+    "tags": ["database", "storage", "records", "data", "tables"]
+  },
+  {
+    "path": "IconDatabase-Filled-Black.svg",
+    "name": "Database icon (Filled, Black)",
+    "tags": ["database", "storage", "records", "data", "tables"]
+  },
+  {
+    "path": "IconDebug-Black.svg",
+    "name": "Debug icon (Outlined, Black)",
+    "tags": ["debug", "diagnose", "fix", "inspect", "troubleshoot"]
+  },
+  {
+    "path": "IconDelivery-Black.svg",
+    "name": "Delivery icon (Outlined, Black)",
+    "tags": ["delivery", "shipping", "parcel", "logistics", "send"]
+  },
+  {
+    "path": "IconDelivery-Filled-Black.svg",
+    "name": "Delivery icon (Filled, Black)",
+    "tags": ["delivery", "shipping", "parcel", "logistics", "send"]
+  },
+  {
+    "path": "IconDesktop-Black.svg",
+    "name": "Desktop icon (Outlined, Black)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconDiagram-Black.svg",
+    "name": "Diagram icon (Outlined, Black)",
+    "tags": ["diagram", "flowchart", "visual", "map", "plan"]
+  },
+  {
+    "path": "IconDiagram-Filled-Black.svg",
+    "name": "Diagram icon (Filled, Black)",
+    "tags": ["diagram", "flowchart", "visual", "map", "plan"]
+  },
+  {
+    "path": "IconDial-Black.svg",
+    "name": "Dial icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDial-Filled-Black.svg",
+    "name": "Dial icon (Filled, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialPress-Black.svg",
+    "name": "Dial Press icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotate-Black.svg",
+    "name": "Dial Rotate icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCCW-Black.svg",
+    "name": "Dial Rotate icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCW-Black.svg",
+    "name": "Dial Rotate icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCCW-Filled-Black.svg",
+    "name": "Dial Rotate icon (Filled, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCW-Filled-Black.svg",
+    "name": "Dial Rotate icon (Filled, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialStack-Black.svg",
+    "name": "Dial Stack icon (Outlined, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialStack-Filled-Black.svg",
+    "name": "Dial Stack icon (Filled, Black)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDiamond-Black.svg",
+    "name": "Diamond icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconDiamond-Filled-Black.svg",
+    "name": "Diamond icon (Filled, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconDiffuse-Black.svg",
+    "name": "Diffuse icon (Outlined, Black)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconDiscount-Black.svg",
+    "name": "Discount icon (Outlined, Black)",
+    "tags": ["discount", "promo", "deal", "offer", "sale"]
+  },
+  {
+    "path": "IconDiscount-Filled-Black.svg",
+    "name": "Discount icon (Filled, Black)",
+    "tags": ["discount", "promo", "deal", "offer", "sale"]
+  },
+  {
+    "path": "IconDisplayAdd-Black.svg",
+    "name": "Display Add icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayAdd-Filled-Black.svg",
+    "name": "Display Add icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplay-Black.svg",
+    "name": "Display icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplay-Filled-Black.svg",
+    "name": "Display icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectCheck-Black.svg",
+    "name": "Display Project Check icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectCheck-Filled-Black.svg",
+    "name": "Display Project Check icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProject-Black.svg",
+    "name": "Display Project icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProject-Filled-Black.svg",
+    "name": "Display Project icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectSet-Black.svg",
+    "name": "Display Project Set icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectSet-Filled-Black.svg",
+    "name": "Display Project Set icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDownload-Black.svg",
+    "name": "Download icon (Outlined, Black)",
+    "tags": ["download", "save", "transfer", "retrieve", "get"]
+  },
+  {
+    "path": "IconDrag-Black.svg",
+    "name": "Drag icon (Outlined, Black)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconDroplet-Black.svg",
+    "name": "Droplet icon (Outlined, Black)",
+    "tags": ["droplet", "water", "liquid", "drop", "humidity"]
+  },
+  {
+    "path": "IconDroplet-Filled-Black.svg",
+    "name": "Droplet icon (Filled, Black)",
+    "tags": ["droplet", "water", "liquid", "drop", "humidity"]
+  },
+  {
+    "path": "IconEar-Black.svg",
+    "name": "Ear icon (Outlined, Black)",
+    "tags": ["ear", "listen", "audio", "sound", "hearing"]
+  },
+  {
+    "path": "IconEar-Filled-Black.svg",
+    "name": "Ear icon (Filled, Black)",
+    "tags": ["ear", "listen", "audio", "sound", "hearing"]
+  },
+  {
+    "path": "IconEdit-Black.svg",
+    "name": "Edit icon (Outlined, Black)",
+    "tags": ["edit", "modify", "change", "adjust", "update"]
+  },
+  {
+    "path": "IconEdit-Filled-Black.svg",
+    "name": "Edit icon (Filled, Black)",
+    "tags": ["edit", "modify", "change", "adjust", "update"]
+  },
+  {
+    "path": "IconEffect-Black.svg",
+    "name": "Effect icon (Outlined, Black)",
+    "tags": ["effect", "filter", "style", "visual", "adjustment"]
+  },
+  {
+    "path": "IconElements-Black.svg",
+    "name": "Elements icon (Outlined, Black)",
+    "tags": ["elements", "components", "pieces", "parts", "layer"]
+  },
+  {
+    "path": "IconElements-Filled-Black.svg",
+    "name": "Elements icon (Filled, Black)",
+    "tags": ["elements", "components", "pieces", "parts", "layer"]
+  },
+  {
+    "path": "IconExitFullscreen-Black.svg",
+    "name": "Exit Fullscreen icon (Outlined, Black)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconExpandSquare-Black.svg",
+    "name": "Expand Square icon (Outlined, Black)",
+    "tags": ["expand", "enlarge", "grow", "increase", "maximize"]
+  },
+  {
+    "path": "IconExpandSquare-Filled-Black.svg",
+    "name": "Expand Square icon (Filled, Black)",
+    "tags": ["expand", "enlarge", "grow", "increase", "maximize"]
+  },
+  {
+    "path": "IconExternalLink-Black.svg",
+    "name": "External Link icon (Outlined, Black)",
+    "tags": ["external", "link", "outside", "open", "outbound"]
+  },
+  {
+    "path": "IconEyeContactCheck-Black.svg",
+    "name": "Eye Contact Check icon (Outlined, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContactCheck-Filled-Black.svg",
+    "name": "Eye Contact Check icon (Filled, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContact-Black.svg",
+    "name": "Eye Contact icon (Outlined, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContact-Filled-Black.svg",
+    "name": "Eye Contact icon (Filled, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyedropper-Black.svg",
+    "name": "Eyedropper icon (Outlined, Black)",
+    "tags": ["eyedropper", "color pick", "sample", "palette", "selector"]
+  },
+  {
+    "path": "IconEyedropper-Filled-Black.svg",
+    "name": "Eyedropper icon (Filled, Black)",
+    "tags": ["eyedropper", "color pick", "sample", "palette", "selector"]
+  },
+  {
+    "path": "IconFaceSatisfiedAdd-Black.svg",
+    "name": "Face Satisfied Add icon (Outlined, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfiedAdd-Filled-Black.svg",
+    "name": "Face Satisfied Add icon (Filled, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfied-Black.svg",
+    "name": "Face Satisfied icon (Outlined, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfied-Filled-Black.svg",
+    "name": "Face Satisfied icon (Filled, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceTrackingCheck-Black.svg",
+    "name": "Face Tracking Check icon (Outlined, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceTracking-Black.svg",
+    "name": "Face Tracking icon (Outlined, Black)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFacecam-Black.svg",
+    "name": "Facecam icon (Outlined, Black)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecam-Filled-Black.svg",
+    "name": "Facecam icon (Filled, Black)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamNeo-Black.svg",
+    "name": "Facecam Neo icon (Outlined, Black)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamNeo-Filled-Black.svg",
+    "name": "Facecam Neo icon (Filled, Black)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamOff-Filled-Black.svg",
+    "name": "Facecam Off icon (Filled, Black)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFeatured-Black.svg",
+    "name": "Featured icon (Outlined, Black)",
+    "tags": ["featured", "highlight", "promoted", "spotlight", "showcase"]
+  },
+  {
+    "path": "IconFileDownload-Black.svg",
+    "name": "File Download icon (Outlined, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileDownload-Filled-Black.svg",
+    "name": "File Download icon (Filled, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFile-Black.svg",
+    "name": "File icon (Outlined, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFile-Filled-Black.svg",
+    "name": "File icon (Filled, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileUpload-Black.svg",
+    "name": "File Upload icon (Outlined, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileUpload-Filled-Black.svg",
+    "name": "File Upload icon (Filled, Black)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFilm-Black.svg",
+    "name": "Film icon (Outlined, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconFilm-Filled-Black.svg",
+    "name": "Film icon (Filled, Black)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconFilterAlt-Black.svg",
+    "name": "Filter Alt icon (Outlined, Black)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFilterAlt-Filled-Black.svg",
+    "name": "Filter Alt icon (Filled, Black)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFilter-Black.svg",
+    "name": "Filter icon (Outlined, Black)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFlame-Black.svg",
+    "name": "Flame icon (Outlined, Black)",
+    "tags": ["flame", "fire", "hot", "burn", "heat"]
+  },
+  {
+    "path": "IconFlame-Filled-Black.svg",
+    "name": "Flame icon (Filled, Black)",
+    "tags": ["flame", "fire", "hot", "burn", "heat"]
+  },
+  {
+    "path": "IconFlash-Black.svg",
+    "name": "Flash icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlash-Filled-Black.svg",
+    "name": "Flash icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlashOff-Black.svg",
+    "name": "Flash Off icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlashOff-Filled-Black.svg",
+    "name": "Flash Off icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlipHorizontalCheck-Black.svg",
+    "name": "Flip Horizontal Check icon (Outlined, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontalCheck-Filled-Black.svg",
+    "name": "Flip Horizontal Check icon (Filled, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontal-Black.svg",
+    "name": "Flip Horizontal icon (Outlined, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontal-Filled-Black.svg",
+    "name": "Flip Horizontal icon (Filled, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVerticalCheck-Black.svg",
+    "name": "Flip Vertical Check icon (Outlined, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVerticalCheck-Filled-Black.svg",
+    "name": "Flip Vertical Check icon (Filled, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVertical-Black.svg",
+    "name": "Flip Vertical icon (Outlined, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVertical-Filled-Black.svg",
+    "name": "Flip Vertical icon (Filled, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFocus-Black.svg",
+    "name": "Focus icon (Outlined, Black)",
+    "tags": ["focus", "sharpness", "clarity", "concentration", "attention"]
+  },
+  {
+    "path": "IconFocus-Filled-Black.svg",
+    "name": "Focus icon (Filled, Black)",
+    "tags": ["focus", "sharpness", "clarity", "concentration", "attention"]
+  },
+  {
+    "path": "IconFolderBack-Black.svg",
+    "name": "Folder Back icon (Outlined, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderBack-Filled-Black.svg",
+    "name": "Folder Back icon (Filled, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderDownload-Black.svg",
+    "name": "Folder Download icon (Outlined, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderDownload-Filled-Black.svg",
+    "name": "Folder Download icon (Filled, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolder-Black.svg",
+    "name": "Folder icon (Outlined, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolder-Filled-Black.svg",
+    "name": "Folder icon (Filled, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderOpen-Black.svg",
+    "name": "Folder Open icon (Outlined, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderOpen-Filled-Black.svg",
+    "name": "Folder Open icon (Filled, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderUpload-Black.svg",
+    "name": "Folder Upload icon (Outlined, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderUpload-Filled-Black.svg",
+    "name": "Folder Upload icon (Filled, Black)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconForest-Black.svg",
+    "name": "Forest icon (Outlined, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconForest-Filled-Black.svg",
+    "name": "Forest icon (Filled, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconFullscreen-Black.svg",
+    "name": "Fullscreen icon (Outlined, Black)",
+    "tags": ["fullscreen", "maximize", "display", "view", "expand"]
+  },
+  {
+    "path": "IconGameAdd-Black.svg",
+    "name": "Game Add icon (Outlined, Black)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGameAdd-Filled-Black.svg",
+    "name": "Game Add icon (Filled, Black)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGameCapture-Black.svg",
+    "name": "Game Capture icon (Outlined, Black)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGame-Black.svg",
+    "name": "Game icon (Outlined, Black)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGame-Filled-Black.svg",
+    "name": "Game icon (Filled, Black)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGapHorizontal-Black.svg",
+    "name": "Gap Horizontal icon (Outlined, Black)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapHorizontal-Filled-Black.svg",
+    "name": "Gap Horizontal icon (Filled, Black)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapVertical-Black.svg",
+    "name": "Gap Vertical icon (Outlined, Black)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapVertical-Filled-Black.svg",
+    "name": "Gap Vertical icon (Filled, Black)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGlobeAdd-Black.svg",
+    "name": "Globe Add icon (Outlined, Black)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobeAdd-Filled-Black.svg",
+    "name": "Globe Add icon (Filled, Black)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobe-Black.svg",
+    "name": "Globe icon (Outlined, Black)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobe-Filled-Black.svg",
+    "name": "Globe icon (Filled, Black)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGreenScreen-Black.svg",
+    "name": "Green Screen icon (Outlined, Black)",
+    "tags": ["green screen", "chromakey", "studio", "backdrop", "keying"]
+  },
+  {
+    "path": "IconGrid-Black.svg",
+    "name": "Grid icon (Outlined, Black)",
+    "tags": ["grid", "matrix", "layout", "structure", "table"]
+  },
+  {
+    "path": "IconGrid-Filled-Black.svg",
+    "name": "Grid icon (Filled, Black)",
+    "tags": ["grid", "matrix", "layout", "structure", "table"]
+  },
+  {
+    "path": "IconGroup-Black.svg",
+    "name": "Group icon (Outlined, Black)",
+    "tags": ["collection", "bundle", "group", "set", "library"]
+  },
+  {
+    "path": "IconGroup-Filled-Black.svg",
+    "name": "Group icon (Filled, Black)",
+    "tags": ["collection", "bundle", "group", "set", "library"]
+  },
+  {
+    "path": "IconHandPointUp-Black.svg",
+    "name": "Hand Point Up icon (Outlined, Black)",
+    "tags": ["hand", "gesture", "control", "pointer", "manual"]
+  },
+  {
+    "path": "IconHdmi-Black.svg",
+    "name": "Hdmi icon (Outlined, Black)",
+    "tags": ["hdmi", "video input", "connection", "cable", "interface"]
+  },
+  {
+    "path": "IconHdmi-Filled-Black.svg",
+    "name": "Hdmi icon (Filled, Black)",
+    "tags": ["hdmi", "video input", "connection", "cable", "interface"]
+  },
+  {
+    "path": "IconHdr-Black.svg",
+    "name": "Hdr icon (Outlined, Black)",
+    "tags": ["hdr", "high dynamic range", "exposure", "contrast", "imaging"]
+  },
+  {
+    "path": "IconHeadphonesAdd-Black.svg",
+    "name": "Headphones Add icon (Outlined, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesAdd-Filled-Black.svg",
+    "name": "Headphones Add icon (Filled, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphones-Black.svg",
+    "name": "Headphones icon (Outlined, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphones-Filled-Black.svg",
+    "name": "Headphones icon (Filled, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesOff-Black.svg",
+    "name": "Headphones Off icon (Outlined, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesOff-Filled-Black.svg",
+    "name": "Headphones Off icon (Filled, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesSwitchTo-Black.svg",
+    "name": "Headphones Switch To icon (Outlined, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesSwitchTo-Filled-Black.svg",
+    "name": "Headphones Switch To icon (Filled, Black)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeart-Black.svg",
+    "name": "Heart icon (Outlined, Black)",
+    "tags": ["favorite", "like", "save", "love", "bookmark"]
+  },
+  {
+    "path": "IconHeart-Filled-Black.svg",
+    "name": "Heart icon (Filled, Black)",
+    "tags": ["favorite", "like", "save", "love", "bookmark"]
+  },
+  {
+    "path": "IconHeatSink-Black.svg",
+    "name": "Heat Sink icon (Outlined, Black)",
+    "tags": ["climate", "temperature", "airflow", "comfort", "environment"]
+  },
+  {
+    "path": "IconHelp-Black.svg",
+    "name": "Help icon (Outlined, Black)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconHelp-Filled-Black.svg",
+    "name": "Help icon (Filled, Black)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconHexagon-Black.svg",
+    "name": "Hexagon icon (Outlined, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconHexagon-Filled-Black.svg",
+    "name": "Hexagon icon (Filled, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconHome-Black.svg",
+    "name": "Home icon (Outlined, Black)",
+    "tags": ["home", "house", "dashboard", "main", "start"]
+  },
+  {
+    "path": "IconHome-Filled-Black.svg",
+    "name": "Home icon (Filled, Black)",
+    "tags": ["home", "house", "dashboard", "main", "start"]
+  },
+  {
+    "path": "IconHotkey-Black.svg",
+    "name": "Hotkey icon (Outlined, Black)",
+    "tags": ["hotkey", "shortcut", "macro", "keybinding", "control"]
+  },
+  {
+    "path": "IconHotkey-Filled-Black.svg",
+    "name": "Hotkey icon (Filled, Black)",
+    "tags": ["hotkey", "shortcut", "macro", "keybinding", "control"]
+  },
+  {
+    "path": "IconImageCheck-Black.svg",
+    "name": "Image Check icon (Outlined, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImageCheck-Filled-Black.svg",
+    "name": "Image Check icon (Filled, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImage-Black.svg",
+    "name": "Image icon (Outlined, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImage-Filled-Black.svg",
+    "name": "Image icon (Filled, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconInbox-Black.svg",
+    "name": "Inbox icon (Outlined, Black)",
+    "tags": ["inbox", "mail", "messages", "email", "communication"]
+  },
+  {
+    "path": "IconInbox-Filled-Black.svg",
+    "name": "Inbox icon (Filled, Black)",
+    "tags": ["inbox", "mail", "messages", "email", "communication"]
+  },
+  {
+    "path": "IconInfo-Black.svg",
+    "name": "Info icon (Outlined, Black)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconInfo-Filled-Black.svg",
+    "name": "Info icon (Filled, Black)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconInfobar-Black.svg",
+    "name": "Infobar icon (Outlined, Black)",
+    "tags": ["infobar", "status bar", "notification", "banner", "information"]
+  },
+  {
+    "path": "IconInfobar-Filled-Black.svg",
+    "name": "Infobar icon (Filled, Black)",
+    "tags": ["infobar", "status bar", "notification", "banner", "information"]
+  },
+  {
+    "path": "IconItalic-Black.svg",
+    "name": "Italic icon (Outlined, Black)",
+    "tags": ["italic", "emphasis", "font", "type style", "slant"]
+  },
+  {
+    "path": "IconKey-Black.svg",
+    "name": "Key icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKey-Filled-Black.svg",
+    "name": "Key icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAir-Black.svg",
+    "name": "Key Light Air icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAir-Filled-Black.svg",
+    "name": "Key Light Air icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirOff-Black.svg",
+    "name": "Key Light Air Off icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirOff-Filled-Black.svg",
+    "name": "Key Light Air Off icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirPower-Black.svg",
+    "name": "Key Light Air Power icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirPower-Filled-Black.svg",
+    "name": "Key Light Air Power icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLight-Black.svg",
+    "name": "Key Light icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLight-Filled-Black.svg",
+    "name": "Key Light icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMini-Black.svg",
+    "name": "Key Light Mini icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMini-Filled-Black.svg",
+    "name": "Key Light Mini icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniOff-Black.svg",
+    "name": "Key Light Mini Off icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniOff-Filled-Black.svg",
+    "name": "Key Light Mini Off icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniPower-Black.svg",
+    "name": "Key Light Mini Power icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniPower-Filled-Black.svg",
+    "name": "Key Light Mini Power icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeo-Black.svg",
+    "name": "Key Light Neo icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeo-Filled-Black.svg",
+    "name": "Key Light Neo icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoOff-Black.svg",
+    "name": "Key Light Neo Off icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoOff-Filled-Black.svg",
+    "name": "Key Light Neo Off icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoPower-Black.svg",
+    "name": "Key Light Neo Power icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoPower-Filled-Black.svg",
+    "name": "Key Light Neo Power icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightOff-Black.svg",
+    "name": "Key Light Off icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightOff-Filled-Black.svg",
+    "name": "Key Light Off icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightPower-Black.svg",
+    "name": "Key Light Power icon (Outlined, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightPower-Filled-Black.svg",
+    "name": "Key Light Power icon (Filled, Black)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyboardEmoji-Black.svg",
+    "name": "Keyboard Emoji icon (Outlined, Black)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboardEmoji-Filled-Black.svg",
+    "name": "Keyboard Emoji icon (Filled, Black)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboard-Black.svg",
+    "name": "Keyboard icon (Outlined, Black)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboard-Filled-Black.svg",
+    "name": "Keyboard icon (Filled, Black)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconLaptop-Black.svg",
+    "name": "Laptop icon (Outlined, Black)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconLaptop-Filled-Black.svg",
+    "name": "Laptop icon (Filled, Black)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconLayers-Black.svg",
+    "name": "Layers icon (Outlined, Black)",
+    "tags": ["layers", "stack", "compose", "design", "overlay"]
+  },
+  {
+    "path": "IconLayers-Filled-Black.svg",
+    "name": "Layers icon (Filled, Black)",
+    "tags": ["layers", "stack", "compose", "design", "overlay"]
+  },
+  {
+    "path": "IconLearn-Black.svg",
+    "name": "Learn icon (Outlined, Black)",
+    "tags": ["learn", "tutorial", "guide", "education", "tips"]
+  },
+  {
+    "path": "IconLearn-Filled-Black.svg",
+    "name": "Learn icon (Filled, Black)",
+    "tags": ["learn", "tutorial", "guide", "education", "tips"]
+  },
+  {
+    "path": "IconLensCheck-Black.svg",
+    "name": "Lens Check icon (Outlined, Black)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLensCheck-Filled-Black.svg",
+    "name": "Lens Check icon (Filled, Black)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLens-Black.svg",
+    "name": "Lens icon (Outlined, Black)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLens-Filled-Black.svg",
+    "name": "Lens icon (Filled, Black)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLibrary-Black.svg",
+    "name": "Library icon (Outlined, Black)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconLibrary-Filled-Black.svg",
+    "name": "Library icon (Filled, Black)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconLightStrip-Black.svg",
+    "name": "Light Strip icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStrip-Filled-Black.svg",
+    "name": "Light Strip icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripOff-Black.svg",
+    "name": "Light Strip Off icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripOff-Filled-Black.svg",
+    "name": "Light Strip Off icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripPower-Black.svg",
+    "name": "Light Strip Power icon (Outlined, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripPower-Filled-Black.svg",
+    "name": "Light Strip Power icon (Filled, Black)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLinkBroken-Black.svg",
+    "name": "Link Broken icon (Outlined, Black)",
+    "tags": ["link", "url", "hyperlink", "connect", "reference"]
+  },
+  {
+    "path": "IconLink-Black.svg",
+    "name": "Link icon (Outlined, Black)",
+    "tags": ["link", "url", "hyperlink", "connect", "reference"]
+  },
+  {
+    "path": "IconList-Black.svg",
+    "name": "List icon (Outlined, Black)",
+    "tags": ["list", "items", "bullet", "sequence", "ordered"]
+  },
+  {
+    "path": "IconLocation-Black.svg",
+    "name": "Location icon (Outlined, Black)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconLocation-Filled-Black.svg",
+    "name": "Location icon (Filled, Black)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconLock-Black.svg",
+    "name": "Lock icon (Outlined, Black)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLock-Filled-Black.svg",
+    "name": "Lock icon (Filled, Black)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLockOpen-Black.svg",
+    "name": "Lock Open icon (Outlined, Black)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLockOpen-Filled-Black.svg",
+    "name": "Lock Open icon (Filled, Black)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLut-Black.svg",
+    "name": "Lut icon (Outlined, Black)",
+    "tags": ["lut", "color grade", "lookup table", "film look", "grading"]
+  },
+  {
+    "path": "IconLut-Filled-Black.svg",
+    "name": "Lut icon (Filled, Black)",
+    "tags": ["lut", "color grade", "lookup table", "film look", "grading"]
+  },
+  {
+    "path": "IconMagicWand-Black.svg",
+    "name": "Magic Wand icon (Outlined, Black)",
+    "tags": ["magic", "instant", "auto", "assist", "smart"]
+  },
+  {
+    "path": "IconMagicWand-Filled-Black.svg",
+    "name": "Magic Wand icon (Filled, Black)",
+    "tags": ["magic", "instant", "auto", "assist", "smart"]
+  },
+  {
+    "path": "IconMail-Black.svg",
+    "name": "Mail icon (Outlined, Black)",
+    "tags": ["mail", "email", "message", "inbox", "communication"]
+  },
+  {
+    "path": "IconMail-Filled-Black.svg",
+    "name": "Mail icon (Filled, Black)",
+    "tags": ["mail", "email", "message", "inbox", "communication"]
+  },
+  {
+    "path": "IconMarginDecrease-Black.svg",
+    "name": "Margin Decrease icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMargin-Black.svg",
+    "name": "Margin icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginX-Black.svg",
+    "name": "Margin icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginY-Black.svg",
+    "name": "Margin icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginIncrease-Black.svg",
+    "name": "Margin Increase icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginSet-Black.svg",
+    "name": "Margin Set icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXDecrease-Black.svg",
+    "name": "Margin X Decrease icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXIncrease-Black.svg",
+    "name": "Margin X Increase icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXSet-Black.svg",
+    "name": "Margin X Set icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginYSet-Black.svg",
+    "name": "Margin Y Set icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarketplaceBrand-Black.svg",
+    "name": "Marketplace Brand icon (Outlined, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceBrand-Filled-Black.svg",
+    "name": "Marketplace Brand icon (Filled, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceCreate-Black.svg",
+    "name": "Marketplace Create icon (Outlined, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceCreate-Filled-Black.svg",
+    "name": "Marketplace Create icon (Filled, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceEngage-Black.svg",
+    "name": "Marketplace Engage icon (Outlined, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceEngage-Filled-Black.svg",
+    "name": "Marketplace Engage icon (Filled, Black)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMediaCast-Black.svg",
+    "name": "Media Cast icon (Outlined, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconMediaCast-Filled-Black.svg",
+    "name": "Media Cast icon (Filled, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconMenu-Black.svg",
+    "name": "Menu icon (Outlined, Black)",
+    "tags": ["menu", "options", "navigation", "list", "controls"]
+  },
+  {
+    "path": "IconMessageAdd-Black.svg",
+    "name": "Message Add icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageAdd-Filled-Black.svg",
+    "name": "Message Add icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageCheck-Black.svg",
+    "name": "Message Check icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageCheck-Filled-Black.svg",
+    "name": "Message Check icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageDownToBottom-Black.svg",
+    "name": "Message Down To Bottom icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageDownToBottom-Filled-Black.svg",
+    "name": "Message Down To Bottom icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessage-Black.svg",
+    "name": "Message icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessage-Filled-Black.svg",
+    "name": "Message icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageSet-Black.svg",
+    "name": "Message Set icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageSet-Filled-Black.svg",
+    "name": "Message Set icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageUpToTop-Black.svg",
+    "name": "Message Up To Top icon (Outlined, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageUpToTop-Filled-Black.svg",
+    "name": "Message Up To Top icon (Filled, Black)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMeteringCenterWeighted-Black.svg",
+    "name": "Metering Center Weighted icon (Outlined, Black)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringCenterWeighted-Filled-Black.svg",
+    "name": "Metering Center Weighted icon (Filled, Black)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringEvaluative-Black.svg",
+    "name": "Metering Evaluative icon (Outlined, Black)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringSpot-Black.svg",
+    "name": "Metering Spot icon (Outlined, Black)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringSpot-Filled-Black.svg",
+    "name": "Metering Spot icon (Filled, Black)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMicArm-Black.svg",
+    "name": "Mic Arm icon (Outlined, Black)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophone-Black.svg",
+    "name": "Microphone icon (Outlined, Black)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophone-Filled-Black.svg",
+    "name": "Microphone icon (Filled, Black)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophoneOff-Black.svg",
+    "name": "Microphone Off icon (Outlined, Black)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophoneOff-Filled-Black.svg",
+    "name": "Microphone Off icon (Filled, Black)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMobile-Black.svg",
+    "name": "Mobile icon (Outlined, Black)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconMobile-Filled-Black.svg",
+    "name": "Mobile icon (Filled, Black)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconMoney-Black.svg",
+    "name": "Money icon (Outlined, Black)",
+    "tags": ["money", "currency", "finance", "budget", "payments"]
+  },
+  {
+    "path": "IconMoney-Filled-Black.svg",
+    "name": "Money icon (Filled, Black)",
+    "tags": ["money", "currency", "finance", "budget", "payments"]
+  },
+  {
+    "path": "IconMoreAlt-Black.svg",
+    "name": "More Alt icon (Outlined, Black)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMoreCircle-Black.svg",
+    "name": "More Circle icon (Outlined, Black)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMore-Black.svg",
+    "name": "More icon (Outlined, Black)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMountain-Black.svg",
+    "name": "Mountain icon (Outlined, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconMountain-Filled-Black.svg",
+    "name": "Mountain icon (Filled, Black)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconMouse-Black.svg",
+    "name": "Mouse icon (Outlined, Black)",
+    "tags": ["mouse", "pointer", "cursor", "input", "device"]
+  },
+  {
+    "path": "IconMouse-Filled-Black.svg",
+    "name": "Mouse icon (Filled, Black)",
+    "tags": ["mouse", "pointer", "cursor", "input", "device"]
+  },
+  {
+    "path": "IconMove-Black.svg",
+    "name": "Move icon (Outlined, Black)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToBottom-Black.svg",
+    "name": "Move To Bottom icon (Outlined, Black)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToCenter-Black.svg",
+    "name": "Move To Center icon (Outlined, Black)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToTop-Black.svg",
+    "name": "Move To Top icon (Outlined, Black)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMultiAction-Black.svg",
+    "name": "Multi Action icon (Outlined, Black)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiAction-Filled-Black.svg",
+    "name": "Multi Action icon (Filled, Black)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiActionSwitch-Black.svg",
+    "name": "Multi Action Switch icon (Outlined, Black)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiActionSwitch-Filled-Black.svg",
+    "name": "Multi Action Switch icon (Filled, Black)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiMount-Black.svg",
+    "name": "Multi Mount icon (Outlined, Black)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMusicAdd-Black.svg",
+    "name": "Music Add icon (Outlined, Black)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusicAdd-Filled-Black.svg",
+    "name": "Music Add icon (Filled, Black)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusic-Black.svg",
+    "name": "Music icon (Outlined, Black)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusic-Filled-Black.svg",
+    "name": "Music icon (Filled, Black)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconNew-Black.svg",
+    "name": "New icon (Outlined, Black)",
+    "tags": ["new", "create", "add", "fresh", "start"]
+  },
+  {
+    "path": "IconNew-Filled-Black.svg",
+    "name": "New icon (Filled, Black)",
+    "tags": ["new", "create", "add", "fresh", "start"]
+  },
+  {
+    "path": "IconNfc-Black.svg",
+    "name": "Nfc icon (Outlined, Black)",
+    "tags": ["nfc", "tap", "contactless", "near field", "payment"]
+  },
+  {
+    "path": "IconNfc-Filled-Black.svg",
+    "name": "Nfc icon (Filled, Black)",
+    "tags": ["nfc", "tap", "contactless", "near field", "payment"]
+  },
+  {
+    "path": "IconNight-Black.svg",
+    "name": "Night icon (Outlined, Black)",
+    "tags": ["night", "dark", "low light", "evening", "night mode"]
+  },
+  {
+    "path": "IconNight-Filled-Black.svg",
+    "name": "Night icon (Filled, Black)",
+    "tags": ["night", "dark", "low light", "evening", "night mode"]
+  },
+  {
+    "path": "IconNotAllowed-Black.svg",
+    "name": "Not Allowed icon (Outlined, Black)",
+    "tags": ["allowed", "permitted", "access", "granted", "allowed status"]
+  },
+  {
+    "path": "IconNotification-Black.svg",
+    "name": "Notification icon (Outlined, Black)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotification-Filled-Black.svg",
+    "name": "Notification icon (Filled, Black)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotificationOff-Black.svg",
+    "name": "Notification Off icon (Outlined, Black)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotificationOff-Filled-Black.svg",
+    "name": "Notification Off icon (Filled, Black)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNumber0Square-Black.svg",
+    "name": "Number 0 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber0Square-Filled-Black.svg",
+    "name": "Number 0 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber1Square-Black.svg",
+    "name": "Number 1 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber1Square-Filled-Black.svg",
+    "name": "Number 1 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber10Square-Black.svg",
+    "name": "Number 10 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber10Square-Filled-Black.svg",
+    "name": "Number 10 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber2Square-Black.svg",
+    "name": "Number 2 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber2Square-Filled-Black.svg",
+    "name": "Number 2 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber3Square-Black.svg",
+    "name": "Number 3 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber3Square-Filled-Black.svg",
+    "name": "Number 3 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber4Square-Black.svg",
+    "name": "Number 4 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber4Square-Filled-Black.svg",
+    "name": "Number 4 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber5Square-Black.svg",
+    "name": "Number 5 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber5Square-Filled-Black.svg",
+    "name": "Number 5 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber6Square-Black.svg",
+    "name": "Number 6 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber6Square-Filled-Black.svg",
+    "name": "Number 6 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber7Square-Black.svg",
+    "name": "Number 7 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber7Square-Filled-Black.svg",
+    "name": "Number 7 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber8Square-Black.svg",
+    "name": "Number 8 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber8Square-Filled-Black.svg",
+    "name": "Number 8 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber9Square-Black.svg",
+    "name": "Number 9 Square icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber9Square-Filled-Black.svg",
+    "name": "Number 9 Square icon (Filled, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumberedList-Black.svg",
+    "name": "Numbered List icon (Outlined, Black)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconOctagon-Black.svg",
+    "name": "Octagon icon (Outlined, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconOctagon-Filled-Black.svg",
+    "name": "Octagon icon (Filled, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconOpacity-Black.svg",
+    "name": "Opacity icon (Outlined, Black)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconOpacityIncrease-Black.svg",
+    "name": "Opacity Increase icon (Outlined, Black)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconOpacitySet-Black.svg",
+    "name": "Opacity Set icon (Outlined, Black)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconPackage-Black.svg",
+    "name": "Package icon (Outlined, Black)",
+    "tags": ["package", "bundle", "kit", "delivery", "shipment"]
+  },
+  {
+    "path": "IconPackage-Filled-Black.svg",
+    "name": "Package icon (Filled, Black)",
+    "tags": ["package", "bundle", "kit", "delivery", "shipment"]
+  },
+  {
+    "path": "IconPaddingBottom-Black.svg",
+    "name": "Padding Bottom icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingBottom-Filled-Black.svg",
+    "name": "Padding Bottom icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPadding-Black.svg",
+    "name": "Padding icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingX-Black.svg",
+    "name": "Padding icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingY-Black.svg",
+    "name": "Padding icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPadding-Filled-Black.svg",
+    "name": "Padding icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingX-Filled-Black.svg",
+    "name": "Padding icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingY-Filled-Black.svg",
+    "name": "Padding icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingLeft-Black.svg",
+    "name": "Padding Left icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingLeft-Filled-Black.svg",
+    "name": "Padding Left icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingRight-Black.svg",
+    "name": "Padding Right icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingRight-Filled-Black.svg",
+    "name": "Padding Right icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingTop-Black.svg",
+    "name": "Padding Top icon (Outlined, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingTop-Filled-Black.svg",
+    "name": "Padding Top icon (Filled, Black)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPalette-Black.svg",
+    "name": "Palette icon (Outlined, Black)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconPalette-Filled-Black.svg",
+    "name": "Palette icon (Filled, Black)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconPanelLeft-Black.svg",
+    "name": "Panel Left icon (Outlined, Black)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelLeft-Filled-Black.svg",
+    "name": "Panel Left icon (Filled, Black)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelRight-Black.svg",
+    "name": "Panel Right icon (Outlined, Black)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelRight-Filled-Black.svg",
+    "name": "Panel Right icon (Filled, Black)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPaste-Black.svg",
+    "name": "Paste icon (Outlined, Black)",
+    "tags": ["paste", "insert", "clipboard", "replace", "drop"]
+  },
+  {
+    "path": "IconPaste-Filled-Black.svg",
+    "name": "Paste icon (Filled, Black)",
+    "tags": ["paste", "insert", "clipboard", "replace", "drop"]
+  },
+  {
+    "path": "IconPause-Black.svg",
+    "name": "Pause icon (Outlined, Black)",
+    "tags": ["pause", "hold", "stop", "wait", "freeze"]
+  },
+  {
+    "path": "IconPause-Filled-Black.svg",
+    "name": "Pause icon (Filled, Black)",
+    "tags": ["pause", "hold", "stop", "wait", "freeze"]
+  },
+  {
+    "path": "IconPayment-Black.svg",
+    "name": "Payment icon (Outlined, Black)",
+    "tags": ["payment", "checkout", "billing", "finance", "transaction"]
+  },
+  {
+    "path": "IconPayment-Filled-Black.svg",
+    "name": "Payment icon (Filled, Black)",
+    "tags": ["payment", "checkout", "billing", "finance", "transaction"]
+  },
+  {
+    "path": "IconPenTool-Black.svg",
+    "name": "Pen Tool icon (Outlined, Black)",
+    "tags": ["pen", "draw", "write", "sketch", "annotate"]
+  },
+  {
+    "path": "IconPenTool-Filled-Black.svg",
+    "name": "Pen Tool icon (Filled, Black)",
+    "tags": ["pen", "draw", "write", "sketch", "annotate"]
+  },
+  {
+    "path": "IconPentagon-Black.svg",
+    "name": "Pentagon icon (Outlined, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconPentagon-Filled-Black.svg",
+    "name": "Pentagon icon (Filled, Black)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconPerson-Black.svg",
+    "name": "Person icon (Outlined, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPerson-Filled-Black.svg",
+    "name": "Person icon (Filled, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPhone-Black.svg",
+    "name": "Phone icon (Outlined, Black)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhone-Filled-Black.svg",
+    "name": "Phone icon (Filled, Black)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhoneVoice-Black.svg",
+    "name": "Phone Voice icon (Outlined, Black)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhoneVoice-Filled-Black.svg",
+    "name": "Phone Voice icon (Filled, Black)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhotoGrid-Black.svg",
+    "name": "Photo Grid icon (Outlined, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconPhotoGrid-Filled-Black.svg",
+    "name": "Photo Grid icon (Filled, Black)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconPin-Black.svg",
+    "name": "Pin icon (Outlined, Black)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconPin-Filled-Black.svg",
+    "name": "Pin icon (Filled, Black)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconPlayCircle-Black.svg",
+    "name": "Play Circle icon (Outlined, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayCircle-Filled-Black.svg",
+    "name": "Play Circle icon (Filled, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlay-Black.svg",
+    "name": "Play icon (Outlined, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlay-Filled-Black.svg",
+    "name": "Play icon (Filled, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayPause-Black.svg",
+    "name": "Play Pause icon (Outlined, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayPause-Filled-Black.svg",
+    "name": "Play Pause icon (Filled, Black)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlugin-Black.svg",
+    "name": "Plugin icon (Outlined, Black)",
+    "tags": ["plugin", "extension", "integration", "add-on", "module"]
+  },
+  {
+    "path": "IconPlugin-Filled-Black.svg",
+    "name": "Plugin icon (Filled, Black)",
+    "tags": ["plugin", "extension", "integration", "add-on", "module"]
+  },
+  {
+    "path": "IconPodcast-Black.svg",
+    "name": "Podcast icon (Outlined, Black)",
+    "tags": ["podcast", "show", "episode", "audio", "broadcast"]
+  },
+  {
+    "path": "IconPodcast-Filled-Black.svg",
+    "name": "Podcast icon (Filled, Black)",
+    "tags": ["podcast", "show", "episode", "audio", "broadcast"]
+  },
+  {
+    "path": "IconPower-Black.svg",
+    "name": "Power icon (Outlined, Black)",
+    "tags": ["power", "energy", "charge", "electric", "on/off"]
+  },
+  {
+    "path": "IconPowerOff-Black.svg",
+    "name": "Power Off icon (Outlined, Black)",
+    "tags": ["power", "energy", "charge", "electric", "on/off"]
+  },
+  {
+    "path": "IconPresentation-Black.svg",
+    "name": "Presentation icon (Outlined, Black)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentation-Filled-Black.svg",
+    "name": "Presentation icon (Filled, Black)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentationPlay-Black.svg",
+    "name": "Presentation Play icon (Outlined, Black)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentationPlay-Filled-Black.svg",
+    "name": "Presentation Play icon (Filled, Black)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconProfile-Black.svg",
+    "name": "Profile icon (Outlined, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfile-Filled-Black.svg",
+    "name": "Profile icon (Filled, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfileSwitch-Black.svg",
+    "name": "Profile Switch icon (Outlined, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfileSwitch-Filled-Black.svg",
+    "name": "Profile Switch icon (Filled, Black)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPrompter-Black.svg",
+    "name": "Prompter icon (Outlined, Black)",
+    "tags": ["teleprompter", "script", "read", "presentation", "display"]
+  },
+  {
+    "path": "IconPrompter-Filled-Black.svg",
+    "name": "Prompter icon (Filled, Black)",
+    "tags": ["teleprompter", "script", "read", "presentation", "display"]
+  },
+  {
+    "path": "IconQrCode-Black.svg",
+    "name": "Qr Code icon (Outlined, Black)",
+    "tags": ["qr code", "scan", "barcode", "link", "mobile"]
+  },
+  {
+    "path": "IconQrCodeScan-Black.svg",
+    "name": "Qr Code Scan icon (Outlined, Black)",
+    "tags": ["qr code", "scan", "barcode", "link", "mobile"]
+  },
+  {
+    "path": "IconQuestionMark-Black.svg",
+    "name": "Question Mark icon (Outlined, Black)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconQuote-Black.svg",
+    "name": "Quote icon (Outlined, Black)",
+    "tags": ["quote", "citation", "block quote", "text", "reference"]
+  },
+  {
+    "path": "IconQuote-Filled-Black.svg",
+    "name": "Quote icon (Filled, Black)",
+    "tags": ["quote", "citation", "block quote", "text", "reference"]
+  },
+  {
+    "path": "IconReceipt-Black.svg",
+    "name": "Receipt icon (Outlined, Black)",
+    "tags": ["receipt", "invoice", "payment", "bill", "transaction"]
+  },
+  {
+    "path": "IconReceipt-Filled-Black.svg",
+    "name": "Receipt icon (Filled, Black)",
+    "tags": ["receipt", "invoice", "payment", "bill", "transaction"]
+  },
+  {
+    "path": "IconRecord-Black.svg",
+    "name": "Record icon (Outlined, Black)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconRecord-Filled-Black.svg",
+    "name": "Record icon (Filled, Black)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconRedo-Black.svg",
+    "name": "Redo icon (Outlined, Black)",
+    "tags": ["redo", "repeat", "forward", "reapply", "recover"]
+  },
+  {
+    "path": "IconReflect-Black.svg",
+    "name": "Reflect icon (Outlined, Black)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconRefresh-Black.svg",
+    "name": "Refresh icon (Outlined, Black)",
+    "tags": ["refresh", "reload", "sync", "update", "restart"]
+  },
+  {
+    "path": "IconReset-Black.svg",
+    "name": "Reset icon (Outlined, Black)",
+    "tags": ["reset", "restore", "default", "restart", "clear"]
+  },
+  {
+    "path": "IconRingLight-Black.svg",
+    "name": "Ring Light icon (Outlined, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLight-Filled-Black.svg",
+    "name": "Ring Light icon (Filled, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightOff-Black.svg",
+    "name": "Ring Light Off icon (Outlined, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightOff-Filled-Black.svg",
+    "name": "Ring Light Off icon (Filled, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightPower-Black.svg",
+    "name": "Ring Light Power icon (Outlined, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightPower-Filled-Black.svg",
+    "name": "Ring Light Power icon (Filled, Black)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRocket-Black.svg",
+    "name": "Rocket icon (Outlined, Black)",
+    "tags": ["rocket", "launch", "startup", "speed", "boost"]
+  },
+  {
+    "path": "IconRocket-Filled-Black.svg",
+    "name": "Rocket icon (Filled, Black)",
+    "tags": ["rocket", "launch", "startup", "speed", "boost"]
+  },
+  {
+    "path": "IconRotate180-Black.svg",
+    "name": "Rotate 180 icon (Outlined, Black)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRotate360-Black.svg",
+    "name": "Rotate 360 icon (Outlined, Black)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRotate-Black.svg",
+    "name": "Rotate icon (Outlined, Black)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRss-Black.svg",
+    "name": "Rss icon (Outlined, Black)",
+    "tags": ["rss", "feed", "subscribe", "news", "updates"]
+  },
+  {
+    "path": "IconRss-Filled-Black.svg",
+    "name": "Rss icon (Filled, Black)",
+    "tags": ["rss", "feed", "subscribe", "news", "updates"]
+  },
+  {
+    "path": "IconSave-Black.svg",
+    "name": "Save icon (Outlined, Black)",
+    "tags": ["save", "store", "download", "archive", "keep"]
+  },
+  {
+    "path": "IconSave-Filled-Black.svg",
+    "name": "Save icon (Filled, Black)",
+    "tags": ["save", "store", "download", "archive", "keep"]
+  },
+  {
+    "path": "IconSceneCollection-Black.svg",
+    "name": "Scene Collection icon (Outlined, Black)",
+    "tags": ["scene", "layout", "obs", "production", "preset"]
+  },
+  {
+    "path": "IconSceneCollection-Filled-Black.svg",
+    "name": "Scene Collection icon (Filled, Black)",
+    "tags": ["scene", "layout", "obs", "production", "preset"]
+  },
+  {
+    "path": "IconScreenRotation-Black.svg",
+    "name": "Screen Rotation icon (Outlined, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconScreenRotation-Filled-Black.svg",
+    "name": "Screen Rotation icon (Filled, Black)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconScreenshot-Black.svg",
+    "name": "Screenshot icon (Outlined, Black)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconScroll-Black.svg",
+    "name": "Scroll icon (Outlined, Black)",
+    "tags": ["scroll", "navigate", "move", "list", "page"]
+  },
+  {
+    "path": "IconSearch-Black.svg",
+    "name": "Search icon (Outlined, Black)",
+    "tags": ["search", "find", "lookup", "query", "discover"]
+  },
+  {
+    "path": "IconSearch-Filled-Black.svg",
+    "name": "Search icon (Filled, Black)",
+    "tags": ["search", "find", "lookup", "query", "discover"]
+  },
+  {
+    "path": "IconSecurityCamera-Black.svg",
+    "name": "Security Camera icon (Outlined, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurityCamera-Filled-Black.svg",
+    "name": "Security Camera icon (Filled, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurity-Black.svg",
+    "name": "Security icon (Outlined, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurity-Filled-Black.svg",
+    "name": "Security icon (Filled, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconServer-Black.svg",
+    "name": "Server icon (Outlined, Black)",
+    "tags": ["server", "hosting", "backend", "infrastructure", "cloud"]
+  },
+  {
+    "path": "IconSettingsAdjustFocusCheck-Black.svg",
+    "name": "Settings Adjust Focus Check icon (Outlined, Black)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettingsAdjustFocus-Black.svg",
+    "name": "Settings Adjust Focus icon (Outlined, Black)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettingsAdjust-Black.svg",
+    "name": "Settings Adjust icon (Outlined, Black)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettings-Black.svg",
+    "name": "Settings icon (Outlined, Black)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettings-Filled-Black.svg",
+    "name": "Settings icon (Filled, Black)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconShapes-Black.svg",
+    "name": "Shapes icon (Outlined, Black)",
+    "tags": ["shapes", "geometry", "icons", "symbols", "design"]
+  },
+  {
+    "path": "IconShapes-Filled-Black.svg",
+    "name": "Shapes icon (Filled, Black)",
+    "tags": ["shapes", "geometry", "icons", "symbols", "design"]
+  },
+  {
+    "path": "IconShare-Black.svg",
+    "name": "Share icon (Outlined, Black)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconShareWeb-Black.svg",
+    "name": "Share Web icon (Outlined, Black)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconShareWeb-Filled-Black.svg",
+    "name": "Share Web icon (Filled, Black)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconSheet-Black.svg",
+    "name": "Sheet icon (Outlined, Black)",
+    "tags": ["sheet", "spreadsheet", "rows", "data", "cells"]
+  },
+  {
+    "path": "IconSheet-Filled-Black.svg",
+    "name": "Sheet icon (Filled, Black)",
+    "tags": ["sheet", "spreadsheet", "rows", "data", "cells"]
+  },
+  {
+    "path": "IconShield-Black.svg",
+    "name": "Shield icon (Outlined, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShield-Filled-Black.svg",
+    "name": "Shield icon (Filled, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShieldOff-Black.svg",
+    "name": "Shield Off icon (Outlined, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShieldOff-Filled-Black.svg",
+    "name": "Shield Off icon (Filled, Black)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShuffle-Black.svg",
+    "name": "Shuffle icon (Outlined, Black)",
+    "tags": ["shuffle", "random", "mix", "reorder", "shuffle play"]
+  },
+  {
+    "path": "IconShutter-Black.svg",
+    "name": "Shutter icon (Outlined, Black)",
+    "tags": ["shutter", "camera", "photo", "capture", "exposure"]
+  },
+  {
+    "path": "IconSignIn-Black.svg",
+    "name": "Sign In icon (Outlined, Black)",
+    "tags": ["sign", "signature", "approval", "authorize", "agreement"]
+  },
+  {
+    "path": "IconSignOut-Black.svg",
+    "name": "Sign Out icon (Outlined, Black)",
+    "tags": ["sign", "signature", "approval", "authorize", "agreement"]
+  },
+  {
+    "path": "IconSignal1-Black.svg",
+    "name": "Signal 1 icon (Outlined, Black)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal2-Black.svg",
+    "name": "Signal 2 icon (Outlined, Black)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal3-Black.svg",
+    "name": "Signal 3 icon (Outlined, Black)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal-Black.svg",
+    "name": "Signal icon (Outlined, Black)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignalOff-Black.svg",
+    "name": "Signal Off icon (Outlined, Black)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSkipBack-Black.svg",
+    "name": "Skip Back icon (Outlined, Black)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipBack-Filled-Black.svg",
+    "name": "Skip Back icon (Filled, Black)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipForward-Black.svg",
+    "name": "Skip Forward icon (Outlined, Black)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipForward-Filled-Black.svg",
+    "name": "Skip Forward icon (Filled, Black)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSnorkel-Black.svg",
+    "name": "Snorkel icon (Outlined, Black)",
+    "tags": ["snorkel", "diving", "ocean", "underwater", "swim"]
+  },
+  {
+    "path": "IconSnorkel-Filled-Black.svg",
+    "name": "Snorkel icon (Filled, Black)",
+    "tags": ["snorkel", "diving", "ocean", "underwater", "swim"]
+  },
+  {
+    "path": "IconSort-Black.svg",
+    "name": "Sort icon (Outlined, Black)",
+    "tags": ["sort", "order", "arrange", "organize", "sequence"]
+  },
+  {
+    "path": "IconSoundEffectAdd-Black.svg",
+    "name": "Sound Effect Add icon (Outlined, Black)",
+    "tags": ["sound", "audio", "effects", "fx", "audio clip"]
+  },
+  {
+    "path": "IconSoundEffect-Black.svg",
+    "name": "Sound Effect icon (Outlined, Black)",
+    "tags": ["sound", "audio", "effects", "fx", "audio clip"]
+  },
+  {
+    "path": "IconSpeaker-Black.svg",
+    "name": "Speaker icon (Outlined, Black)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeaker-Filled-Black.svg",
+    "name": "Speaker icon (Filled, Black)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeakerSwitchTo-Black.svg",
+    "name": "Speaker Switch To icon (Outlined, Black)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeakerSwitchTo-Filled-Black.svg",
+    "name": "Speaker Switch To icon (Filled, Black)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeech-Black.svg",
+    "name": "Speech icon (Outlined, Black)",
+    "tags": ["speech", "talk", "dialog", "conversation", "voice"]
+  },
+  {
+    "path": "IconSpeech-Filled-Black.svg",
+    "name": "Speech icon (Filled, Black)",
+    "tags": ["speech", "talk", "dialog", "conversation", "voice"]
+  },
+  {
+    "path": "IconSquareDashed-Black.svg",
+    "name": "Square Dashed icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconSquare-Black.svg",
+    "name": "Square icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconSquare-Filled-Black.svg",
+    "name": "Square icon (Filled, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconStar-Black.svg",
+    "name": "Star icon (Outlined, Black)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStar-Filled-Black.svg",
+    "name": "Star icon (Filled, Black)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStarbursts-Black.svg",
+    "name": "Starbursts icon (Outlined, Black)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStarbursts-Filled-Black.svg",
+    "name": "Starbursts icon (Filled, Black)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStop-Black.svg",
+    "name": "Stop icon (Outlined, Black)",
+    "tags": ["stop", "halt", "end", "terminate", "pause"]
+  },
+  {
+    "path": "IconStop-Filled-Black.svg",
+    "name": "Stop icon (Filled, Black)",
+    "tags": ["stop", "halt", "end", "terminate", "pause"]
+  },
+  {
+    "path": "IconStore-Black.svg",
+    "name": "Store icon (Outlined, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconStore-Filled-Black.svg",
+    "name": "Store icon (Filled, Black)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconStreamDeckKeyBottom-Black.svg",
+    "name": "Stream Deck Key Bottom icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyBottom-Filled-Black.svg",
+    "name": "Stream Deck Key Bottom icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKey-Black.svg",
+    "name": "Stream Deck Key icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKey-Filled-Black.svg",
+    "name": "Stream Deck Key icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyMiddle-Black.svg",
+    "name": "Stream Deck Key Middle icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyMiddle-Filled-Black.svg",
+    "name": "Stream Deck Key Middle icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyTop-Black.svg",
+    "name": "Stream Deck Key Top icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyTop-Filled-Black.svg",
+    "name": "Stream Deck Key Top icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckMini-Black.svg",
+    "name": "Stream Deck Mini icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "compact"]
+  },
+  {
+    "path": "IconStreamDeckMini-Filled-Black.svg",
+    "name": "Stream Deck Mini icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "compact"]
+  },
+  {
+    "path": "IconStreamDeckMk2-Black.svg",
+    "name": "Stream Deck Mk 2 icon (Outlined, Black)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "second generation"
+    ]
+  },
+  {
+    "path": "IconStreamDeckMk2-Filled-Black.svg",
+    "name": "Stream Deck Mk 2 icon (Filled, Black)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "second generation"
+    ]
+  },
+  {
+    "path": "IconStreamDeckNeo-Black.svg",
+    "name": "Stream Deck Neo icon (Outlined, Black)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "touch display"
+    ]
+  },
+  {
+    "path": "IconStreamDeckNeo-Filled-Black.svg",
+    "name": "Stream Deck Neo icon (Filled, Black)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "touch display"
+    ]
+  },
+  {
+    "path": "IconStreamDeckPedal-Black.svg",
+    "name": "Stream Deck Pedal icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "footswitch"]
+  },
+  {
+    "path": "IconStreamDeckPedal-Filled-Black.svg",
+    "name": "Stream Deck Pedal icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "footswitch"]
+  },
+  {
+    "path": "IconStreamDeckPlus-Black.svg",
+    "name": "Stream Deck Plus icon (Outlined, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "dial control"]
+  },
+  {
+    "path": "IconStreamDeckPlus-Filled-Black.svg",
+    "name": "Stream Deck Plus icon (Filled, Black)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "dial control"]
+  },
+  {
+    "path": "IconStream-Black.svg",
+    "name": "Stream icon (Outlined, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStream-Filled-Black.svg",
+    "name": "Stream icon (Filled, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamOff-Black.svg",
+    "name": "Stream Off icon (Outlined, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamOff-Filled-Black.svg",
+    "name": "Stream Off icon (Filled, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamSwitchTo-Black.svg",
+    "name": "Stream Switch To icon (Outlined, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamSwitchTo-Filled-Black.svg",
+    "name": "Stream Switch To icon (Filled, Black)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStrikethrough-Black.svg",
+    "name": "Strikethrough icon (Outlined, Black)",
+    "tags": ["formatting", "text style", "typography", "emphasis", "font"]
+  },
+  {
+    "path": "IconSubtractCircle-Black.svg",
+    "name": "Subtract Circle icon (Outlined, Black)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSubtractCircle-Filled-Black.svg",
+    "name": "Subtract Circle icon (Filled, Black)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSubtract-Black.svg",
+    "name": "Subtract icon (Outlined, Black)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSync-Black.svg",
+    "name": "Sync icon (Outlined, Black)",
+    "tags": ["sync", "synchronize", "match", "align", "update"]
+  },
+  {
+    "path": "IconTag-Black.svg",
+    "name": "Tag icon (Outlined, Black)",
+    "tags": ["tag", "label", "metadata", "keyword", "identifier"]
+  },
+  {
+    "path": "IconTag-Filled-Black.svg",
+    "name": "Tag icon (Filled, Black)",
+    "tags": ["tag", "label", "metadata", "keyword", "identifier"]
+  },
+  {
+    "path": "IconTapDouble-Black.svg",
+    "name": "Tap Double icon (Outlined, Black)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTapHold-Black.svg",
+    "name": "Tap Hold icon (Outlined, Black)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTap-Black.svg",
+    "name": "Tap icon (Outlined, Black)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTemperatureCool-Black.svg",
+    "name": "Temperature Cool icon (Outlined, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureCool-Filled-Black.svg",
+    "name": "Temperature Cool icon (Filled, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperature-Black.svg",
+    "name": "Temperature icon (Outlined, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperature-Filled-Black.svg",
+    "name": "Temperature icon (Filled, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureWarm-Black.svg",
+    "name": "Temperature Warm icon (Outlined, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureWarm-Filled-Black.svg",
+    "name": "Temperature Warm icon (Filled, Black)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemplate-Black.svg",
+    "name": "Template icon (Outlined, Black)",
+    "tags": ["template", "layout", "preset", "framework", "starter"]
+  },
+  {
+    "path": "IconTemplate-Filled-Black.svg",
+    "name": "Template icon (Filled, Black)",
+    "tags": ["template", "layout", "preset", "framework", "starter"]
+  },
+  {
+    "path": "IconTerminal-Black.svg",
+    "name": "Terminal icon (Outlined, Black)",
+    "tags": ["terminal", "command line", "shell", "console", "developer"]
+  },
+  {
+    "path": "IconTerminal-Filled-Black.svg",
+    "name": "Terminal icon (Filled, Black)",
+    "tags": ["terminal", "command line", "shell", "console", "developer"]
+  },
+  {
+    "path": "IconTestTube-Black.svg",
+    "name": "Test Tube icon (Outlined, Black)",
+    "tags": ["test", "exam", "assessment", "check", "validate"]
+  },
+  {
+    "path": "IconTextAlignCenter-Black.svg",
+    "name": "Text Align Center icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextAlignLeft-Black.svg",
+    "name": "Text Align Left icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextAlignRight-Black.svg",
+    "name": "Text Align Right icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextDownToBottom-Black.svg",
+    "name": "Text Down To Bottom icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconText-Black.svg",
+    "name": "Text icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextLineSpacing-Black.svg",
+    "name": "Text Line Spacing icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextLineSpacingSet-Black.svg",
+    "name": "Text Line Spacing Set icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextNext-Black.svg",
+    "name": "Text Next icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextPrevious-Black.svg",
+    "name": "Text Previous icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSet-Black.svg",
+    "name": "Text Set icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeDecrease-Black.svg",
+    "name": "Text Size Decrease icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSize-Black.svg",
+    "name": "Text Size icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeIncrease-Black.svg",
+    "name": "Text Size Increase icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeSet-Black.svg",
+    "name": "Text Size Set icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextUpToTop-Black.svg",
+    "name": "Text Up To Top icon (Outlined, Black)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconThumbDown-Black.svg",
+    "name": "Thumb Down icon (Outlined, Black)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbDown-Filled-Black.svg",
+    "name": "Thumb Down icon (Filled, Black)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbUp-Black.svg",
+    "name": "Thumb Up icon (Outlined, Black)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbUp-Filled-Black.svg",
+    "name": "Thumb Up icon (Filled, Black)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconTimeDelay-Black.svg",
+    "name": "Time Delay icon (Outlined, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimeHistory-Black.svg",
+    "name": "Time History icon (Outlined, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTime-Black.svg",
+    "name": "Time icon (Outlined, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTime-Filled-Black.svg",
+    "name": "Time icon (Filled, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimer-Black.svg",
+    "name": "Timer icon (Outlined, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimer-Filled-Black.svg",
+    "name": "Timer icon (Filled, Black)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTint-Black.svg",
+    "name": "Tint icon (Outlined, Black)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconTint-Filled-Black.svg",
+    "name": "Tint icon (Filled, Black)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconToken-Black.svg",
+    "name": "Token icon (Outlined, Black)",
+    "tags": ["token", "crypto", "currency", "redeem", "reward"]
+  },
+  {
+    "path": "IconToken-Filled-Black.svg",
+    "name": "Token icon (Filled, Black)",
+    "tags": ["token", "crypto", "currency", "redeem", "reward"]
+  },
+  {
+    "path": "IconTrain-Black.svg",
+    "name": "Train icon (Outlined, Black)",
+    "tags": ["train", "rail", "transport", "commute", "travel"]
+  },
+  {
+    "path": "IconTrain-Filled-Black.svg",
+    "name": "Train icon (Filled, Black)",
+    "tags": ["train", "rail", "transport", "commute", "travel"]
+  },
+  {
+    "path": "IconTransition-Black.svg",
+    "name": "Transition icon (Outlined, Black)",
+    "tags": ["transition", "switch", "change", "animation", "dissolve"]
+  },
+  {
+    "path": "IconTransition-Filled-Black.svg",
+    "name": "Transition icon (Filled, Black)",
+    "tags": ["transition", "switch", "change", "animation", "dissolve"]
+  },
+  {
+    "path": "IconTrash-Black.svg",
+    "name": "Trash icon (Outlined, Black)",
+    "tags": ["trash", "delete", "remove", "bin", "discard"]
+  },
+  {
+    "path": "IconTrash-Filled-Black.svg",
+    "name": "Trash icon (Filled, Black)",
+    "tags": ["trash", "delete", "remove", "bin", "discard"]
+  },
+  {
+    "path": "IconTriangle-Black.svg",
+    "name": "Triangle icon (Outlined, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconTriangle-Filled-Black.svg",
+    "name": "Triangle icon (Filled, Black)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconUnderline-Black.svg",
+    "name": "Underline icon (Outlined, Black)",
+    "tags": ["underline", "format", "text style", "emphasis", "typography"]
+  },
+  {
+    "path": "IconUndo-Black.svg",
+    "name": "Undo icon (Outlined, Black)",
+    "tags": ["undo", "revert", "back", "restore", "undo action"]
+  },
+  {
+    "path": "IconUnorderedList-Black.svg",
+    "name": "Unordered List icon (Outlined, Black)",
+    "tags": ["unordered", "bulleted", "list", "items", "notes"]
+  },
+  {
+    "path": "IconUpload-Black.svg",
+    "name": "Upload icon (Outlined, Black)",
+    "tags": ["upload", "send", "post", "transfer", "cloud"]
+  },
+  {
+    "path": "IconUsb-Black.svg",
+    "name": "Usb icon (Outlined, Black)",
+    "tags": ["usb", "connection", "device", "cable", "interface"]
+  },
+  {
+    "path": "IconVerified-Black.svg",
+    "name": "Verified icon (Outlined, Black)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconVerified-Filled-Black.svg",
+    "name": "Verified icon (Filled, Black)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconVideo-Black.svg",
+    "name": "Video icon (Outlined, Black)",
+    "tags": ["video", "film", "media", "recording", "clip"]
+  },
+  {
+    "path": "IconVideo-Filled-Black.svg",
+    "name": "Video icon (Filled, Black)",
+    "tags": ["video", "film", "media", "recording", "clip"]
+  },
+  {
+    "path": "IconView-Black.svg",
+    "name": "View icon (Outlined, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconView-Filled-Black.svg",
+    "name": "View icon (Filled, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconViewOff-Black.svg",
+    "name": "View Off icon (Outlined, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconViewOff-Filled-Black.svg",
+    "name": "View Off icon (Filled, Black)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconVoiceSync-Black.svg",
+    "name": "Voice Sync icon (Outlined, Black)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceSync-Filled-Black.svg",
+    "name": "Voice Sync icon (Filled, Black)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceTune-Black.svg",
+    "name": "Voice Tune icon (Outlined, Black)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceTune-Filled-Black.svg",
+    "name": "Voice Tune icon (Filled, Black)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVolume1-Black.svg",
+    "name": "Volume 1 icon (Outlined, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume1-Filled-Black.svg",
+    "name": "Volume 1 icon (Filled, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume2-Black.svg",
+    "name": "Volume 2 icon (Outlined, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume2-Filled-Black.svg",
+    "name": "Volume 2 icon (Filled, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume-Black.svg",
+    "name": "Volume icon (Outlined, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume-Filled-Black.svg",
+    "name": "Volume icon (Filled, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMixer-Black.svg",
+    "name": "Volume Mixer icon (Outlined, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMixer-Filled-Black.svg",
+    "name": "Volume Mixer icon (Filled, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMuted-Black.svg",
+    "name": "Volume Muted icon (Outlined, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMuted-Filled-Black.svg",
+    "name": "Volume Muted icon (Filled, Black)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconWarning-Black.svg",
+    "name": "Warning icon (Outlined, Black)",
+    "tags": ["warning", "alert", "caution", "danger", "attention"]
+  },
+  {
+    "path": "IconWarning-Filled-Black.svg",
+    "name": "Warning icon (Filled, Black)",
+    "tags": ["warning", "alert", "caution", "danger", "attention"]
+  },
+  {
+    "path": "IconWaveDx-Black.svg",
+    "name": "Wave Dx icon (Outlined, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "dynamic mic"]
+  },
+  {
+    "path": "IconWaveDx-Filled-Black.svg",
+    "name": "Wave Dx icon (Filled, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "dynamic mic"]
+  },
+  {
+    "path": "IconWave-Black.svg",
+    "name": "Wave icon (Outlined, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "streaming"]
+  },
+  {
+    "path": "IconWaveMic-Black.svg",
+    "name": "Wave Mic icon (Outlined, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "broadcast mic"]
+  },
+  {
+    "path": "IconWaveMic-Filled-Black.svg",
+    "name": "Wave Mic icon (Filled, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "broadcast mic"]
+  },
+  {
+    "path": "IconWaveNeo-Black.svg",
+    "name": "Wave Neo icon (Outlined, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "usb mic"]
+  },
+  {
+    "path": "IconWaveNeo-Filled-Black.svg",
+    "name": "Wave Neo icon (Filled, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "usb mic"]
+  },
+  {
+    "path": "IconWaveXlr-Black.svg",
+    "name": "Wave Xlr icon (Outlined, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "audio interface"]
+  },
+  {
+    "path": "IconWaveXlr-Filled-Black.svg",
+    "name": "Wave Xlr icon (Filled, Black)",
+    "tags": ["wave", "elgato", "microphone", "audio", "audio interface"]
+  },
+  {
+    "path": "IconWeather-Black.svg",
+    "name": "Weather icon (Outlined, Black)",
+    "tags": ["weather", "forecast", "climate", "conditions", "report"]
+  },
+  {
+    "path": "IconWeather-Filled-Black.svg",
+    "name": "Weather icon (Filled, Black)",
+    "tags": ["weather", "forecast", "climate", "conditions", "report"]
+  },
+  {
+    "path": "IconWebcam-Black.svg",
+    "name": "Webcam icon (Outlined, Black)",
+    "tags": ["web", "online", "browser", "internet", "webcam"]
+  },
+  {
+    "path": "IconWebcam-Filled-Black.svg",
+    "name": "Webcam icon (Filled, Black)",
+    "tags": ["web", "online", "browser", "internet", "webcam"]
+  },
+  {
+    "path": "IconWidget-Black.svg",
+    "name": "Widget icon (Outlined, Black)",
+    "tags": ["widget", "module", "panel", "component", "block"]
+  },
+  {
+    "path": "IconWidget-Filled-Black.svg",
+    "name": "Widget icon (Filled, Black)",
+    "tags": ["widget", "module", "panel", "component", "block"]
+  },
+  {
+    "path": "IconWifi1-Black.svg",
+    "name": "Wifi 1 icon (Outlined, Black)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi2-Black.svg",
+    "name": "Wifi 2 icon (Outlined, Black)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi3-Black.svg",
+    "name": "Wifi 3 icon (Outlined, Black)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi-Black.svg",
+    "name": "Wifi icon (Outlined, Black)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifiOff-Black.svg",
+    "name": "Wifi Off icon (Outlined, Black)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWindowCheck-Black.svg",
+    "name": "Window Check icon (Outlined, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowCheck-Filled-Black.svg",
+    "name": "Window Check icon (Filled, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowForeground-Black.svg",
+    "name": "Window Foreground icon (Outlined, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowForeground-Filled-Black.svg",
+    "name": "Window Foreground icon (Filled, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindow-Black.svg",
+    "name": "Window icon (Outlined, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindow-Filled-Black.svg",
+    "name": "Window icon (Filled, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowToPrompter-Black.svg",
+    "name": "Window To Prompter icon (Outlined, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowToPrompter-Filled-Black.svg",
+    "name": "Window To Prompter icon (Filled, Black)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWrench-Black.svg",
+    "name": "Wrench icon (Outlined, Black)",
+    "tags": ["wrench", "tools", "repair", "maintenance", "fix"]
+  },
+  {
+    "path": "IconWrench-Filled-Black.svg",
+    "name": "Wrench icon (Filled, Black)",
+    "tags": ["wrench", "tools", "repair", "maintenance", "fix"]
+  },
+  {
+    "path": "IconXlr-Black.svg",
+    "name": "Xlr icon (Outlined, Black)",
+    "tags": ["xlr", "connector", "microphone", "cable", "audio"]
+  },
+  {
+    "path": "IconXlr-Filled-Black.svg",
+    "name": "Xlr icon (Filled, Black)",
+    "tags": ["xlr", "connector", "microphone", "cable", "audio"]
+  },
+  {
+    "path": "IconZoomIn-Black.svg",
+    "name": "Zoom In icon (Outlined, Black)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomIn-Filled-Black.svg",
+    "name": "Zoom In icon (Filled, Black)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomOut-Black.svg",
+    "name": "Zoom Out icon (Outlined, Black)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomOut-Filled-Black.svg",
+    "name": "Zoom Out icon (Filled, Black)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  }
+]

@@ -18,6 +18,12 @@ extraResources:
     to: udev
   - from: systemd
     to: systemd
+  # Bundled Elgato icon packs (the two com.elgato.defaulticons* libraries).
+  # Seeded into <userData>/iconpacks at startup when the user has no packs —
+  # packaged builds read <resources>/iconpacks here, dev runs read the repo
+  # resources/iconpacks dir directly (src/main/index.ts iconPackSeedDir).
+  - from: resources/iconpacks
+    to: iconpacks
 
 linux:
   target:

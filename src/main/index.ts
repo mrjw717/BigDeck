@@ -16,6 +16,7 @@ import {
 import path from "path";
 import { pathToFileURL } from "url";
 import fs from "fs/promises";
+import { existsSync } from "fs";
 import { DeviceManager } from "./device/DeviceManager";
 import { ProfileManager } from "./profiles/ProfileManager";
 import {
@@ -887,17 +888,28 @@ if (!gotTheLock) {
       pluginManager = new PluginManager(logger);
 
       // Icon pack library (Elgato .sdIconPack). Packs are imported into
-      // <userData>/iconpacks; at startup we seed it from the app's bundled
-      // pack directory when one exists (assets/iconpacks — see
-      // docs/ICON-PACKS.md). Already-installed packs are never overwritten,
-      // and a missing seed dir imports nothing.
+      // <userData>/iconpacks; at startup we seed it from the bundled pack
+      // directory (resources/iconpacks in the repo, embedded via
+      // electron-builder extraResources as <resources>/iconpacks in
+      // packaged builds — see electron-builder.yml and docs/ICON-PACKS.md).
+      // importAllFrom skips already-installed packs (the user's copy wins)
+      // and a missing seed dir imports nothing — but log it loudly, since a
+      // fresh machine without the seed shows an empty icon picker.
       iconPackManager = new IconPackManager({
         logger,
         packsDir: path.join(app.getPath("userData"), "iconpacks"),
       });
-      void iconPackManager.importAllFrom(
-        path.join(app.getAppPath(), "assets", "iconpacks"),
-      );
+      const iconPackSeedDir = [
+        path.join(process.resourcesPath, "iconpacks"), // packaged (extraResources)
+        path.join(app.getAppPath(), "resources", "iconpacks"), // dev checkout
+      ].find((dir) => existsSync(dir));
+      if (iconPackSeedDir) {
+        void iconPackManager.importAllFrom(iconPackSeedDir);
+      } else {
+        logger.warn(
+          "Icon pack seed dir not found (resources/iconpacks) — no built-in icon packs",
+        );
+      }
 
       networkServer = new NetworkServer(
         logger,

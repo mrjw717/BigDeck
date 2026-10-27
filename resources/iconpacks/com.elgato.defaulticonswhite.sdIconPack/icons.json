@@ -1,0 +1,4275 @@
+[
+  {
+    "path": "IconAccessibility-White.svg",
+    "name": "Accessibility icon (Outlined, White)",
+    "tags": ["accessibility", "inclusive", "assistive", "universal design"]
+  },
+  {
+    "path": "IconAccessibility-Filled-White.svg",
+    "name": "Accessibility icon (Filled, White)",
+    "tags": ["accessibility", "inclusive", "assistive", "universal design"]
+  },
+  {
+    "path": "IconAccessories-White.svg",
+    "name": "Accessories icon (Outlined, White)",
+    "tags": ["accessories", "gear", "peripherals", "add-ons", "equipment"]
+  },
+  {
+    "path": "IconAction-White.svg",
+    "name": "Action icon (Outlined, White)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconAction-Filled-White.svg",
+    "name": "Action icon (Filled, White)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconActionWheel-White.svg",
+    "name": "Action Wheel icon (Outlined, White)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconActionWheel-Filled-White.svg",
+    "name": "Action Wheel icon (Filled, White)",
+    "tags": ["action", "command", "trigger", "shortcut", "execute"]
+  },
+  {
+    "path": "IconAddCircle-White.svg",
+    "name": "Add Circle icon (Outlined, White)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAddCircle-Filled-White.svg",
+    "name": "Add Circle icon (Filled, White)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAdd-White.svg",
+    "name": "Add icon (Outlined, White)",
+    "tags": ["add", "plus", "create", "insert", "increase"]
+  },
+  {
+    "path": "IconAdjustHorizontal-White.svg",
+    "name": "Adjust Horizontal icon (Outlined, White)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustHorizontal-Filled-White.svg",
+    "name": "Adjust Horizontal icon (Filled, White)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustVertical-White.svg",
+    "name": "Adjust Vertical icon (Outlined, White)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAdjustVertical-Filled-White.svg",
+    "name": "Adjust Vertical icon (Filled, White)",
+    "tags": ["adjust", "fine-tune", "modify", "calibrate", "optimize"]
+  },
+  {
+    "path": "IconAlignBottom-White.svg",
+    "name": "Align Bottom icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignBottom-Filled-White.svg",
+    "name": "Align Bottom icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignHorizontalCenter-White.svg",
+    "name": "Align Horizontal Center icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignHorizontalCenter-Filled-White.svg",
+    "name": "Align Horizontal Center icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignLeft-White.svg",
+    "name": "Align Left icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignLeft-Filled-White.svg",
+    "name": "Align Left icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignRight-White.svg",
+    "name": "Align Right icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignRight-Filled-White.svg",
+    "name": "Align Right icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignTop-White.svg",
+    "name": "Align Top icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignTop-Filled-White.svg",
+    "name": "Align Top icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignVerticalCenter-White.svg",
+    "name": "Align Vertical Center icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAlignVerticalCenter-Filled-White.svg",
+    "name": "Align Vertical Center icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconAnalytics-White.svg",
+    "name": "Analytics icon (Outlined, White)",
+    "tags": ["analytics", "insights", "metrics", "data", "reporting"]
+  },
+  {
+    "path": "IconAnalytics-Filled-White.svg",
+    "name": "Analytics icon (Filled, White)",
+    "tags": ["analytics", "insights", "metrics", "data", "reporting"]
+  },
+  {
+    "path": "IconAppsAdd-White.svg",
+    "name": "Apps Add icon (Outlined, White)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconAppsAdd-Filled-White.svg",
+    "name": "Apps Add icon (Filled, White)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconApps-White.svg",
+    "name": "Apps icon (Outlined, White)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconApps-Filled-White.svg",
+    "name": "Apps icon (Filled, White)",
+    "tags": ["apps", "applications", "software", "programs", "tools"]
+  },
+  {
+    "path": "IconArCheck-White.svg",
+    "name": "Ar Check icon (Outlined, White)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconArCheck-Filled-White.svg",
+    "name": "Ar Check icon (Filled, White)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconAr-White.svg",
+    "name": "Ar icon (Outlined, White)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconAr-Filled-White.svg",
+    "name": "Ar icon (Filled, White)",
+    "tags": [
+      "augmented reality",
+      "mixed reality",
+      "immersive",
+      "3d overlay",
+      "digital layer"
+    ]
+  },
+  {
+    "path": "IconArrowDown-White.svg",
+    "name": "Arrow Down icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowDownToRight-White.svg",
+    "name": "Arrow Down To Right icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowHorizontal-White.svg",
+    "name": "Arrow Horizontal icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowLeft-White.svg",
+    "name": "Arrow Left icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowRight-White.svg",
+    "name": "Arrow Right icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowUp-White.svg",
+    "name": "Arrow Up icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArrowVertical-White.svg",
+    "name": "Arrow Vertical icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconArticle-White.svg",
+    "name": "Article icon (Outlined, White)",
+    "tags": ["article", "story", "write-up", "content", "publication"]
+  },
+  {
+    "path": "IconArticle-Filled-White.svg",
+    "name": "Article icon (Filled, White)",
+    "tags": ["article", "story", "write-up", "content", "publication"]
+  },
+  {
+    "path": "IconAspectRatio-White.svg",
+    "name": "Aspect Ratio icon (Outlined, White)",
+    "tags": ["aspect ratio", "dimensions", "framing", "proportion", "layout"]
+  },
+  {
+    "path": "IconAspectRatio-Filled-White.svg",
+    "name": "Aspect Ratio icon (Filled, White)",
+    "tags": ["aspect ratio", "dimensions", "framing", "proportion", "layout"]
+  },
+  {
+    "path": "IconAttachment-White.svg",
+    "name": "Attachment icon (Outlined, White)",
+    "tags": ["attachment", "paperclip", "file", "document", "include"]
+  },
+  {
+    "path": "IconAutoScrollDecrease-White.svg",
+    "name": "Auto Scroll Decrease icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDecrease-Filled-White.svg",
+    "name": "Auto Scroll Decrease icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDown-White.svg",
+    "name": "Auto Scroll Down icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollDown-Filled-White.svg",
+    "name": "Auto Scroll Down icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScroll-White.svg",
+    "name": "Auto Scroll icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScroll-Filled-White.svg",
+    "name": "Auto Scroll icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollIncrease-White.svg",
+    "name": "Auto Scroll Increase icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollIncrease-Filled-White.svg",
+    "name": "Auto Scroll Increase icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollSet-White.svg",
+    "name": "Auto Scroll Set icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollSet-Filled-White.svg",
+    "name": "Auto Scroll Set icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollUp-White.svg",
+    "name": "Auto Scroll Up icon (Outlined, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAutoScrollUp-Filled-White.svg",
+    "name": "Auto Scroll Up icon (Filled, White)",
+    "tags": ["automatic", "smart", "automation", "assist", "hands-free"]
+  },
+  {
+    "path": "IconAuxiliaryAdd-White.svg",
+    "name": "Auxiliary Add icon (Outlined, White)",
+    "tags": ["auxiliary", "audio channel", "input", "routing", "mix"]
+  },
+  {
+    "path": "IconAuxiliary-White.svg",
+    "name": "Auxiliary icon (Outlined, White)",
+    "tags": ["auxiliary", "audio channel", "input", "routing", "mix"]
+  },
+  {
+    "path": "IconAvatar-White.svg",
+    "name": "Avatar icon (Outlined, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconAvatar-Filled-White.svg",
+    "name": "Avatar icon (Filled, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconBackgroundRemove-White.svg",
+    "name": "Background Remove icon (Outlined, White)",
+    "tags": ["background", "layer", "backdrop", "canvas", "scene"]
+  },
+  {
+    "path": "IconBackgroundRemove-Filled-White.svg",
+    "name": "Background Remove icon (Filled, White)",
+    "tags": ["background", "layer", "backdrop", "canvas", "scene"]
+  },
+  {
+    "path": "IconBackspace-White.svg",
+    "name": "Backspace icon (Outlined, White)",
+    "tags": ["backspace", "delete", "erase", "keyboard", "typing"]
+  },
+  {
+    "path": "IconBackspace-Filled-White.svg",
+    "name": "Backspace icon (Filled, White)",
+    "tags": ["backspace", "delete", "erase", "keyboard", "typing"]
+  },
+  {
+    "path": "IconBadge-White.svg",
+    "name": "Badge icon (Outlined, White)",
+    "tags": ["badge", "award", "achievement", "label", "status"]
+  },
+  {
+    "path": "IconBadge-Filled-White.svg",
+    "name": "Badge icon (Filled, White)",
+    "tags": ["badge", "award", "achievement", "label", "status"]
+  },
+  {
+    "path": "IconBlinds-White.svg",
+    "name": "Blinds icon (Outlined, White)",
+    "tags": ["blinds", "window covering", "shade", "home decor", "privacy"]
+  },
+  {
+    "path": "IconBlinds-Filled-White.svg",
+    "name": "Blinds icon (Filled, White)",
+    "tags": ["blinds", "window covering", "shade", "home decor", "privacy"]
+  },
+  {
+    "path": "IconBlockQuote-White.svg",
+    "name": "Block Quote icon (Outlined, White)",
+    "tags": ["block", "deny", "restrict", "stop", "prevent"]
+  },
+  {
+    "path": "IconBluetooth-White.svg",
+    "name": "Bluetooth icon (Outlined, White)",
+    "tags": ["bluetooth", "wireless", "connect", "pair", "device"]
+  },
+  {
+    "path": "IconBlurBackground-White.svg",
+    "name": "Blur Background icon (Outlined, White)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconBlur-White.svg",
+    "name": "Blur icon (Outlined, White)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconBoard-White.svg",
+    "name": "Board icon (Outlined, White)",
+    "tags": ["board", "whiteboard", "planning", "collaboration", "workspace"]
+  },
+  {
+    "path": "IconBoard-Filled-White.svg",
+    "name": "Board icon (Filled, White)",
+    "tags": ["board", "whiteboard", "planning", "collaboration", "workspace"]
+  },
+  {
+    "path": "IconBold-White.svg",
+    "name": "Bold icon (Outlined, White)",
+    "tags": ["formatting", "text style", "typography", "emphasis", "font"]
+  },
+  {
+    "path": "IconBookClosed-White.svg",
+    "name": "Book Closed icon (Outlined, White)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBook-White.svg",
+    "name": "Book icon (Outlined, White)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBook-Filled-White.svg",
+    "name": "Book icon (Filled, White)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconBriefcase-White.svg",
+    "name": "Briefcase icon (Outlined, White)",
+    "tags": ["briefcase", "business", "work", "office", "professional"]
+  },
+  {
+    "path": "IconBriefcase-Filled-White.svg",
+    "name": "Briefcase icon (Filled, White)",
+    "tags": ["briefcase", "business", "work", "office", "professional"]
+  },
+  {
+    "path": "IconBrightnessDecrease-White.svg",
+    "name": "Brightness Decrease icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessDecrease-Filled-White.svg",
+    "name": "Brightness Decrease icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightness-White.svg",
+    "name": "Brightness icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightness-Filled-White.svg",
+    "name": "Brightness icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessIncrease-White.svg",
+    "name": "Brightness Increase icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessIncrease-Filled-White.svg",
+    "name": "Brightness Increase icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessOff-White.svg",
+    "name": "Brightness Off icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessOff-Filled-White.svg",
+    "name": "Brightness Off icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessReset-White.svg",
+    "name": "Brightness Reset icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessReset-Filled-White.svg",
+    "name": "Brightness Reset icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessSet-White.svg",
+    "name": "Brightness Set icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBrightnessSet-Filled-White.svg",
+    "name": "Brightness Set icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconBug-White.svg",
+    "name": "Bug icon (Outlined, White)",
+    "tags": ["bug", "issue", "problem", "debug", "report"]
+  },
+  {
+    "path": "IconBug-Filled-White.svg",
+    "name": "Bug icon (Filled, White)",
+    "tags": ["bug", "issue", "problem", "debug", "report"]
+  },
+  {
+    "path": "IconCalendar-White.svg",
+    "name": "Calendar icon (Outlined, White)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendar-Filled-White.svg",
+    "name": "Calendar icon (Filled, White)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendarToday-White.svg",
+    "name": "Calendar Today icon (Outlined, White)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCalendarToday-Filled-White.svg",
+    "name": "Calendar Today icon (Filled, White)",
+    "tags": ["calendar", "schedule", "date", "planner", "appointment"]
+  },
+  {
+    "path": "IconCamcorder-White.svg",
+    "name": "Camcorder icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamcorder-Filled-White.svg",
+    "name": "Camcorder icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFlip-White.svg",
+    "name": "Camera Flip icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFlip-Filled-White.svg",
+    "name": "Camera Flip icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetCheck-White.svg",
+    "name": "Camera Frame Preset Check icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetCheck-Filled-White.svg",
+    "name": "Camera Frame Preset Check icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePreset-White.svg",
+    "name": "Camera Frame Preset icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePreset-Filled-White.svg",
+    "name": "Camera Frame Preset icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetReset-White.svg",
+    "name": "Camera Frame Preset Reset icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetReset-Filled-White.svg",
+    "name": "Camera Frame Preset Reset icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetSet-White.svg",
+    "name": "Camera Frame Preset Set icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraFramePresetSet-Filled-White.svg",
+    "name": "Camera Frame Preset Set icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamera-White.svg",
+    "name": "Camera icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCamera-Filled-White.svg",
+    "name": "Camera icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInputCheck-White.svg",
+    "name": "Camera Input Check icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInputCheck-Filled-White.svg",
+    "name": "Camera Input Check icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInput-White.svg",
+    "name": "Camera Input icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraInput-Filled-White.svg",
+    "name": "Camera Input icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraMonitorMountAlt-White.svg",
+    "name": "Camera Monitor Mount Alt icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraMonitorMount-White.svg",
+    "name": "Camera Monitor Mount icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraOff-White.svg",
+    "name": "Camera Off icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraOff-Filled-White.svg",
+    "name": "Camera Off icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraPreviewToPrompter-White.svg",
+    "name": "Camera Preview To Prompter icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraPreviewToPrompter-Filled-White.svg",
+    "name": "Camera Preview To Prompter icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCameraSensor-White.svg",
+    "name": "Camera Sensor icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconCapture-White.svg",
+    "name": "Capture icon (Outlined, White)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconCapture-Filled-White.svg",
+    "name": "Capture icon (Filled, White)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconCarousel-White.svg",
+    "name": "Carousel icon (Outlined, White)",
+    "tags": ["carousel", "gallery", "slideshow", "rotate", "images"]
+  },
+  {
+    "path": "IconCartAdd-White.svg",
+    "name": "Cart Add icon (Outlined, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCart-White.svg",
+    "name": "Cart icon (Outlined, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCart-Filled-White.svg",
+    "name": "Cart icon (Filled, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCartRemove-White.svg",
+    "name": "Cart Remove icon (Outlined, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconCathedral-White.svg",
+    "name": "Cathedral icon (Outlined, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCathedral-Filled-White.svg",
+    "name": "Cathedral icon (Filled, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCave-White.svg",
+    "name": "Cave icon (Outlined, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCave-Filled-White.svg",
+    "name": "Cave icon (Filled, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconChairDesk-White.svg",
+    "name": "Chair Desk icon (Outlined, White)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconChapterCheck-White.svg",
+    "name": "Chapter Check icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterCheck-Filled-White.svg",
+    "name": "Chapter Check icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterDownToBottom-White.svg",
+    "name": "Chapter Down To Bottom icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterDownToBottom-Filled-White.svg",
+    "name": "Chapter Down To Bottom icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapter-White.svg",
+    "name": "Chapter icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapter-Filled-White.svg",
+    "name": "Chapter icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarker-White.svg",
+    "name": "Chapter Marker icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarker-Filled-White.svg",
+    "name": "Chapter Marker icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarkerOff-White.svg",
+    "name": "Chapter Marker Off icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterMarkerOff-Filled-White.svg",
+    "name": "Chapter Marker Off icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterSet-White.svg",
+    "name": "Chapter Set icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterSet-Filled-White.svg",
+    "name": "Chapter Set icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterUpToTop-White.svg",
+    "name": "Chapter Up To Top icon (Outlined, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconChapterUpToTop-Filled-White.svg",
+    "name": "Chapter Up To Top icon (Filled, White)",
+    "tags": ["chapter", "section", "script", "marker", "teleprompter"]
+  },
+  {
+    "path": "IconCheckmarkCircle-White.svg",
+    "name": "Checkmark Circle icon (Outlined, White)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconCheckmarkCircle-Filled-White.svg",
+    "name": "Checkmark Circle icon (Filled, White)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconCheckmark-White.svg",
+    "name": "Checkmark icon (Outlined, White)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconChevronDown-White.svg",
+    "name": "Chevron Down icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronLeft-White.svg",
+    "name": "Chevron Left icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronRight-White.svg",
+    "name": "Chevron Right icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronUp-White.svg",
+    "name": "Chevron Up icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownDecrease-White.svg",
+    "name": "Chevrons Down Decrease icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDown-White.svg",
+    "name": "Chevrons Down icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownIncrease-White.svg",
+    "name": "Chevrons Down Increase icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsDownSet-White.svg",
+    "name": "Chevrons Down Set icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsLeft-White.svg",
+    "name": "Chevrons Left icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsLeftRight-White.svg",
+    "name": "Chevrons Left Right icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsRight-White.svg",
+    "name": "Chevrons Right icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsUpDown-White.svg",
+    "name": "Chevrons Up Down icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconChevronsUp-White.svg",
+    "name": "Chevrons Up icon (Outlined, White)",
+    "tags": ["arrow", "direction", "navigate", "pointer", "indicator"]
+  },
+  {
+    "path": "IconCircle-White.svg",
+    "name": "Circle icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCircle-Filled-White.svg",
+    "name": "Circle icon (Filled, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCity-White.svg",
+    "name": "City icon (Outlined, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconCity-Filled-White.svg",
+    "name": "City icon (Filled, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconClamp-White.svg",
+    "name": "Clamp icon (Outlined, White)",
+    "tags": ["clamp", "mount", "secure", "hardware", "hold"]
+  },
+  {
+    "path": "IconClipboard-White.svg",
+    "name": "Clipboard icon (Outlined, White)",
+    "tags": ["clipboard", "notes", "documents", "office", "copy"]
+  },
+  {
+    "path": "IconClipboard-Filled-White.svg",
+    "name": "Clipboard icon (Filled, White)",
+    "tags": ["clipboard", "notes", "documents", "office", "copy"]
+  },
+  {
+    "path": "IconClipguard-White.svg",
+    "name": "Clipguard icon (Outlined, White)",
+    "tags": ["clipguard", "limiter", "microphone", "safety", "audio"]
+  },
+  {
+    "path": "IconCloseCircle-White.svg",
+    "name": "Close Circle icon (Outlined, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseCircle-Filled-White.svg",
+    "name": "Close Circle icon (Filled, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconClose-White.svg",
+    "name": "Close icon (Outlined, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseSquare-White.svg",
+    "name": "Close Square icon (Outlined, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloseSquare-Filled-White.svg",
+    "name": "Close Square icon (Filled, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconCloud-White.svg",
+    "name": "Cloud icon (Outlined, White)",
+    "tags": ["cloud", "storage", "online", "sync", "backup"]
+  },
+  {
+    "path": "IconCloud-Filled-White.svg",
+    "name": "Cloud icon (Filled, White)",
+    "tags": ["cloud", "storage", "online", "sync", "backup"]
+  },
+  {
+    "path": "IconCodeBlock-White.svg",
+    "name": "Code Block icon (Outlined, White)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCodeBlock-Filled-White.svg",
+    "name": "Code Block icon (Filled, White)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCodeBuild-White.svg",
+    "name": "Code Build icon (Outlined, White)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCode-White.svg",
+    "name": "Code icon (Outlined, White)",
+    "tags": ["code", "programming", "developer", "script", "source"]
+  },
+  {
+    "path": "IconCollab-White.svg",
+    "name": "Collab icon (Outlined, White)",
+    "tags": ["collaboration", "team", "contact", "group", "partners"]
+  },
+  {
+    "path": "IconColorWheel-White.svg",
+    "name": "Color Wheel icon (Outlined, White)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconCompany-White.svg",
+    "name": "Company icon (Outlined, White)",
+    "tags": ["brand", "identity", "company", "organization", "logo"]
+  },
+  {
+    "path": "IconCompany-Filled-White.svg",
+    "name": "Company icon (Filled, White)",
+    "tags": ["brand", "identity", "company", "organization", "logo"]
+  },
+  {
+    "path": "IconCompass-White.svg",
+    "name": "Compass icon (Outlined, White)",
+    "tags": ["compass", "navigation", "direction", "orientation", "map"]
+  },
+  {
+    "path": "IconCompass-Filled-White.svg",
+    "name": "Compass icon (Filled, White)",
+    "tags": ["compass", "navigation", "direction", "orientation", "map"]
+  },
+  {
+    "path": "IconCompose-White.svg",
+    "name": "Compose icon (Outlined, White)",
+    "tags": ["compose", "write", "message", "draft", "create"]
+  },
+  {
+    "path": "IconCompose-Filled-White.svg",
+    "name": "Compose icon (Filled, White)",
+    "tags": ["compose", "write", "message", "draft", "create"]
+  },
+  {
+    "path": "IconCopy-White.svg",
+    "name": "Copy icon (Outlined, White)",
+    "tags": ["copy", "duplicate", "clone", "clipboard", "replicate"]
+  },
+  {
+    "path": "IconCopy-Filled-White.svg",
+    "name": "Copy icon (Filled, White)",
+    "tags": ["copy", "duplicate", "clone", "clipboard", "replicate"]
+  },
+  {
+    "path": "IconCouch-White.svg",
+    "name": "Couch icon (Outlined, White)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconCouch-Filled-White.svg",
+    "name": "Couch icon (Filled, White)",
+    "tags": ["furniture", "seat", "home", "living space", "comfort"]
+  },
+  {
+    "path": "IconCpu-White.svg",
+    "name": "Cpu icon (Outlined, White)",
+    "tags": ["cpu", "processor", "hardware", "computer", "performance"]
+  },
+  {
+    "path": "IconCpu-Filled-White.svg",
+    "name": "Cpu icon (Filled, White)",
+    "tags": ["cpu", "processor", "hardware", "computer", "performance"]
+  },
+  {
+    "path": "IconCrop-White.svg",
+    "name": "Crop icon (Outlined, White)",
+    "tags": ["crop", "trim", "resize", "cut", "edit"]
+  },
+  {
+    "path": "IconCrossfade-White.svg",
+    "name": "Crossfade icon (Outlined, White)",
+    "tags": ["crossfade", "transition", "audio", "blend", "mix"]
+  },
+  {
+    "path": "IconCrosshairCheck-White.svg",
+    "name": "Crosshair Check icon (Outlined, White)",
+    "tags": ["crosshair", "aim", "target", "precision", "focus"]
+  },
+  {
+    "path": "IconCrosshair-White.svg",
+    "name": "Crosshair icon (Outlined, White)",
+    "tags": ["crosshair", "aim", "target", "precision", "focus"]
+  },
+  {
+    "path": "IconCrown-White.svg",
+    "name": "Crown icon (Outlined, White)",
+    "tags": ["crown", "premium", "vip", "status", "reward"]
+  },
+  {
+    "path": "IconCrown-Filled-White.svg",
+    "name": "Crown icon (Filled, White)",
+    "tags": ["crown", "premium", "vip", "status", "reward"]
+  },
+  {
+    "path": "IconCube-White.svg",
+    "name": "Cube icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCube-Filled-White.svg",
+    "name": "Cube icon (Filled, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconCurrencyDollar-White.svg",
+    "name": "Currency Dollar icon (Outlined, White)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyEuro-White.svg",
+    "name": "Currency Euro icon (Outlined, White)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyPound-White.svg",
+    "name": "Currency Pound icon (Outlined, White)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCurrencyYen-White.svg",
+    "name": "Currency Yen icon (Outlined, White)",
+    "tags": ["currency", "finance", "money", "payments", "pricing"]
+  },
+  {
+    "path": "IconCursor-White.svg",
+    "name": "Cursor icon (Outlined, White)",
+    "tags": ["cursor", "pointer", "mouse", "select", "point"]
+  },
+  {
+    "path": "IconCursor-Filled-White.svg",
+    "name": "Cursor icon (Filled, White)",
+    "tags": ["cursor", "pointer", "mouse", "select", "point"]
+  },
+  {
+    "path": "IconCut-White.svg",
+    "name": "Cut icon (Outlined, White)",
+    "tags": ["cut", "scissors", "trim", "remove", "edit"]
+  },
+  {
+    "path": "IconDatabase-White.svg",
+    "name": "Database icon (Outlined, White)",
+    "tags": ["database", "storage", "records", "data", "tables"]
+  },
+  {
+    "path": "IconDatabase-Filled-White.svg",
+    "name": "Database icon (Filled, White)",
+    "tags": ["database", "storage", "records", "data", "tables"]
+  },
+  {
+    "path": "IconDebug-White.svg",
+    "name": "Debug icon (Outlined, White)",
+    "tags": ["debug", "diagnose", "fix", "inspect", "troubleshoot"]
+  },
+  {
+    "path": "IconDelivery-White.svg",
+    "name": "Delivery icon (Outlined, White)",
+    "tags": ["delivery", "shipping", "parcel", "logistics", "send"]
+  },
+  {
+    "path": "IconDelivery-Filled-White.svg",
+    "name": "Delivery icon (Filled, White)",
+    "tags": ["delivery", "shipping", "parcel", "logistics", "send"]
+  },
+  {
+    "path": "IconDesktop-White.svg",
+    "name": "Desktop icon (Outlined, White)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconDiagram-White.svg",
+    "name": "Diagram icon (Outlined, White)",
+    "tags": ["diagram", "flowchart", "visual", "map", "plan"]
+  },
+  {
+    "path": "IconDiagram-Filled-White.svg",
+    "name": "Diagram icon (Filled, White)",
+    "tags": ["diagram", "flowchart", "visual", "map", "plan"]
+  },
+  {
+    "path": "IconDial-White.svg",
+    "name": "Dial icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDial-Filled-White.svg",
+    "name": "Dial icon (Filled, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialPress-White.svg",
+    "name": "Dial Press icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotate-White.svg",
+    "name": "Dial Rotate icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCCW-White.svg",
+    "name": "Dial Rotate icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCW-White.svg",
+    "name": "Dial Rotate icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCCW-Filled-White.svg",
+    "name": "Dial Rotate icon (Filled, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialRotateCW-Filled-White.svg",
+    "name": "Dial Rotate icon (Filled, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialStack-White.svg",
+    "name": "Dial Stack icon (Outlined, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDialStack-Filled-White.svg",
+    "name": "Dial Stack icon (Filled, White)",
+    "tags": ["dial", "knob", "control", "adjust", "tune"]
+  },
+  {
+    "path": "IconDiamond-White.svg",
+    "name": "Diamond icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconDiamond-Filled-White.svg",
+    "name": "Diamond icon (Filled, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconDiffuse-White.svg",
+    "name": "Diffuse icon (Outlined, White)",
+    "tags": ["blur", "soften", "effect", "defocus", "style"]
+  },
+  {
+    "path": "IconDiscount-White.svg",
+    "name": "Discount icon (Outlined, White)",
+    "tags": ["discount", "promo", "deal", "offer", "sale"]
+  },
+  {
+    "path": "IconDiscount-Filled-White.svg",
+    "name": "Discount icon (Filled, White)",
+    "tags": ["discount", "promo", "deal", "offer", "sale"]
+  },
+  {
+    "path": "IconDisplayAdd-White.svg",
+    "name": "Display Add icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayAdd-Filled-White.svg",
+    "name": "Display Add icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplay-White.svg",
+    "name": "Display icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplay-Filled-White.svg",
+    "name": "Display icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectCheck-White.svg",
+    "name": "Display Project Check icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectCheck-Filled-White.svg",
+    "name": "Display Project Check icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProject-White.svg",
+    "name": "Display Project icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProject-Filled-White.svg",
+    "name": "Display Project icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectSet-White.svg",
+    "name": "Display Project Set icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDisplayProjectSet-Filled-White.svg",
+    "name": "Display Project Set icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconDownload-White.svg",
+    "name": "Download icon (Outlined, White)",
+    "tags": ["download", "save", "transfer", "retrieve", "get"]
+  },
+  {
+    "path": "IconDrag-White.svg",
+    "name": "Drag icon (Outlined, White)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconDroplet-White.svg",
+    "name": "Droplet icon (Outlined, White)",
+    "tags": ["droplet", "water", "liquid", "drop", "humidity"]
+  },
+  {
+    "path": "IconDroplet-Filled-White.svg",
+    "name": "Droplet icon (Filled, White)",
+    "tags": ["droplet", "water", "liquid", "drop", "humidity"]
+  },
+  {
+    "path": "IconEar-White.svg",
+    "name": "Ear icon (Outlined, White)",
+    "tags": ["ear", "listen", "audio", "sound", "hearing"]
+  },
+  {
+    "path": "IconEar-Filled-White.svg",
+    "name": "Ear icon (Filled, White)",
+    "tags": ["ear", "listen", "audio", "sound", "hearing"]
+  },
+  {
+    "path": "IconEdit-White.svg",
+    "name": "Edit icon (Outlined, White)",
+    "tags": ["edit", "modify", "change", "adjust", "update"]
+  },
+  {
+    "path": "IconEdit-Filled-White.svg",
+    "name": "Edit icon (Filled, White)",
+    "tags": ["edit", "modify", "change", "adjust", "update"]
+  },
+  {
+    "path": "IconEffect-White.svg",
+    "name": "Effect icon (Outlined, White)",
+    "tags": ["effect", "filter", "style", "visual", "adjustment"]
+  },
+  {
+    "path": "IconElements-White.svg",
+    "name": "Elements icon (Outlined, White)",
+    "tags": ["elements", "components", "pieces", "parts", "layer"]
+  },
+  {
+    "path": "IconElements-Filled-White.svg",
+    "name": "Elements icon (Filled, White)",
+    "tags": ["elements", "components", "pieces", "parts", "layer"]
+  },
+  {
+    "path": "IconExitFullscreen-White.svg",
+    "name": "Exit Fullscreen icon (Outlined, White)",
+    "tags": ["exit", "leave", "quit", "close", "finished"]
+  },
+  {
+    "path": "IconExpandSquare-White.svg",
+    "name": "Expand Square icon (Outlined, White)",
+    "tags": ["expand", "enlarge", "grow", "increase", "maximize"]
+  },
+  {
+    "path": "IconExpandSquare-Filled-White.svg",
+    "name": "Expand Square icon (Filled, White)",
+    "tags": ["expand", "enlarge", "grow", "increase", "maximize"]
+  },
+  {
+    "path": "IconExternalLink-White.svg",
+    "name": "External Link icon (Outlined, White)",
+    "tags": ["external", "link", "outside", "open", "outbound"]
+  },
+  {
+    "path": "IconEyeContactCheck-White.svg",
+    "name": "Eye Contact Check icon (Outlined, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContactCheck-Filled-White.svg",
+    "name": "Eye Contact Check icon (Filled, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContact-White.svg",
+    "name": "Eye Contact icon (Outlined, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyeContact-Filled-White.svg",
+    "name": "Eye Contact icon (Filled, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconEyedropper-White.svg",
+    "name": "Eyedropper icon (Outlined, White)",
+    "tags": ["eyedropper", "color pick", "sample", "palette", "selector"]
+  },
+  {
+    "path": "IconEyedropper-Filled-White.svg",
+    "name": "Eyedropper icon (Filled, White)",
+    "tags": ["eyedropper", "color pick", "sample", "palette", "selector"]
+  },
+  {
+    "path": "IconFaceSatisfiedAdd-White.svg",
+    "name": "Face Satisfied Add icon (Outlined, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfiedAdd-Filled-White.svg",
+    "name": "Face Satisfied Add icon (Filled, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfied-White.svg",
+    "name": "Face Satisfied icon (Outlined, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceSatisfied-Filled-White.svg",
+    "name": "Face Satisfied icon (Filled, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceTrackingCheck-White.svg",
+    "name": "Face Tracking Check icon (Outlined, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFaceTracking-White.svg",
+    "name": "Face Tracking icon (Outlined, White)",
+    "tags": ["emoji", "reaction", "expression", "face", "emotion"]
+  },
+  {
+    "path": "IconFacecam-White.svg",
+    "name": "Facecam icon (Outlined, White)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecam-Filled-White.svg",
+    "name": "Facecam icon (Filled, White)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamNeo-White.svg",
+    "name": "Facecam Neo icon (Outlined, White)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamNeo-Filled-White.svg",
+    "name": "Facecam Neo icon (Filled, White)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFacecamOff-Filled-White.svg",
+    "name": "Facecam Off icon (Filled, White)",
+    "tags": ["facecam", "webcam", "camera", "streaming", "elgato"]
+  },
+  {
+    "path": "IconFeatured-White.svg",
+    "name": "Featured icon (Outlined, White)",
+    "tags": ["featured", "highlight", "promoted", "spotlight", "showcase"]
+  },
+  {
+    "path": "IconFileDownload-White.svg",
+    "name": "File Download icon (Outlined, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileDownload-Filled-White.svg",
+    "name": "File Download icon (Filled, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFile-White.svg",
+    "name": "File icon (Outlined, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFile-Filled-White.svg",
+    "name": "File icon (Filled, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileUpload-White.svg",
+    "name": "File Upload icon (Outlined, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFileUpload-Filled-White.svg",
+    "name": "File Upload icon (Filled, White)",
+    "tags": ["document", "file", "paperwork", "record", "archive"]
+  },
+  {
+    "path": "IconFilm-White.svg",
+    "name": "Film icon (Outlined, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconFilm-Filled-White.svg",
+    "name": "Film icon (Filled, White)",
+    "tags": ["camera", "video", "recording", "capture", "film"]
+  },
+  {
+    "path": "IconFilterAlt-White.svg",
+    "name": "Filter Alt icon (Outlined, White)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFilterAlt-Filled-White.svg",
+    "name": "Filter Alt icon (Filled, White)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFilter-White.svg",
+    "name": "Filter icon (Outlined, White)",
+    "tags": ["filter", "refine", "sort", "narrow", "search"]
+  },
+  {
+    "path": "IconFlame-White.svg",
+    "name": "Flame icon (Outlined, White)",
+    "tags": ["flame", "fire", "hot", "burn", "heat"]
+  },
+  {
+    "path": "IconFlame-Filled-White.svg",
+    "name": "Flame icon (Filled, White)",
+    "tags": ["flame", "fire", "hot", "burn", "heat"]
+  },
+  {
+    "path": "IconFlash-White.svg",
+    "name": "Flash icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlash-Filled-White.svg",
+    "name": "Flash icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlashOff-White.svg",
+    "name": "Flash Off icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlashOff-Filled-White.svg",
+    "name": "Flash Off icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconFlipHorizontalCheck-White.svg",
+    "name": "Flip Horizontal Check icon (Outlined, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontalCheck-Filled-White.svg",
+    "name": "Flip Horizontal Check icon (Filled, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontal-White.svg",
+    "name": "Flip Horizontal icon (Outlined, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipHorizontal-Filled-White.svg",
+    "name": "Flip Horizontal icon (Filled, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVerticalCheck-White.svg",
+    "name": "Flip Vertical Check icon (Outlined, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVerticalCheck-Filled-White.svg",
+    "name": "Flip Vertical Check icon (Filled, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVertical-White.svg",
+    "name": "Flip Vertical icon (Outlined, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFlipVertical-Filled-White.svg",
+    "name": "Flip Vertical icon (Filled, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconFocus-White.svg",
+    "name": "Focus icon (Outlined, White)",
+    "tags": ["focus", "sharpness", "clarity", "concentration", "attention"]
+  },
+  {
+    "path": "IconFocus-Filled-White.svg",
+    "name": "Focus icon (Filled, White)",
+    "tags": ["focus", "sharpness", "clarity", "concentration", "attention"]
+  },
+  {
+    "path": "IconFolderBack-White.svg",
+    "name": "Folder Back icon (Outlined, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderBack-Filled-White.svg",
+    "name": "Folder Back icon (Filled, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderDownload-White.svg",
+    "name": "Folder Download icon (Outlined, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderDownload-Filled-White.svg",
+    "name": "Folder Download icon (Filled, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolder-White.svg",
+    "name": "Folder icon (Outlined, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolder-Filled-White.svg",
+    "name": "Folder icon (Filled, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderOpen-White.svg",
+    "name": "Folder Open icon (Outlined, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderOpen-Filled-White.svg",
+    "name": "Folder Open icon (Filled, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderUpload-White.svg",
+    "name": "Folder Upload icon (Outlined, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconFolderUpload-Filled-White.svg",
+    "name": "Folder Upload icon (Filled, White)",
+    "tags": ["folder", "directory", "storage", "organize", "files"]
+  },
+  {
+    "path": "IconForest-White.svg",
+    "name": "Forest icon (Outlined, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconForest-Filled-White.svg",
+    "name": "Forest icon (Filled, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconFullscreen-White.svg",
+    "name": "Fullscreen icon (Outlined, White)",
+    "tags": ["fullscreen", "maximize", "display", "view", "expand"]
+  },
+  {
+    "path": "IconGameAdd-White.svg",
+    "name": "Game Add icon (Outlined, White)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGameAdd-Filled-White.svg",
+    "name": "Game Add icon (Filled, White)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGameCapture-White.svg",
+    "name": "Game Capture icon (Outlined, White)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGame-White.svg",
+    "name": "Game icon (Outlined, White)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGame-Filled-White.svg",
+    "name": "Game icon (Filled, White)",
+    "tags": ["gaming", "controller", "play", "entertainment", "gameplay"]
+  },
+  {
+    "path": "IconGapHorizontal-White.svg",
+    "name": "Gap Horizontal icon (Outlined, White)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapHorizontal-Filled-White.svg",
+    "name": "Gap Horizontal icon (Filled, White)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapVertical-White.svg",
+    "name": "Gap Vertical icon (Outlined, White)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGapVertical-Filled-White.svg",
+    "name": "Gap Vertical icon (Filled, White)",
+    "tags": ["gap", "spacing", "margin", "layout", "breathing room"]
+  },
+  {
+    "path": "IconGlobeAdd-White.svg",
+    "name": "Globe Add icon (Outlined, White)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobeAdd-Filled-White.svg",
+    "name": "Globe Add icon (Filled, White)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobe-White.svg",
+    "name": "Globe icon (Outlined, White)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGlobe-Filled-White.svg",
+    "name": "Globe icon (Filled, White)",
+    "tags": ["globe", "world", "global", "planet", "international"]
+  },
+  {
+    "path": "IconGreenScreen-White.svg",
+    "name": "Green Screen icon (Outlined, White)",
+    "tags": ["green screen", "chromakey", "studio", "backdrop", "keying"]
+  },
+  {
+    "path": "IconGrid-White.svg",
+    "name": "Grid icon (Outlined, White)",
+    "tags": ["grid", "matrix", "layout", "structure", "table"]
+  },
+  {
+    "path": "IconGrid-Filled-White.svg",
+    "name": "Grid icon (Filled, White)",
+    "tags": ["grid", "matrix", "layout", "structure", "table"]
+  },
+  {
+    "path": "IconGroup-White.svg",
+    "name": "Group icon (Outlined, White)",
+    "tags": ["collection", "bundle", "group", "set", "library"]
+  },
+  {
+    "path": "IconGroup-Filled-White.svg",
+    "name": "Group icon (Filled, White)",
+    "tags": ["collection", "bundle", "group", "set", "library"]
+  },
+  {
+    "path": "IconHandPointUp-White.svg",
+    "name": "Hand Point Up icon (Outlined, White)",
+    "tags": ["hand", "gesture", "control", "pointer", "manual"]
+  },
+  {
+    "path": "IconHdmi-White.svg",
+    "name": "Hdmi icon (Outlined, White)",
+    "tags": ["hdmi", "video input", "connection", "cable", "interface"]
+  },
+  {
+    "path": "IconHdmi-Filled-White.svg",
+    "name": "Hdmi icon (Filled, White)",
+    "tags": ["hdmi", "video input", "connection", "cable", "interface"]
+  },
+  {
+    "path": "IconHdr-White.svg",
+    "name": "Hdr icon (Outlined, White)",
+    "tags": ["hdr", "high dynamic range", "exposure", "contrast", "imaging"]
+  },
+  {
+    "path": "IconHeadphonesAdd-White.svg",
+    "name": "Headphones Add icon (Outlined, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesAdd-Filled-White.svg",
+    "name": "Headphones Add icon (Filled, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphones-White.svg",
+    "name": "Headphones icon (Outlined, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphones-Filled-White.svg",
+    "name": "Headphones icon (Filled, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesOff-White.svg",
+    "name": "Headphones Off icon (Outlined, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesOff-Filled-White.svg",
+    "name": "Headphones Off icon (Filled, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesSwitchTo-White.svg",
+    "name": "Headphones Switch To icon (Outlined, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeadphonesSwitchTo-Filled-White.svg",
+    "name": "Headphones Switch To icon (Filled, White)",
+    "tags": ["headphones", "headset", "audio", "monitoring", "listening"]
+  },
+  {
+    "path": "IconHeart-White.svg",
+    "name": "Heart icon (Outlined, White)",
+    "tags": ["favorite", "like", "save", "love", "bookmark"]
+  },
+  {
+    "path": "IconHeart-Filled-White.svg",
+    "name": "Heart icon (Filled, White)",
+    "tags": ["favorite", "like", "save", "love", "bookmark"]
+  },
+  {
+    "path": "IconHeatSink-White.svg",
+    "name": "Heat Sink icon (Outlined, White)",
+    "tags": ["climate", "temperature", "airflow", "comfort", "environment"]
+  },
+  {
+    "path": "IconHelp-White.svg",
+    "name": "Help icon (Outlined, White)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconHelp-Filled-White.svg",
+    "name": "Help icon (Filled, White)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconHexagon-White.svg",
+    "name": "Hexagon icon (Outlined, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconHexagon-Filled-White.svg",
+    "name": "Hexagon icon (Filled, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconHome-White.svg",
+    "name": "Home icon (Outlined, White)",
+    "tags": ["home", "house", "dashboard", "main", "start"]
+  },
+  {
+    "path": "IconHome-Filled-White.svg",
+    "name": "Home icon (Filled, White)",
+    "tags": ["home", "house", "dashboard", "main", "start"]
+  },
+  {
+    "path": "IconHotkey-White.svg",
+    "name": "Hotkey icon (Outlined, White)",
+    "tags": ["hotkey", "shortcut", "macro", "keybinding", "control"]
+  },
+  {
+    "path": "IconHotkey-Filled-White.svg",
+    "name": "Hotkey icon (Filled, White)",
+    "tags": ["hotkey", "shortcut", "macro", "keybinding", "control"]
+  },
+  {
+    "path": "IconImageCheck-White.svg",
+    "name": "Image Check icon (Outlined, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImageCheck-Filled-White.svg",
+    "name": "Image Check icon (Filled, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImage-White.svg",
+    "name": "Image icon (Outlined, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconImage-Filled-White.svg",
+    "name": "Image icon (Filled, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconInbox-White.svg",
+    "name": "Inbox icon (Outlined, White)",
+    "tags": ["inbox", "mail", "messages", "email", "communication"]
+  },
+  {
+    "path": "IconInbox-Filled-White.svg",
+    "name": "Inbox icon (Filled, White)",
+    "tags": ["inbox", "mail", "messages", "email", "communication"]
+  },
+  {
+    "path": "IconInfo-White.svg",
+    "name": "Info icon (Outlined, White)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconInfo-Filled-White.svg",
+    "name": "Info icon (Filled, White)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconInfobar-White.svg",
+    "name": "Infobar icon (Outlined, White)",
+    "tags": ["infobar", "status bar", "notification", "banner", "information"]
+  },
+  {
+    "path": "IconInfobar-Filled-White.svg",
+    "name": "Infobar icon (Filled, White)",
+    "tags": ["infobar", "status bar", "notification", "banner", "information"]
+  },
+  {
+    "path": "IconItalic-White.svg",
+    "name": "Italic icon (Outlined, White)",
+    "tags": ["italic", "emphasis", "font", "type style", "slant"]
+  },
+  {
+    "path": "IconKey-White.svg",
+    "name": "Key icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKey-Filled-White.svg",
+    "name": "Key icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAir-White.svg",
+    "name": "Key Light Air icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAir-Filled-White.svg",
+    "name": "Key Light Air icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirOff-White.svg",
+    "name": "Key Light Air Off icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirOff-Filled-White.svg",
+    "name": "Key Light Air Off icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirPower-White.svg",
+    "name": "Key Light Air Power icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightAirPower-Filled-White.svg",
+    "name": "Key Light Air Power icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLight-White.svg",
+    "name": "Key Light icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLight-Filled-White.svg",
+    "name": "Key Light icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMini-White.svg",
+    "name": "Key Light Mini icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMini-Filled-White.svg",
+    "name": "Key Light Mini icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniOff-White.svg",
+    "name": "Key Light Mini Off icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniOff-Filled-White.svg",
+    "name": "Key Light Mini Off icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniPower-White.svg",
+    "name": "Key Light Mini Power icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightMiniPower-Filled-White.svg",
+    "name": "Key Light Mini Power icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeo-White.svg",
+    "name": "Key Light Neo icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeo-Filled-White.svg",
+    "name": "Key Light Neo icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoOff-White.svg",
+    "name": "Key Light Neo Off icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoOff-Filled-White.svg",
+    "name": "Key Light Neo Off icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoPower-White.svg",
+    "name": "Key Light Neo Power icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightNeoPower-Filled-White.svg",
+    "name": "Key Light Neo Power icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightOff-White.svg",
+    "name": "Key Light Off icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightOff-Filled-White.svg",
+    "name": "Key Light Off icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightPower-White.svg",
+    "name": "Key Light Power icon (Outlined, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyLightPower-Filled-White.svg",
+    "name": "Key Light Power icon (Filled, White)",
+    "tags": ["key", "button", "switch", "shortcut", "control"]
+  },
+  {
+    "path": "IconKeyboardEmoji-White.svg",
+    "name": "Keyboard Emoji icon (Outlined, White)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboardEmoji-Filled-White.svg",
+    "name": "Keyboard Emoji icon (Filled, White)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboard-White.svg",
+    "name": "Keyboard icon (Outlined, White)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconKeyboard-Filled-White.svg",
+    "name": "Keyboard icon (Filled, White)",
+    "tags": ["keyboard", "typing", "keys", "input", "hardware"]
+  },
+  {
+    "path": "IconLaptop-White.svg",
+    "name": "Laptop icon (Outlined, White)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconLaptop-Filled-White.svg",
+    "name": "Laptop icon (Filled, White)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconLayers-White.svg",
+    "name": "Layers icon (Outlined, White)",
+    "tags": ["layers", "stack", "compose", "design", "overlay"]
+  },
+  {
+    "path": "IconLayers-Filled-White.svg",
+    "name": "Layers icon (Filled, White)",
+    "tags": ["layers", "stack", "compose", "design", "overlay"]
+  },
+  {
+    "path": "IconLearn-White.svg",
+    "name": "Learn icon (Outlined, White)",
+    "tags": ["learn", "tutorial", "guide", "education", "tips"]
+  },
+  {
+    "path": "IconLearn-Filled-White.svg",
+    "name": "Learn icon (Filled, White)",
+    "tags": ["learn", "tutorial", "guide", "education", "tips"]
+  },
+  {
+    "path": "IconLensCheck-White.svg",
+    "name": "Lens Check icon (Outlined, White)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLensCheck-Filled-White.svg",
+    "name": "Lens Check icon (Filled, White)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLens-White.svg",
+    "name": "Lens icon (Outlined, White)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLens-Filled-White.svg",
+    "name": "Lens icon (Filled, White)",
+    "tags": ["lens", "optics", "glass", "camera", "focus"]
+  },
+  {
+    "path": "IconLibrary-White.svg",
+    "name": "Library icon (Outlined, White)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconLibrary-Filled-White.svg",
+    "name": "Library icon (Filled, White)",
+    "tags": ["library", "reference", "knowledge", "collection", "reading"]
+  },
+  {
+    "path": "IconLightStrip-White.svg",
+    "name": "Light Strip icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStrip-Filled-White.svg",
+    "name": "Light Strip icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripOff-White.svg",
+    "name": "Light Strip Off icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripOff-Filled-White.svg",
+    "name": "Light Strip Off icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripPower-White.svg",
+    "name": "Light Strip Power icon (Outlined, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLightStripPower-Filled-White.svg",
+    "name": "Light Strip Power icon (Filled, White)",
+    "tags": ["lighting", "illumination", "exposure", "brightness", "studio"]
+  },
+  {
+    "path": "IconLinkBroken-White.svg",
+    "name": "Link Broken icon (Outlined, White)",
+    "tags": ["link", "url", "hyperlink", "connect", "reference"]
+  },
+  {
+    "path": "IconLink-White.svg",
+    "name": "Link icon (Outlined, White)",
+    "tags": ["link", "url", "hyperlink", "connect", "reference"]
+  },
+  {
+    "path": "IconList-White.svg",
+    "name": "List icon (Outlined, White)",
+    "tags": ["list", "items", "bullet", "sequence", "ordered"]
+  },
+  {
+    "path": "IconLocation-White.svg",
+    "name": "Location icon (Outlined, White)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconLocation-Filled-White.svg",
+    "name": "Location icon (Filled, White)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconLock-White.svg",
+    "name": "Lock icon (Outlined, White)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLock-Filled-White.svg",
+    "name": "Lock icon (Filled, White)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLockOpen-White.svg",
+    "name": "Lock Open icon (Outlined, White)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLockOpen-Filled-White.svg",
+    "name": "Lock Open icon (Filled, White)",
+    "tags": ["lock", "secure", "privacy", "protected", "password"]
+  },
+  {
+    "path": "IconLut-White.svg",
+    "name": "Lut icon (Outlined, White)",
+    "tags": ["lut", "color grade", "lookup table", "film look", "grading"]
+  },
+  {
+    "path": "IconLut-Filled-White.svg",
+    "name": "Lut icon (Filled, White)",
+    "tags": ["lut", "color grade", "lookup table", "film look", "grading"]
+  },
+  {
+    "path": "IconMagicWand-White.svg",
+    "name": "Magic Wand icon (Outlined, White)",
+    "tags": ["magic", "instant", "auto", "assist", "smart"]
+  },
+  {
+    "path": "IconMagicWand-Filled-White.svg",
+    "name": "Magic Wand icon (Filled, White)",
+    "tags": ["magic", "instant", "auto", "assist", "smart"]
+  },
+  {
+    "path": "IconMail-White.svg",
+    "name": "Mail icon (Outlined, White)",
+    "tags": ["mail", "email", "message", "inbox", "communication"]
+  },
+  {
+    "path": "IconMail-Filled-White.svg",
+    "name": "Mail icon (Filled, White)",
+    "tags": ["mail", "email", "message", "inbox", "communication"]
+  },
+  {
+    "path": "IconMarginDecrease-White.svg",
+    "name": "Margin Decrease icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMargin-White.svg",
+    "name": "Margin icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginX-White.svg",
+    "name": "Margin icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginY-White.svg",
+    "name": "Margin icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginIncrease-White.svg",
+    "name": "Margin Increase icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginSet-White.svg",
+    "name": "Margin Set icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXDecrease-White.svg",
+    "name": "Margin X Decrease icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXIncrease-White.svg",
+    "name": "Margin X Increase icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginXSet-White.svg",
+    "name": "Margin X Set icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarginYSet-White.svg",
+    "name": "Margin Y Set icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconMarketplaceBrand-White.svg",
+    "name": "Marketplace Brand icon (Outlined, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceBrand-Filled-White.svg",
+    "name": "Marketplace Brand icon (Filled, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceCreate-White.svg",
+    "name": "Marketplace Create icon (Outlined, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceCreate-Filled-White.svg",
+    "name": "Marketplace Create icon (Filled, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceEngage-White.svg",
+    "name": "Marketplace Engage icon (Outlined, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMarketplaceEngage-Filled-White.svg",
+    "name": "Marketplace Engage icon (Filled, White)",
+    "tags": ["marketplace", "store", "plugins", "community", "extensions"]
+  },
+  {
+    "path": "IconMediaCast-White.svg",
+    "name": "Media Cast icon (Outlined, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconMediaCast-Filled-White.svg",
+    "name": "Media Cast icon (Filled, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconMenu-White.svg",
+    "name": "Menu icon (Outlined, White)",
+    "tags": ["menu", "options", "navigation", "list", "controls"]
+  },
+  {
+    "path": "IconMessageAdd-White.svg",
+    "name": "Message Add icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageAdd-Filled-White.svg",
+    "name": "Message Add icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageCheck-White.svg",
+    "name": "Message Check icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageCheck-Filled-White.svg",
+    "name": "Message Check icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageDownToBottom-White.svg",
+    "name": "Message Down To Bottom icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageDownToBottom-Filled-White.svg",
+    "name": "Message Down To Bottom icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessage-White.svg",
+    "name": "Message icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessage-Filled-White.svg",
+    "name": "Message icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageSet-White.svg",
+    "name": "Message Set icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageSet-Filled-White.svg",
+    "name": "Message Set icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageUpToTop-White.svg",
+    "name": "Message Up To Top icon (Outlined, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMessageUpToTop-Filled-White.svg",
+    "name": "Message Up To Top icon (Filled, White)",
+    "tags": ["message", "chat", "conversation", "communication", "talk"]
+  },
+  {
+    "path": "IconMeteringCenterWeighted-White.svg",
+    "name": "Metering Center Weighted icon (Outlined, White)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringCenterWeighted-Filled-White.svg",
+    "name": "Metering Center Weighted icon (Filled, White)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringEvaluative-White.svg",
+    "name": "Metering Evaluative icon (Outlined, White)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringSpot-White.svg",
+    "name": "Metering Spot icon (Outlined, White)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMeteringSpot-Filled-White.svg",
+    "name": "Metering Spot icon (Filled, White)",
+    "tags": ["metering", "exposure", "measurement", "camera", "light"]
+  },
+  {
+    "path": "IconMicArm-White.svg",
+    "name": "Mic Arm icon (Outlined, White)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophone-White.svg",
+    "name": "Microphone icon (Outlined, White)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophone-Filled-White.svg",
+    "name": "Microphone icon (Filled, White)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophoneOff-White.svg",
+    "name": "Microphone Off icon (Outlined, White)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMicrophoneOff-Filled-White.svg",
+    "name": "Microphone Off icon (Filled, White)",
+    "tags": ["microphone", "audio", "recording", "voice", "podcast"]
+  },
+  {
+    "path": "IconMobile-White.svg",
+    "name": "Mobile icon (Outlined, White)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconMobile-Filled-White.svg",
+    "name": "Mobile icon (Filled, White)",
+    "tags": ["device", "computer", "workstation", "hardware", "technology"]
+  },
+  {
+    "path": "IconMoney-White.svg",
+    "name": "Money icon (Outlined, White)",
+    "tags": ["money", "currency", "finance", "budget", "payments"]
+  },
+  {
+    "path": "IconMoney-Filled-White.svg",
+    "name": "Money icon (Filled, White)",
+    "tags": ["money", "currency", "finance", "budget", "payments"]
+  },
+  {
+    "path": "IconMoreAlt-White.svg",
+    "name": "More Alt icon (Outlined, White)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMoreCircle-White.svg",
+    "name": "More Circle icon (Outlined, White)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMore-White.svg",
+    "name": "More icon (Outlined, White)",
+    "tags": ["more", "options", "overflow", "extra", "menu"]
+  },
+  {
+    "path": "IconMountain-White.svg",
+    "name": "Mountain icon (Outlined, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconMountain-Filled-White.svg",
+    "name": "Mountain icon (Filled, White)",
+    "tags": ["scene", "environment", "landscape", "location", "backdrop"]
+  },
+  {
+    "path": "IconMouse-White.svg",
+    "name": "Mouse icon (Outlined, White)",
+    "tags": ["mouse", "pointer", "cursor", "input", "device"]
+  },
+  {
+    "path": "IconMouse-Filled-White.svg",
+    "name": "Mouse icon (Filled, White)",
+    "tags": ["mouse", "pointer", "cursor", "input", "device"]
+  },
+  {
+    "path": "IconMove-White.svg",
+    "name": "Move icon (Outlined, White)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToBottom-White.svg",
+    "name": "Move To Bottom icon (Outlined, White)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToCenter-White.svg",
+    "name": "Move To Center icon (Outlined, White)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMoveToTop-White.svg",
+    "name": "Move To Top icon (Outlined, White)",
+    "tags": ["move", "drag", "reposition", "adjust", "arrange"]
+  },
+  {
+    "path": "IconMultiAction-White.svg",
+    "name": "Multi Action icon (Outlined, White)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiAction-Filled-White.svg",
+    "name": "Multi Action icon (Filled, White)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiActionSwitch-White.svg",
+    "name": "Multi Action Switch icon (Outlined, White)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiActionSwitch-Filled-White.svg",
+    "name": "Multi Action Switch icon (Filled, White)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMultiMount-White.svg",
+    "name": "Multi Mount icon (Outlined, White)",
+    "tags": ["multi", "multiple", "several", "group", "bundle"]
+  },
+  {
+    "path": "IconMusicAdd-White.svg",
+    "name": "Music Add icon (Outlined, White)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusicAdd-Filled-White.svg",
+    "name": "Music Add icon (Filled, White)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusic-White.svg",
+    "name": "Music icon (Outlined, White)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconMusic-Filled-White.svg",
+    "name": "Music icon (Filled, White)",
+    "tags": ["music", "audio", "playlist", "songs", "soundtrack"]
+  },
+  {
+    "path": "IconNew-White.svg",
+    "name": "New icon (Outlined, White)",
+    "tags": ["new", "create", "add", "fresh", "start"]
+  },
+  {
+    "path": "IconNew-Filled-White.svg",
+    "name": "New icon (Filled, White)",
+    "tags": ["new", "create", "add", "fresh", "start"]
+  },
+  {
+    "path": "IconNfc-White.svg",
+    "name": "Nfc icon (Outlined, White)",
+    "tags": ["nfc", "tap", "contactless", "near field", "payment"]
+  },
+  {
+    "path": "IconNfc-Filled-White.svg",
+    "name": "Nfc icon (Filled, White)",
+    "tags": ["nfc", "tap", "contactless", "near field", "payment"]
+  },
+  {
+    "path": "IconNight-White.svg",
+    "name": "Night icon (Outlined, White)",
+    "tags": ["night", "dark", "low light", "evening", "night mode"]
+  },
+  {
+    "path": "IconNight-Filled-White.svg",
+    "name": "Night icon (Filled, White)",
+    "tags": ["night", "dark", "low light", "evening", "night mode"]
+  },
+  {
+    "path": "IconNotAllowed-White.svg",
+    "name": "Not Allowed icon (Outlined, White)",
+    "tags": ["allowed", "permitted", "access", "granted", "allowed status"]
+  },
+  {
+    "path": "IconNotification-White.svg",
+    "name": "Notification icon (Outlined, White)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotification-Filled-White.svg",
+    "name": "Notification icon (Filled, White)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotificationOff-White.svg",
+    "name": "Notification Off icon (Outlined, White)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNotificationOff-Filled-White.svg",
+    "name": "Notification Off icon (Filled, White)",
+    "tags": ["notification", "alert", "reminder", "signal", "message"]
+  },
+  {
+    "path": "IconNumber0Square-White.svg",
+    "name": "Number 0 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber0Square-Filled-White.svg",
+    "name": "Number 0 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber1Square-White.svg",
+    "name": "Number 1 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber1Square-Filled-White.svg",
+    "name": "Number 1 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber10Square-White.svg",
+    "name": "Number 10 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber10Square-Filled-White.svg",
+    "name": "Number 10 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber2Square-White.svg",
+    "name": "Number 2 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber2Square-Filled-White.svg",
+    "name": "Number 2 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber3Square-White.svg",
+    "name": "Number 3 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber3Square-Filled-White.svg",
+    "name": "Number 3 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber4Square-White.svg",
+    "name": "Number 4 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber4Square-Filled-White.svg",
+    "name": "Number 4 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber5Square-White.svg",
+    "name": "Number 5 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber5Square-Filled-White.svg",
+    "name": "Number 5 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber6Square-White.svg",
+    "name": "Number 6 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber6Square-Filled-White.svg",
+    "name": "Number 6 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber7Square-White.svg",
+    "name": "Number 7 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber7Square-Filled-White.svg",
+    "name": "Number 7 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber8Square-White.svg",
+    "name": "Number 8 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber8Square-Filled-White.svg",
+    "name": "Number 8 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber9Square-White.svg",
+    "name": "Number 9 Square icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumber9Square-Filled-White.svg",
+    "name": "Number 9 Square icon (Filled, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconNumberedList-White.svg",
+    "name": "Numbered List icon (Outlined, White)",
+    "tags": ["numbered", "ordered", "sequence", "list", "index"]
+  },
+  {
+    "path": "IconOctagon-White.svg",
+    "name": "Octagon icon (Outlined, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconOctagon-Filled-White.svg",
+    "name": "Octagon icon (Filled, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconOpacity-White.svg",
+    "name": "Opacity icon (Outlined, White)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconOpacityIncrease-White.svg",
+    "name": "Opacity Increase icon (Outlined, White)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconOpacitySet-White.svg",
+    "name": "Opacity Set icon (Outlined, White)",
+    "tags": ["opacity", "transparency", "alpha", "visibility", "layer"]
+  },
+  {
+    "path": "IconPackage-White.svg",
+    "name": "Package icon (Outlined, White)",
+    "tags": ["package", "bundle", "kit", "delivery", "shipment"]
+  },
+  {
+    "path": "IconPackage-Filled-White.svg",
+    "name": "Package icon (Filled, White)",
+    "tags": ["package", "bundle", "kit", "delivery", "shipment"]
+  },
+  {
+    "path": "IconPaddingBottom-White.svg",
+    "name": "Padding Bottom icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingBottom-Filled-White.svg",
+    "name": "Padding Bottom icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPadding-White.svg",
+    "name": "Padding icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingX-White.svg",
+    "name": "Padding icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingY-White.svg",
+    "name": "Padding icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPadding-Filled-White.svg",
+    "name": "Padding icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingX-Filled-White.svg",
+    "name": "Padding icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingY-Filled-White.svg",
+    "name": "Padding icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingLeft-White.svg",
+    "name": "Padding Left icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingLeft-Filled-White.svg",
+    "name": "Padding Left icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingRight-White.svg",
+    "name": "Padding Right icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingRight-Filled-White.svg",
+    "name": "Padding Right icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingTop-White.svg",
+    "name": "Padding Top icon (Outlined, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPaddingTop-Filled-White.svg",
+    "name": "Padding Top icon (Filled, White)",
+    "tags": ["alignment", "layout", "position", "arrange", "balance"]
+  },
+  {
+    "path": "IconPalette-White.svg",
+    "name": "Palette icon (Outlined, White)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconPalette-Filled-White.svg",
+    "name": "Palette icon (Filled, White)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconPanelLeft-White.svg",
+    "name": "Panel Left icon (Outlined, White)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelLeft-Filled-White.svg",
+    "name": "Panel Left icon (Filled, White)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelRight-White.svg",
+    "name": "Panel Right icon (Outlined, White)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPanelRight-Filled-White.svg",
+    "name": "Panel Right icon (Filled, White)",
+    "tags": ["panel", "dashboard", "widget", "interface", "module"]
+  },
+  {
+    "path": "IconPaste-White.svg",
+    "name": "Paste icon (Outlined, White)",
+    "tags": ["paste", "insert", "clipboard", "replace", "drop"]
+  },
+  {
+    "path": "IconPaste-Filled-White.svg",
+    "name": "Paste icon (Filled, White)",
+    "tags": ["paste", "insert", "clipboard", "replace", "drop"]
+  },
+  {
+    "path": "IconPause-White.svg",
+    "name": "Pause icon (Outlined, White)",
+    "tags": ["pause", "hold", "stop", "wait", "freeze"]
+  },
+  {
+    "path": "IconPause-Filled-White.svg",
+    "name": "Pause icon (Filled, White)",
+    "tags": ["pause", "hold", "stop", "wait", "freeze"]
+  },
+  {
+    "path": "IconPayment-White.svg",
+    "name": "Payment icon (Outlined, White)",
+    "tags": ["payment", "checkout", "billing", "finance", "transaction"]
+  },
+  {
+    "path": "IconPayment-Filled-White.svg",
+    "name": "Payment icon (Filled, White)",
+    "tags": ["payment", "checkout", "billing", "finance", "transaction"]
+  },
+  {
+    "path": "IconPenTool-White.svg",
+    "name": "Pen Tool icon (Outlined, White)",
+    "tags": ["pen", "draw", "write", "sketch", "annotate"]
+  },
+  {
+    "path": "IconPenTool-Filled-White.svg",
+    "name": "Pen Tool icon (Filled, White)",
+    "tags": ["pen", "draw", "write", "sketch", "annotate"]
+  },
+  {
+    "path": "IconPentagon-White.svg",
+    "name": "Pentagon icon (Outlined, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconPentagon-Filled-White.svg",
+    "name": "Pentagon icon (Filled, White)",
+    "tags": ["polygon", "shape", "geometry", "symbol", "icon"]
+  },
+  {
+    "path": "IconPerson-White.svg",
+    "name": "Person icon (Outlined, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPerson-Filled-White.svg",
+    "name": "Person icon (Filled, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPhone-White.svg",
+    "name": "Phone icon (Outlined, White)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhone-Filled-White.svg",
+    "name": "Phone icon (Filled, White)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhoneVoice-White.svg",
+    "name": "Phone Voice icon (Outlined, White)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhoneVoice-Filled-White.svg",
+    "name": "Phone Voice icon (Filled, White)",
+    "tags": ["phone", "call", "dial", "contact", "communication"]
+  },
+  {
+    "path": "IconPhotoGrid-White.svg",
+    "name": "Photo Grid icon (Outlined, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconPhotoGrid-Filled-White.svg",
+    "name": "Photo Grid icon (Filled, White)",
+    "tags": ["image", "picture", "visual", "photo", "media"]
+  },
+  {
+    "path": "IconPin-White.svg",
+    "name": "Pin icon (Outlined, White)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconPin-Filled-White.svg",
+    "name": "Pin icon (Filled, White)",
+    "tags": ["location", "place", "map", "gps", "pin"]
+  },
+  {
+    "path": "IconPlayCircle-White.svg",
+    "name": "Play Circle icon (Outlined, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayCircle-Filled-White.svg",
+    "name": "Play Circle icon (Filled, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlay-White.svg",
+    "name": "Play icon (Outlined, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlay-Filled-White.svg",
+    "name": "Play icon (Filled, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayPause-White.svg",
+    "name": "Play Pause icon (Outlined, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlayPause-Filled-White.svg",
+    "name": "Play Pause icon (Filled, White)",
+    "tags": ["play", "start", "media", "video", "begin"]
+  },
+  {
+    "path": "IconPlugin-White.svg",
+    "name": "Plugin icon (Outlined, White)",
+    "tags": ["plugin", "extension", "integration", "add-on", "module"]
+  },
+  {
+    "path": "IconPlugin-Filled-White.svg",
+    "name": "Plugin icon (Filled, White)",
+    "tags": ["plugin", "extension", "integration", "add-on", "module"]
+  },
+  {
+    "path": "IconPodcast-White.svg",
+    "name": "Podcast icon (Outlined, White)",
+    "tags": ["podcast", "show", "episode", "audio", "broadcast"]
+  },
+  {
+    "path": "IconPodcast-Filled-White.svg",
+    "name": "Podcast icon (Filled, White)",
+    "tags": ["podcast", "show", "episode", "audio", "broadcast"]
+  },
+  {
+    "path": "IconPower-White.svg",
+    "name": "Power icon (Outlined, White)",
+    "tags": ["power", "energy", "charge", "electric", "on/off"]
+  },
+  {
+    "path": "IconPowerOff-White.svg",
+    "name": "Power Off icon (Outlined, White)",
+    "tags": ["power", "energy", "charge", "electric", "on/off"]
+  },
+  {
+    "path": "IconPresentation-White.svg",
+    "name": "Presentation icon (Outlined, White)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentation-Filled-White.svg",
+    "name": "Presentation icon (Filled, White)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentationPlay-White.svg",
+    "name": "Presentation Play icon (Outlined, White)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconPresentationPlay-Filled-White.svg",
+    "name": "Presentation Play icon (Filled, White)",
+    "tags": ["presentation", "slides", "deck", "talk", "keynote"]
+  },
+  {
+    "path": "IconProfile-White.svg",
+    "name": "Profile icon (Outlined, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfile-Filled-White.svg",
+    "name": "Profile icon (Filled, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfileSwitch-White.svg",
+    "name": "Profile Switch icon (Outlined, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconProfileSwitch-Filled-White.svg",
+    "name": "Profile Switch icon (Filled, White)",
+    "tags": ["profile", "user", "account", "identity", "avatar"]
+  },
+  {
+    "path": "IconPrompter-White.svg",
+    "name": "Prompter icon (Outlined, White)",
+    "tags": ["teleprompter", "script", "read", "presentation", "display"]
+  },
+  {
+    "path": "IconPrompter-Filled-White.svg",
+    "name": "Prompter icon (Filled, White)",
+    "tags": ["teleprompter", "script", "read", "presentation", "display"]
+  },
+  {
+    "path": "IconQrCode-White.svg",
+    "name": "Qr Code icon (Outlined, White)",
+    "tags": ["qr code", "scan", "barcode", "link", "mobile"]
+  },
+  {
+    "path": "IconQrCodeScan-White.svg",
+    "name": "Qr Code Scan icon (Outlined, White)",
+    "tags": ["qr code", "scan", "barcode", "link", "mobile"]
+  },
+  {
+    "path": "IconQuestionMark-White.svg",
+    "name": "Question Mark icon (Outlined, White)",
+    "tags": ["help", "support", "information", "assist", "guide"]
+  },
+  {
+    "path": "IconQuote-White.svg",
+    "name": "Quote icon (Outlined, White)",
+    "tags": ["quote", "citation", "block quote", "text", "reference"]
+  },
+  {
+    "path": "IconQuote-Filled-White.svg",
+    "name": "Quote icon (Filled, White)",
+    "tags": ["quote", "citation", "block quote", "text", "reference"]
+  },
+  {
+    "path": "IconReceipt-White.svg",
+    "name": "Receipt icon (Outlined, White)",
+    "tags": ["receipt", "invoice", "payment", "bill", "transaction"]
+  },
+  {
+    "path": "IconReceipt-Filled-White.svg",
+    "name": "Receipt icon (Filled, White)",
+    "tags": ["receipt", "invoice", "payment", "bill", "transaction"]
+  },
+  {
+    "path": "IconRecord-White.svg",
+    "name": "Record icon (Outlined, White)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconRecord-Filled-White.svg",
+    "name": "Record icon (Filled, White)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconRedo-White.svg",
+    "name": "Redo icon (Outlined, White)",
+    "tags": ["redo", "repeat", "forward", "reapply", "recover"]
+  },
+  {
+    "path": "IconReflect-White.svg",
+    "name": "Reflect icon (Outlined, White)",
+    "tags": ["flip", "mirror", "invert", "reverse", "rotate"]
+  },
+  {
+    "path": "IconRefresh-White.svg",
+    "name": "Refresh icon (Outlined, White)",
+    "tags": ["refresh", "reload", "sync", "update", "restart"]
+  },
+  {
+    "path": "IconReset-White.svg",
+    "name": "Reset icon (Outlined, White)",
+    "tags": ["reset", "restore", "default", "restart", "clear"]
+  },
+  {
+    "path": "IconRingLight-White.svg",
+    "name": "Ring Light icon (Outlined, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLight-Filled-White.svg",
+    "name": "Ring Light icon (Filled, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightOff-White.svg",
+    "name": "Ring Light Off icon (Outlined, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightOff-Filled-White.svg",
+    "name": "Ring Light Off icon (Filled, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightPower-White.svg",
+    "name": "Ring Light Power icon (Outlined, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRingLightPower-Filled-White.svg",
+    "name": "Ring Light Power icon (Filled, White)",
+    "tags": ["ring light", "lighting", "illumination", "studio", "elgato"]
+  },
+  {
+    "path": "IconRocket-White.svg",
+    "name": "Rocket icon (Outlined, White)",
+    "tags": ["rocket", "launch", "startup", "speed", "boost"]
+  },
+  {
+    "path": "IconRocket-Filled-White.svg",
+    "name": "Rocket icon (Filled, White)",
+    "tags": ["rocket", "launch", "startup", "speed", "boost"]
+  },
+  {
+    "path": "IconRotate180-White.svg",
+    "name": "Rotate 180 icon (Outlined, White)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRotate360-White.svg",
+    "name": "Rotate 360 icon (Outlined, White)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRotate-White.svg",
+    "name": "Rotate icon (Outlined, White)",
+    "tags": ["rotate", "spin", "turn", "orientation", "transform"]
+  },
+  {
+    "path": "IconRss-White.svg",
+    "name": "Rss icon (Outlined, White)",
+    "tags": ["rss", "feed", "subscribe", "news", "updates"]
+  },
+  {
+    "path": "IconRss-Filled-White.svg",
+    "name": "Rss icon (Filled, White)",
+    "tags": ["rss", "feed", "subscribe", "news", "updates"]
+  },
+  {
+    "path": "IconSave-White.svg",
+    "name": "Save icon (Outlined, White)",
+    "tags": ["save", "store", "download", "archive", "keep"]
+  },
+  {
+    "path": "IconSave-Filled-White.svg",
+    "name": "Save icon (Filled, White)",
+    "tags": ["save", "store", "download", "archive", "keep"]
+  },
+  {
+    "path": "IconSceneCollection-White.svg",
+    "name": "Scene Collection icon (Outlined, White)",
+    "tags": ["scene", "layout", "obs", "production", "preset"]
+  },
+  {
+    "path": "IconSceneCollection-Filled-White.svg",
+    "name": "Scene Collection icon (Filled, White)",
+    "tags": ["scene", "layout", "obs", "production", "preset"]
+  },
+  {
+    "path": "IconScreenRotation-White.svg",
+    "name": "Screen Rotation icon (Outlined, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconScreenRotation-Filled-White.svg",
+    "name": "Screen Rotation icon (Filled, White)",
+    "tags": ["display", "screen", "monitor", "visual", "output"]
+  },
+  {
+    "path": "IconScreenshot-White.svg",
+    "name": "Screenshot icon (Outlined, White)",
+    "tags": ["capture", "record", "snapshot", "save", "grab"]
+  },
+  {
+    "path": "IconScroll-White.svg",
+    "name": "Scroll icon (Outlined, White)",
+    "tags": ["scroll", "navigate", "move", "list", "page"]
+  },
+  {
+    "path": "IconSearch-White.svg",
+    "name": "Search icon (Outlined, White)",
+    "tags": ["search", "find", "lookup", "query", "discover"]
+  },
+  {
+    "path": "IconSearch-Filled-White.svg",
+    "name": "Search icon (Filled, White)",
+    "tags": ["search", "find", "lookup", "query", "discover"]
+  },
+  {
+    "path": "IconSecurityCamera-White.svg",
+    "name": "Security Camera icon (Outlined, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurityCamera-Filled-White.svg",
+    "name": "Security Camera icon (Filled, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurity-White.svg",
+    "name": "Security icon (Outlined, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconSecurity-Filled-White.svg",
+    "name": "Security icon (Filled, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconServer-White.svg",
+    "name": "Server icon (Outlined, White)",
+    "tags": ["server", "hosting", "backend", "infrastructure", "cloud"]
+  },
+  {
+    "path": "IconSettingsAdjustFocusCheck-White.svg",
+    "name": "Settings Adjust Focus Check icon (Outlined, White)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettingsAdjustFocus-White.svg",
+    "name": "Settings Adjust Focus icon (Outlined, White)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettingsAdjust-White.svg",
+    "name": "Settings Adjust icon (Outlined, White)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettings-White.svg",
+    "name": "Settings icon (Outlined, White)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconSettings-Filled-White.svg",
+    "name": "Settings icon (Filled, White)",
+    "tags": ["settings", "preferences", "options", "configure", "tools"]
+  },
+  {
+    "path": "IconShapes-White.svg",
+    "name": "Shapes icon (Outlined, White)",
+    "tags": ["shapes", "geometry", "icons", "symbols", "design"]
+  },
+  {
+    "path": "IconShapes-Filled-White.svg",
+    "name": "Shapes icon (Filled, White)",
+    "tags": ["shapes", "geometry", "icons", "symbols", "design"]
+  },
+  {
+    "path": "IconShare-White.svg",
+    "name": "Share icon (Outlined, White)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconShareWeb-White.svg",
+    "name": "Share Web icon (Outlined, White)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconShareWeb-Filled-White.svg",
+    "name": "Share Web icon (Filled, White)",
+    "tags": ["share", "send", "broadcast", "distribute", "link"]
+  },
+  {
+    "path": "IconSheet-White.svg",
+    "name": "Sheet icon (Outlined, White)",
+    "tags": ["sheet", "spreadsheet", "rows", "data", "cells"]
+  },
+  {
+    "path": "IconSheet-Filled-White.svg",
+    "name": "Sheet icon (Filled, White)",
+    "tags": ["sheet", "spreadsheet", "rows", "data", "cells"]
+  },
+  {
+    "path": "IconShield-White.svg",
+    "name": "Shield icon (Outlined, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShield-Filled-White.svg",
+    "name": "Shield icon (Filled, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShieldOff-White.svg",
+    "name": "Shield Off icon (Outlined, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShieldOff-Filled-White.svg",
+    "name": "Shield Off icon (Filled, White)",
+    "tags": ["security", "protection", "safety", "guard", "privacy"]
+  },
+  {
+    "path": "IconShuffle-White.svg",
+    "name": "Shuffle icon (Outlined, White)",
+    "tags": ["shuffle", "random", "mix", "reorder", "shuffle play"]
+  },
+  {
+    "path": "IconShutter-White.svg",
+    "name": "Shutter icon (Outlined, White)",
+    "tags": ["shutter", "camera", "photo", "capture", "exposure"]
+  },
+  {
+    "path": "IconSignIn-White.svg",
+    "name": "Sign In icon (Outlined, White)",
+    "tags": ["sign", "signature", "approval", "authorize", "agreement"]
+  },
+  {
+    "path": "IconSignOut-White.svg",
+    "name": "Sign Out icon (Outlined, White)",
+    "tags": ["sign", "signature", "approval", "authorize", "agreement"]
+  },
+  {
+    "path": "IconSignal1-White.svg",
+    "name": "Signal 1 icon (Outlined, White)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal2-White.svg",
+    "name": "Signal 2 icon (Outlined, White)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal3-White.svg",
+    "name": "Signal 3 icon (Outlined, White)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignal-White.svg",
+    "name": "Signal icon (Outlined, White)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSignalOff-White.svg",
+    "name": "Signal Off icon (Outlined, White)",
+    "tags": ["signal", "network", "strength", "connectivity", "bars"]
+  },
+  {
+    "path": "IconSkipBack-White.svg",
+    "name": "Skip Back icon (Outlined, White)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipBack-Filled-White.svg",
+    "name": "Skip Back icon (Filled, White)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipForward-White.svg",
+    "name": "Skip Forward icon (Outlined, White)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSkipForward-Filled-White.svg",
+    "name": "Skip Forward icon (Filled, White)",
+    "tags": ["skip", "forward", "jump", "advance", "next"]
+  },
+  {
+    "path": "IconSnorkel-White.svg",
+    "name": "Snorkel icon (Outlined, White)",
+    "tags": ["snorkel", "diving", "ocean", "underwater", "swim"]
+  },
+  {
+    "path": "IconSnorkel-Filled-White.svg",
+    "name": "Snorkel icon (Filled, White)",
+    "tags": ["snorkel", "diving", "ocean", "underwater", "swim"]
+  },
+  {
+    "path": "IconSort-White.svg",
+    "name": "Sort icon (Outlined, White)",
+    "tags": ["sort", "order", "arrange", "organize", "sequence"]
+  },
+  {
+    "path": "IconSoundEffectAdd-White.svg",
+    "name": "Sound Effect Add icon (Outlined, White)",
+    "tags": ["sound", "audio", "effects", "fx", "audio clip"]
+  },
+  {
+    "path": "IconSoundEffect-White.svg",
+    "name": "Sound Effect icon (Outlined, White)",
+    "tags": ["sound", "audio", "effects", "fx", "audio clip"]
+  },
+  {
+    "path": "IconSpeaker-White.svg",
+    "name": "Speaker icon (Outlined, White)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeaker-Filled-White.svg",
+    "name": "Speaker icon (Filled, White)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeakerSwitchTo-White.svg",
+    "name": "Speaker Switch To icon (Outlined, White)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeakerSwitchTo-Filled-White.svg",
+    "name": "Speaker Switch To icon (Filled, White)",
+    "tags": ["speaker", "audio", "sound", "monitor", "playback"]
+  },
+  {
+    "path": "IconSpeech-White.svg",
+    "name": "Speech icon (Outlined, White)",
+    "tags": ["speech", "talk", "dialog", "conversation", "voice"]
+  },
+  {
+    "path": "IconSpeech-Filled-White.svg",
+    "name": "Speech icon (Filled, White)",
+    "tags": ["speech", "talk", "dialog", "conversation", "voice"]
+  },
+  {
+    "path": "IconSquareDashed-White.svg",
+    "name": "Square Dashed icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconSquare-White.svg",
+    "name": "Square icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconSquare-Filled-White.svg",
+    "name": "Square icon (Filled, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconStar-White.svg",
+    "name": "Star icon (Outlined, White)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStar-Filled-White.svg",
+    "name": "Star icon (Filled, White)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStarbursts-White.svg",
+    "name": "Starbursts icon (Outlined, White)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStarbursts-Filled-White.svg",
+    "name": "Starbursts icon (Filled, White)",
+    "tags": ["favorite", "rating", "highlight", "featured", "bookmark"]
+  },
+  {
+    "path": "IconStop-White.svg",
+    "name": "Stop icon (Outlined, White)",
+    "tags": ["stop", "halt", "end", "terminate", "pause"]
+  },
+  {
+    "path": "IconStop-Filled-White.svg",
+    "name": "Stop icon (Filled, White)",
+    "tags": ["stop", "halt", "end", "terminate", "pause"]
+  },
+  {
+    "path": "IconStore-White.svg",
+    "name": "Store icon (Outlined, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconStore-Filled-White.svg",
+    "name": "Store icon (Filled, White)",
+    "tags": ["shopping", "commerce", "buy", "retail", "sale"]
+  },
+  {
+    "path": "IconStreamDeckKeyBottom-White.svg",
+    "name": "Stream Deck Key Bottom icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyBottom-Filled-White.svg",
+    "name": "Stream Deck Key Bottom icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKey-White.svg",
+    "name": "Stream Deck Key icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKey-Filled-White.svg",
+    "name": "Stream Deck Key icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyMiddle-White.svg",
+    "name": "Stream Deck Key Middle icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyMiddle-Filled-White.svg",
+    "name": "Stream Deck Key Middle icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyTop-White.svg",
+    "name": "Stream Deck Key Top icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckKeyTop-Filled-White.svg",
+    "name": "Stream Deck Key Top icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "keycap", "macro pad", "buttons"]
+  },
+  {
+    "path": "IconStreamDeckMini-White.svg",
+    "name": "Stream Deck Mini icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "compact"]
+  },
+  {
+    "path": "IconStreamDeckMini-Filled-White.svg",
+    "name": "Stream Deck Mini icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "compact"]
+  },
+  {
+    "path": "IconStreamDeckMk2-White.svg",
+    "name": "Stream Deck Mk 2 icon (Outlined, White)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "second generation"
+    ]
+  },
+  {
+    "path": "IconStreamDeckMk2-Filled-White.svg",
+    "name": "Stream Deck Mk 2 icon (Filled, White)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "second generation"
+    ]
+  },
+  {
+    "path": "IconStreamDeckNeo-White.svg",
+    "name": "Stream Deck Neo icon (Outlined, White)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "touch display"
+    ]
+  },
+  {
+    "path": "IconStreamDeckNeo-Filled-White.svg",
+    "name": "Stream Deck Neo icon (Filled, White)",
+    "tags": [
+      "stream deck",
+      "elgato",
+      "controller",
+      "macro pad",
+      "touch display"
+    ]
+  },
+  {
+    "path": "IconStreamDeckPedal-White.svg",
+    "name": "Stream Deck Pedal icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "footswitch"]
+  },
+  {
+    "path": "IconStreamDeckPedal-Filled-White.svg",
+    "name": "Stream Deck Pedal icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "footswitch"]
+  },
+  {
+    "path": "IconStreamDeckPlus-White.svg",
+    "name": "Stream Deck Plus icon (Outlined, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "dial control"]
+  },
+  {
+    "path": "IconStreamDeckPlus-Filled-White.svg",
+    "name": "Stream Deck Plus icon (Filled, White)",
+    "tags": ["stream deck", "elgato", "controller", "macro pad", "dial control"]
+  },
+  {
+    "path": "IconStream-White.svg",
+    "name": "Stream icon (Outlined, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStream-Filled-White.svg",
+    "name": "Stream icon (Filled, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamOff-White.svg",
+    "name": "Stream Off icon (Outlined, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamOff-Filled-White.svg",
+    "name": "Stream Off icon (Filled, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamSwitchTo-White.svg",
+    "name": "Stream Switch To icon (Outlined, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStreamSwitchTo-Filled-White.svg",
+    "name": "Stream Switch To icon (Filled, White)",
+    "tags": ["stream", "broadcast", "live", "online", "video"]
+  },
+  {
+    "path": "IconStrikethrough-White.svg",
+    "name": "Strikethrough icon (Outlined, White)",
+    "tags": ["formatting", "text style", "typography", "emphasis", "font"]
+  },
+  {
+    "path": "IconSubtractCircle-White.svg",
+    "name": "Subtract Circle icon (Outlined, White)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSubtractCircle-Filled-White.svg",
+    "name": "Subtract Circle icon (Filled, White)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSubtract-White.svg",
+    "name": "Subtract icon (Outlined, White)",
+    "tags": ["remove", "minus", "delete", "subtract", "clear"]
+  },
+  {
+    "path": "IconSync-White.svg",
+    "name": "Sync icon (Outlined, White)",
+    "tags": ["sync", "synchronize", "match", "align", "update"]
+  },
+  {
+    "path": "IconTag-White.svg",
+    "name": "Tag icon (Outlined, White)",
+    "tags": ["tag", "label", "metadata", "keyword", "identifier"]
+  },
+  {
+    "path": "IconTag-Filled-White.svg",
+    "name": "Tag icon (Filled, White)",
+    "tags": ["tag", "label", "metadata", "keyword", "identifier"]
+  },
+  {
+    "path": "IconTapDouble-White.svg",
+    "name": "Tap Double icon (Outlined, White)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTapHold-White.svg",
+    "name": "Tap Hold icon (Outlined, White)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTap-White.svg",
+    "name": "Tap icon (Outlined, White)",
+    "tags": ["tap", "touch", "press", "gesture", "touchscreen"]
+  },
+  {
+    "path": "IconTemperatureCool-White.svg",
+    "name": "Temperature Cool icon (Outlined, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureCool-Filled-White.svg",
+    "name": "Temperature Cool icon (Filled, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperature-White.svg",
+    "name": "Temperature icon (Outlined, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperature-Filled-White.svg",
+    "name": "Temperature icon (Filled, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureWarm-White.svg",
+    "name": "Temperature Warm icon (Outlined, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemperatureWarm-Filled-White.svg",
+    "name": "Temperature Warm icon (Filled, White)",
+    "tags": ["temperature", "thermometer", "climate", "heat", "weather"]
+  },
+  {
+    "path": "IconTemplate-White.svg",
+    "name": "Template icon (Outlined, White)",
+    "tags": ["template", "layout", "preset", "framework", "starter"]
+  },
+  {
+    "path": "IconTemplate-Filled-White.svg",
+    "name": "Template icon (Filled, White)",
+    "tags": ["template", "layout", "preset", "framework", "starter"]
+  },
+  {
+    "path": "IconTerminal-White.svg",
+    "name": "Terminal icon (Outlined, White)",
+    "tags": ["terminal", "command line", "shell", "console", "developer"]
+  },
+  {
+    "path": "IconTerminal-Filled-White.svg",
+    "name": "Terminal icon (Filled, White)",
+    "tags": ["terminal", "command line", "shell", "console", "developer"]
+  },
+  {
+    "path": "IconTestTube-White.svg",
+    "name": "Test Tube icon (Outlined, White)",
+    "tags": ["test", "exam", "assessment", "check", "validate"]
+  },
+  {
+    "path": "IconTextAlignCenter-White.svg",
+    "name": "Text Align Center icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextAlignLeft-White.svg",
+    "name": "Text Align Left icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextAlignRight-White.svg",
+    "name": "Text Align Right icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextDownToBottom-White.svg",
+    "name": "Text Down To Bottom icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconText-White.svg",
+    "name": "Text icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextLineSpacing-White.svg",
+    "name": "Text Line Spacing icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextLineSpacingSet-White.svg",
+    "name": "Text Line Spacing Set icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextNext-White.svg",
+    "name": "Text Next icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextPrevious-White.svg",
+    "name": "Text Previous icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSet-White.svg",
+    "name": "Text Set icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeDecrease-White.svg",
+    "name": "Text Size Decrease icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSize-White.svg",
+    "name": "Text Size icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeIncrease-White.svg",
+    "name": "Text Size Increase icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextSizeSet-White.svg",
+    "name": "Text Size Set icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconTextUpToTop-White.svg",
+    "name": "Text Up To Top icon (Outlined, White)",
+    "tags": ["text", "typography", "font", "copy", "content"]
+  },
+  {
+    "path": "IconThumbDown-White.svg",
+    "name": "Thumb Down icon (Outlined, White)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbDown-Filled-White.svg",
+    "name": "Thumb Down icon (Filled, White)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbUp-White.svg",
+    "name": "Thumb Up icon (Outlined, White)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconThumbUp-Filled-White.svg",
+    "name": "Thumb Up icon (Filled, White)",
+    "tags": ["thumb", "feedback", "rating", "review", "vote"]
+  },
+  {
+    "path": "IconTimeDelay-White.svg",
+    "name": "Time Delay icon (Outlined, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimeHistory-White.svg",
+    "name": "Time History icon (Outlined, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTime-White.svg",
+    "name": "Time icon (Outlined, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTime-Filled-White.svg",
+    "name": "Time icon (Filled, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimer-White.svg",
+    "name": "Timer icon (Outlined, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTimer-Filled-White.svg",
+    "name": "Timer icon (Filled, White)",
+    "tags": ["time", "clock", "schedule", "timer", "duration"]
+  },
+  {
+    "path": "IconTint-White.svg",
+    "name": "Tint icon (Outlined, White)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconTint-Filled-White.svg",
+    "name": "Tint icon (Filled, White)",
+    "tags": ["color", "palette", "hue", "tone", "style"]
+  },
+  {
+    "path": "IconToken-White.svg",
+    "name": "Token icon (Outlined, White)",
+    "tags": ["token", "crypto", "currency", "redeem", "reward"]
+  },
+  {
+    "path": "IconToken-Filled-White.svg",
+    "name": "Token icon (Filled, White)",
+    "tags": ["token", "crypto", "currency", "redeem", "reward"]
+  },
+  {
+    "path": "IconTrain-White.svg",
+    "name": "Train icon (Outlined, White)",
+    "tags": ["train", "rail", "transport", "commute", "travel"]
+  },
+  {
+    "path": "IconTrain-Filled-White.svg",
+    "name": "Train icon (Filled, White)",
+    "tags": ["train", "rail", "transport", "commute", "travel"]
+  },
+  {
+    "path": "IconTransition-White.svg",
+    "name": "Transition icon (Outlined, White)",
+    "tags": ["transition", "switch", "change", "animation", "dissolve"]
+  },
+  {
+    "path": "IconTransition-Filled-White.svg",
+    "name": "Transition icon (Filled, White)",
+    "tags": ["transition", "switch", "change", "animation", "dissolve"]
+  },
+  {
+    "path": "IconTrash-White.svg",
+    "name": "Trash icon (Outlined, White)",
+    "tags": ["trash", "delete", "remove", "bin", "discard"]
+  },
+  {
+    "path": "IconTrash-Filled-White.svg",
+    "name": "Trash icon (Filled, White)",
+    "tags": ["trash", "delete", "remove", "bin", "discard"]
+  },
+  {
+    "path": "IconTriangle-White.svg",
+    "name": "Triangle icon (Outlined, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconTriangle-Filled-White.svg",
+    "name": "Triangle icon (Filled, White)",
+    "tags": ["shape", "geometry", "icon", "symbol", "outline"]
+  },
+  {
+    "path": "IconUnderline-White.svg",
+    "name": "Underline icon (Outlined, White)",
+    "tags": ["underline", "format", "text style", "emphasis", "typography"]
+  },
+  {
+    "path": "IconUndo-White.svg",
+    "name": "Undo icon (Outlined, White)",
+    "tags": ["undo", "revert", "back", "restore", "undo action"]
+  },
+  {
+    "path": "IconUnorderedList-White.svg",
+    "name": "Unordered List icon (Outlined, White)",
+    "tags": ["unordered", "bulleted", "list", "items", "notes"]
+  },
+  {
+    "path": "IconUpload-White.svg",
+    "name": "Upload icon (Outlined, White)",
+    "tags": ["upload", "send", "post", "transfer", "cloud"]
+  },
+  {
+    "path": "IconUsb-White.svg",
+    "name": "Usb icon (Outlined, White)",
+    "tags": ["usb", "connection", "device", "cable", "interface"]
+  },
+  {
+    "path": "IconVerified-White.svg",
+    "name": "Verified icon (Outlined, White)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconVerified-Filled-White.svg",
+    "name": "Verified icon (Filled, White)",
+    "tags": ["checkmark", "confirm", "pass", "completed", "approve"]
+  },
+  {
+    "path": "IconVideo-White.svg",
+    "name": "Video icon (Outlined, White)",
+    "tags": ["video", "film", "media", "recording", "clip"]
+  },
+  {
+    "path": "IconVideo-Filled-White.svg",
+    "name": "Video icon (Filled, White)",
+    "tags": ["video", "film", "media", "recording", "clip"]
+  },
+  {
+    "path": "IconView-White.svg",
+    "name": "View icon (Outlined, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconView-Filled-White.svg",
+    "name": "View icon (Filled, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconViewOff-White.svg",
+    "name": "View Off icon (Outlined, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconViewOff-Filled-White.svg",
+    "name": "View Off icon (Filled, White)",
+    "tags": ["view", "see", "visibility", "preview", "show"]
+  },
+  {
+    "path": "IconVoiceSync-White.svg",
+    "name": "Voice Sync icon (Outlined, White)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceSync-Filled-White.svg",
+    "name": "Voice Sync icon (Filled, White)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceTune-White.svg",
+    "name": "Voice Tune icon (Outlined, White)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVoiceTune-Filled-White.svg",
+    "name": "Voice Tune icon (Filled, White)",
+    "tags": ["voice", "speech", "audio", "microphone", "talk"]
+  },
+  {
+    "path": "IconVolume1-White.svg",
+    "name": "Volume 1 icon (Outlined, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume1-Filled-White.svg",
+    "name": "Volume 1 icon (Filled, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume2-White.svg",
+    "name": "Volume 2 icon (Outlined, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume2-Filled-White.svg",
+    "name": "Volume 2 icon (Filled, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume-White.svg",
+    "name": "Volume icon (Outlined, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolume-Filled-White.svg",
+    "name": "Volume icon (Filled, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMixer-White.svg",
+    "name": "Volume Mixer icon (Outlined, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMixer-Filled-White.svg",
+    "name": "Volume Mixer icon (Filled, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMuted-White.svg",
+    "name": "Volume Muted icon (Outlined, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconVolumeMuted-Filled-White.svg",
+    "name": "Volume Muted icon (Filled, White)",
+    "tags": ["volume", "audio", "level", "sound", "gain"]
+  },
+  {
+    "path": "IconWarning-White.svg",
+    "name": "Warning icon (Outlined, White)",
+    "tags": ["warning", "alert", "caution", "danger", "attention"]
+  },
+  {
+    "path": "IconWarning-Filled-White.svg",
+    "name": "Warning icon (Filled, White)",
+    "tags": ["warning", "alert", "caution", "danger", "attention"]
+  },
+  {
+    "path": "IconWaveDx-White.svg",
+    "name": "Wave Dx icon (Outlined, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "dynamic mic"]
+  },
+  {
+    "path": "IconWaveDx-Filled-White.svg",
+    "name": "Wave Dx icon (Filled, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "dynamic mic"]
+  },
+  {
+    "path": "IconWave-White.svg",
+    "name": "Wave icon (Outlined, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "streaming"]
+  },
+  {
+    "path": "IconWaveMic-White.svg",
+    "name": "Wave Mic icon (Outlined, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "broadcast mic"]
+  },
+  {
+    "path": "IconWaveMic-Filled-White.svg",
+    "name": "Wave Mic icon (Filled, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "broadcast mic"]
+  },
+  {
+    "path": "IconWaveNeo-White.svg",
+    "name": "Wave Neo icon (Outlined, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "usb mic"]
+  },
+  {
+    "path": "IconWaveNeo-Filled-White.svg",
+    "name": "Wave Neo icon (Filled, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "usb mic"]
+  },
+  {
+    "path": "IconWaveXlr-White.svg",
+    "name": "Wave Xlr icon (Outlined, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "audio interface"]
+  },
+  {
+    "path": "IconWaveXlr-Filled-White.svg",
+    "name": "Wave Xlr icon (Filled, White)",
+    "tags": ["wave", "elgato", "microphone", "audio", "audio interface"]
+  },
+  {
+    "path": "IconWeather-White.svg",
+    "name": "Weather icon (Outlined, White)",
+    "tags": ["weather", "forecast", "climate", "conditions", "report"]
+  },
+  {
+    "path": "IconWeather-Filled-White.svg",
+    "name": "Weather icon (Filled, White)",
+    "tags": ["weather", "forecast", "climate", "conditions", "report"]
+  },
+  {
+    "path": "IconWebcam-White.svg",
+    "name": "Webcam icon (Outlined, White)",
+    "tags": ["web", "online", "browser", "internet", "webcam"]
+  },
+  {
+    "path": "IconWebcam-Filled-White.svg",
+    "name": "Webcam icon (Filled, White)",
+    "tags": ["web", "online", "browser", "internet", "webcam"]
+  },
+  {
+    "path": "IconWidget-White.svg",
+    "name": "Widget icon (Outlined, White)",
+    "tags": ["widget", "module", "panel", "component", "block"]
+  },
+  {
+    "path": "IconWidget-Filled-White.svg",
+    "name": "Widget icon (Filled, White)",
+    "tags": ["widget", "module", "panel", "component", "block"]
+  },
+  {
+    "path": "IconWifi1-White.svg",
+    "name": "Wifi 1 icon (Outlined, White)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi2-White.svg",
+    "name": "Wifi 2 icon (Outlined, White)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi3-White.svg",
+    "name": "Wifi 3 icon (Outlined, White)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifi-White.svg",
+    "name": "Wifi icon (Outlined, White)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWifiOff-White.svg",
+    "name": "Wifi Off icon (Outlined, White)",
+    "tags": ["wifi", "wireless", "network", "signal", "connection"]
+  },
+  {
+    "path": "IconWindowCheck-White.svg",
+    "name": "Window Check icon (Outlined, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowCheck-Filled-White.svg",
+    "name": "Window Check icon (Filled, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowForeground-White.svg",
+    "name": "Window Foreground icon (Outlined, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowForeground-Filled-White.svg",
+    "name": "Window Foreground icon (Filled, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindow-White.svg",
+    "name": "Window icon (Outlined, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindow-Filled-White.svg",
+    "name": "Window icon (Filled, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowToPrompter-White.svg",
+    "name": "Window To Prompter icon (Outlined, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWindowToPrompter-Filled-White.svg",
+    "name": "Window To Prompter icon (Filled, White)",
+    "tags": ["window", "panel", "app", "ui", "screen"]
+  },
+  {
+    "path": "IconWrench-White.svg",
+    "name": "Wrench icon (Outlined, White)",
+    "tags": ["wrench", "tools", "repair", "maintenance", "fix"]
+  },
+  {
+    "path": "IconWrench-Filled-White.svg",
+    "name": "Wrench icon (Filled, White)",
+    "tags": ["wrench", "tools", "repair", "maintenance", "fix"]
+  },
+  {
+    "path": "IconXlr-White.svg",
+    "name": "Xlr icon (Outlined, White)",
+    "tags": ["xlr", "connector", "microphone", "cable", "audio"]
+  },
+  {
+    "path": "IconXlr-Filled-White.svg",
+    "name": "Xlr icon (Filled, White)",
+    "tags": ["xlr", "connector", "microphone", "cable", "audio"]
+  },
+  {
+    "path": "IconZoomIn-White.svg",
+    "name": "Zoom In icon (Outlined, White)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomIn-Filled-White.svg",
+    "name": "Zoom In icon (Filled, White)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomOut-White.svg",
+    "name": "Zoom Out icon (Outlined, White)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  },
+  {
+    "path": "IconZoomOut-Filled-White.svg",
+    "name": "Zoom Out icon (Filled, White)",
+    "tags": ["zoom", "magnify", "enlarge", "view", "focus"]
+  }
+]
