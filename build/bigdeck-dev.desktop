@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=BigDeck
+Comment=BigDeck dev launcher — Wayland app_id match (com.bigdeck.app)
+Exec=env ELECTRON_OZONE_PLATFORM_HINT=auto npm --prefix /home/josh/Dev/BigDeck run start:dev
+Icon=/home/josh/Dev/BigDeck/assets/icons/icon-512x512.png
+Terminal=false
+Type=Application
+StartupWMClass=com.bigdeck.app
+Categories=Development;
