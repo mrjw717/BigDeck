@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import bigdeckIcon from "../../../assets/icons/bigdeck-icon.svg";
 import {
   Plus,
   Copy,
@@ -687,7 +688,7 @@ export function StreamdeckView({
       <div className="flex flex-col items-center justify-center text-center p-8 min-h-[400px]">
         <div className="w-24 h-24 flex items-center justify-center mb-6 animate-pulse">
           <img
-            src="/src/renderer/assets/icon.png"
+            src={bigdeckIcon}
             className="w-full h-full object-contain opacity-50"
             alt="Disconnected"
           />

@@ -1,4 +1,5 @@
 import React from "react";
+import bigdeckIcon from "../../../assets/icons/bigdeck-icon.svg";
 import {
   LayoutDashboard,
   Layers,
@@ -40,9 +41,12 @@ export function Sidebar({
     <aside className="w-52 bg-card border-r border-border flex flex-col">
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-            <span className="text-base font-bold text-white">B</span>
-          </div>
+          <img
+            src={bigdeckIcon}
+            alt="BigDeck"
+            className="w-8 h-8"
+            draggable={false}
+          />
           <div>
             <h1 className="text-base font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
               BigDeck

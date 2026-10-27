@@ -76,10 +76,10 @@ fcntl.ioctl(fd, UI_SET_EVBIT, EV_KEY)
 # arrays) before UI_DEV_CREATE — without it the device never reaches
 # UIST_SETUP_COMPLETE and DEV_CREATE fails with EINVAL.
 name = b"BigDeck Virtual Keyboard"
-setup = name.ljust(80, b"\x00")
+setup = name.ljust(80, b"\\x00")
 setup += struct.pack("HHHH", 0x06, 0x0001, 0x0001, 0x0001)  # BUS_VIRTUAL
 setup += struct.pack("i", 0)                                # ff_effects_max
-setup += b"\x00" * (64 * 4 * 4)                             # abs arrays
+setup += b"\\x00" * (64 * 4 * 4)                             # abs arrays
 os.write(fd, setup)
 
 fcntl.ioctl(fd, UI_DEV_CREATE)
