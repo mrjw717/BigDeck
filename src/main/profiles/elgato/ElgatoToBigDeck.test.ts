@@ -17,7 +17,9 @@ import {
   convertHotkeySettings,
   classifyOpenPath,
   inferDeviceType,
+  inferDeviceTypeFromName,
   normalizeElgatoTitle,
+  splitSdPluginUuid,
 } from "./ElgatoToBigDeck";
 import type { Action, KeyLayer } from "../../../shared/types";
 
@@ -329,14 +331,59 @@ describe("convertElgatoAction", () => {
       ["com.elgato.streamdeck.profile.backtoparent", /cross-profile/],
       ["com.elgato.streamdeck.page.next", /page navigation/],
       ["com.elgato.streamdeck.page.previous", /page navigation/],
-      ["com.elgato.tutorial.accounts", /unknown action UUID/],
-      ["com.someone.random.thing", /unknown action UUID/],
     ];
     for (const [uuid, reason] of cases) {
       const result = convertElgatoAction(elgatoAction({ UUID: uuid }), warnings);
       expect(result.action).toBeUndefined();
       expect(result.reason).toMatch(reason);
     }
+  });
+
+  it("unknown UUID → SD-plugin action (UUID minus its last dot-segment)", () => {
+    const result = convertElgatoAction(
+      elgatoAction({
+        UUID: "com.elgato.discord.mute",
+        Name: "Mute Mic",
+        Settings: { isInMultiAction: false },
+      }),
+      warnings,
+    );
+    expect(result.reason).toBeUndefined();
+    expect(result.action).toMatchObject({
+      type: "sdplugin",
+      pluginUUID: "com.elgato.discord",
+      actionUUID: "com.elgato.discord.mute",
+      settings: { isInMultiAction: false },
+      name: "Mute Mic",
+    });
+  });
+
+  it("installed-plugin prefix wins over the dot-segment guess (longest match)", () => {
+    const installed = ["com.elgato.discord"];
+    // pushto.talk strips to com.elgato.discord.pushto by last-segment, but
+    // the installed manifest knows the real plugin boundary.
+    const result = convertElgatoAction(
+      elgatoAction({ UUID: "com.elgato.discord.pushto.talk" }),
+      warnings,
+      installed,
+    );
+    expect(result.action).toMatchObject({
+      type: "sdplugin",
+      pluginUUID: "com.elgato.discord",
+      actionUUID: "com.elgato.discord.pushto.talk",
+    });
+  });
+
+  it("malformed UUIDs (no splittable plugin boundary) stay skips", () => {
+    const missing = convertElgatoAction(elgatoAction({ UUID: "" }), warnings);
+    expect(missing.action).toBeUndefined();
+    expect(missing.reason).toMatch(/unknown action UUID/);
+    const noDots = convertElgatoAction(
+      elgatoAction({ UUID: "justaname" }),
+      warnings,
+    );
+    expect(noDots.action).toBeUndefined();
+    expect(noDots.reason).toMatch(/unknown action UUID "justaname"/);
   });
 });
 
@@ -358,6 +405,49 @@ describe("inferDeviceType", () => {
     expect(inferDeviceType(4, 2)).toBe("plus");
     expect(inferDeviceType(3, 1)).toBe("pedal");
     expect(inferDeviceType(99, 99)).toBeNull();
+  });
+});
+
+describe("inferDeviceTypeFromName", () => {
+  it("recognizes device keywords across real-world name shapes", () => {
+    expect(inferDeviceTypeFromName("Discord (XL)")).toBe("xl");
+    expect(inferDeviceTypeFromName("StreamDeckXL_macDefault")).toBe("xl");
+    expect(inferDeviceTypeFromName("Stream Deck MK.2")).toBe("mk2");
+    expect(inferDeviceTypeFromName("My Pedal layout")).toBe("pedal");
+  });
+
+  it("returns null for names without a device keyword", () => {
+    expect(inferDeviceTypeFromName("Default Profile")).toBeNull();
+    expect(inferDeviceTypeFromName("")).toBeNull();
+    // "minimal" only CONTAINS "mini" — keyword matching is token-exact.
+    expect(inferDeviceTypeFromName("Minimal Deck")).toBeNull();
+  });
+
+  it("uses the filled extent to break ties between matched keywords", () => {
+    // The combined official default profile ships for both devices.
+    expect(inferDeviceTypeFromName("StreamDeckPlusXL_macDefault", 4, 2)).toBe("plus");
+    expect(inferDeviceTypeFromName("StreamDeckPlusXL_macDefault", 8, 4)).toBe("xl");
+    // No extent information → keyword priority (xl first).
+    expect(inferDeviceTypeFromName("StreamDeckPlusXL_macDefault")).toBe("xl");
+  });
+});
+
+describe("splitSdPluginUuid", () => {
+  it("prefers the longest installed plugin that prefixes the UUID", () => {
+    expect(
+      splitSdPluginUuid("com.elgato.discord.pushto.talk", [
+        "com.elgato",
+        "com.elgato.discord",
+      ]),
+    ).toBe("com.elgato.discord");
+  });
+
+  it("falls back to the last dot-segment and rejects malformed UUIDs", () => {
+    expect(splitSdPluginUuid("com.elgato.discord.mute")).toBe("com.elgato.discord");
+    expect(splitSdPluginUuid("justaname")).toBeNull();
+    expect(splitSdPluginUuid(".leadingdot")).toBeNull();
+    expect(splitSdPluginUuid("trailingdot.")).toBeNull();
+    expect(splitSdPluginUuid("com.elgato.discord.mute", [])).toBe("com.elgato.discord");
   });
 });
 
@@ -400,7 +490,7 @@ describe("convertElgatoProfile", () => {
     expect(unnamed.profile.name).toBe("StreamDeckXL_macDefault (Elgato)");
   });
 
-  it("reports skipped keys for unsupported UUIDs with reasons", async () => {
+  it("reports skipped keys for unsupported UUIDs and imports unknown ones as SD-plugin actions", async () => {
     const bundle = makeBundle([
       keypad({
         "0,0": elgatoAction({
@@ -409,7 +499,7 @@ describe("convertElgatoProfile", () => {
         }),
         "1,0": elgatoAction({
           UUID: "com.elgato.tutorial.accounts",
-          ActionID: "skip-2",
+          ActionID: "sdplug-1",
         }),
         "2,0": elgatoAction({
           UUID: "com.elgato.streamdeck.system.sleep",
@@ -421,17 +511,93 @@ describe("convertElgatoProfile", () => {
       deviceType: "original",
       importImage: stubImageImport,
     });
-    expect(result.importedKeys).toBe(1);
+    expect(result.importedKeys).toBe(2);
     expect(result.skippedKeys).toEqual([
       {
         keyIndex: 0,
         uuid: "com.elgato.streamdeck.profile.backtoparent",
         reason: expect.stringMatching(/cross-profile/),
       },
+    ]);
+    // Unknown UUID became an SD-plugin action with an informational note.
+    const page = result.profile.pages[0];
+    expect(page.keys.find((k) => k.keyIndex === 1)?.action).toMatchObject({
+      type: "sdplugin",
+      pluginUUID: "com.elgato.tutorial",
+      actionUUID: "com.elgato.tutorial.accounts",
+    });
+    expect(result.warnings.join(" ")).toMatch(
+      /key 1 \(com\.elgato\.tutorial\.accounts\): imported as SD plugin action \(plugin 'com\.elgato\.tutorial' not installed yet\)/,
+    );
+  });
+
+  it("silences the SD-plugin note when the plugin is already installed", async () => {
+    const bundle = makeBundle([
+      keypad({
+        "0,0": elgatoAction({ UUID: "com.elgato.discord.mute" }),
+      }),
+    ]);
+    const installed = await convertElgatoProfile(bundle, {
+      installedSdPlugins: ["com.elgato.discord"],
+      importImage: stubImageImport,
+    });
+    expect(installed.importedKeys).toBe(1);
+    expect(installed.warnings).toEqual([]);
+
+    const notInstalled = await convertElgatoProfile(bundle, {
+      importImage: stubImageImport,
+    });
+    expect(notInstalled.warnings.join(" ")).toMatch(/not installed yet/);
+  });
+
+  it("keeps a sparse named-XL profile identity-mapped on the XL grid", async () => {
+    // The real Discord XL shape: 10 keys spread over columns 0-5 fill a 6x3
+    // extent that matches no device footprint — the profile NAME picks xl.
+    const bundle = makeBundle([
+      keypad({
+        "0,0": elgatoAction({ UUID: "com.elgato.discord.mute" }),
+        "5,0": elgatoAction({ UUID: "com.elgato.discord.streamtoggle" }),
+        "3,2": elgatoAction({
+          UUID: "com.elgato.streamdeck.system.website",
+          Settings: { path: "https://discord.com/app" },
+        }),
+      }),
+    ], { name: "Discord XL" });
+    const result = await convertElgatoProfile(bundle, {
+      importImage: stubImageImport,
+    });
+    expect(result.profile.deviceType).toBe("xl");
+    const page = result.profile.pages[0];
+    expect(page.keys).toHaveLength(32);
+    expect(page.keys.find((k) => k.keyIndex === 0)?.action).toMatchObject({ type: "sdplugin" });
+    expect(page.keys.find((k) => k.keyIndex === 5)?.action).toMatchObject({ type: "sdplugin" });
+    expect(page.keys.find((k) => k.keyIndex === 19)?.action).toMatchObject({ type: "open-url" });
+  });
+
+  it("clamps XL coordinates onto a smaller explicit target grid, reporting collisions", async () => {
+    const bundle = makeBundle([
+      keypad({
+        "0,0": elgatoAction({ UUID: "com.elgato.streamdeck.system.sleep", Name: "Top Left" }),
+        "7,3": elgatoAction({ UUID: "com.elgato.streamdeck.system.sleep", Name: "Bottom Right" }),
+        "6,2": elgatoAction({ UUID: "com.elgato.streamdeck.system.sleep", Name: "Clashed" }),
+      }),
+    ]);
+    const result = await convertElgatoProfile(bundle, {
+      deviceType: "original", // 5x3 target
+      importImage: stubImageImport,
+    });
+    expect(result.profile.deviceType).toBe("original");
+    const page = result.profile.pages[0];
+    expect(page.keys).toHaveLength(15);
+    expect(page.keys.find((k) => k.keyIndex === 0)?.action).toMatchObject({ name: "Top Left" });
+    // "7,3" clamps onto the bottom-right corner (4,2) → keyIndex 14.
+    expect(page.keys.find((k) => k.keyIndex === 14)?.action).toMatchObject({ name: "Bottom Right" });
+    // "6,2" clamps onto the same corner — reported, not silently merged.
+    expect(result.skippedKeys).toEqual([
       {
-        keyIndex: 1, // col 1, row 0 on a 5-column device
-        uuid: "com.elgato.tutorial.accounts",
-        reason: expect.stringMatching(/unknown action UUID/),
+        keyIndex: 14,
+        uuid: "com.elgato.streamdeck.system.sleep",
+        reason: expect.stringMatching(/rescaled onto an occupied key/),
       },
     ]);
   });

@@ -17,6 +17,9 @@
 //   tutorials → 3x2 → "mini".
 // - StreamDeck_macDefault: 15 keypad actions (backtoparent + 14 text) →
 //   5x3 → "original".
+// - Discord_XL: the real Discord Essentials XL profile — 10 keypad actions
+//   (8 com.elgato.discord.* → SD-plugin actions, 1 Windows-authored hotkey
+//   skipped, 1 website), sparse 6x3 extent, "XL" in the name → "xl".
 // ============================================================================
 
 import { describe, expect, it, vi } from "vitest";
@@ -64,14 +67,25 @@ function fixture(name: string): string {
   return path.join(FIXTURES, name);
 }
 
-async function importFixture(zipName: string) {
+async function importFixture(
+  zipName: string,
+  options: Partial<Parameters<ElgatoProfileImporter["importFile"]>[1]> = {},
+) {
   const profileManager = new ProfileManager(silentLogger);
   const importer = new ElgatoProfileImporter(profileManager, silentLogger);
   const assetsDir = await fsp.mkdtemp(
     path.join(os.tmpdir(), "bigdeck-elgato-assets-"),
   );
-  const report = await importer.importFile(fixture(zipName), { assetsDir });
+  const report = await importer.importFile(fixture(zipName), {
+    assetsDir,
+    ...options,
+  });
   return { report, profileManager, assetsDir };
+}
+
+/** Stored image layers carry bigdeck-asset:// URLs — decode to file names. */
+function assetFileName(source: unknown): string {
+  return decodeURIComponent(String(source).replace("bigdeck-asset://", ""));
 }
 
 /** Extraction dirs from the parser (assets dirs use a longer prefix). */
@@ -122,14 +136,16 @@ describe("ElgatoProfileImporter (real fixtures)", () => {
     expect(macro.type).toBe("macro");
     expect(macro.steps[0]).toEqual({ type: "text", value: "👎" });
 
-    // Every image layer source exists in the asset dir (31 PNGs).
+    // Every image layer source exists in the asset dir (31 PNGs), referenced
+    // through the bigdeck-asset:// URL form the renderer/hardware resolve.
     const profileAny = profile!;
     const sources = profileAny.pages[0].keys.flatMap((k) =>
       (k.layers ?? []).filter((l) => l.type === "image").map((l) => l.source),
     );
     expect(sources.length).toBe(31);
     for (const source of sources) {
-      const stat = await fsp.stat(path.join(assetsDir, source as string));
+      expect(String(source)).toMatch(/^bigdeck-asset:\/\//);
+      const stat = await fsp.stat(path.join(assetsDir, assetFileName(source)));
       expect(stat.size).toBeGreaterThan(0);
     }
 
@@ -149,17 +165,102 @@ describe("ElgatoProfileImporter (real fixtures)", () => {
     expect(report.warnings.join(" ")).toMatch(/4 encoder\/dial action/);
   });
 
-  it("imports the Mini default profile: mini layout, tutorials skipped as unknown", async () => {
+  it("imports the Mini default profile: mini layout, tutorials as SD-plugin actions", async () => {
     const { report } = await importFixture("StreamDeckMini_macDefault.streamDeckProfile");
 
     expect(report.ok).toBe(true);
     expect(report.deviceType).toBe("mini");
-    expect(report.importedKeys).toBe(1); // the website shortcut
-    // backtoparent + 4 tutorial actions
-    expect(report.skippedKeys).toHaveLength(5);
+    // The website shortcut + 4 com.elgato.tutorial.* actions (imported as
+    // SD-plugin actions — com.elgato.tutorial is not installed here).
+    expect(report.importedKeys).toBe(5);
+    expect(report.skippedKeys).toHaveLength(1); // backtoparent
+    expect(report.skippedKeys[0].uuid).toBe(
+      "com.elgato.streamdeck.profile.backtoparent",
+    );
+    expect(report.warnings.join(" ")).toMatch(
+      /imported as SD plugin action \(plugin 'com\.elgato\.tutorial' not installed yet\)/,
+    );
+  });
+
+  it("imports the Discord XL profile: xl via name, Discord keys as SD-plugin actions", async () => {
+    const { report, profileManager, assetsDir } = await importFixture(
+      "Discord_XL.streamDeckProfile",
+    );
+
+    expect(report.ok).toBe(true);
+    // Sparse 6x3 filled extent matches no footprint; the "XL" name decides.
+    expect(report.deviceType).toBe("xl");
+    expect(report.profileName).toBe("Discord XL (Elgato)");
+    // 8 com.elgato.discord.* → SD-plugin actions + 1 website. The quick
+    // switcher hotkey is Windows-authored (VKeyCode 75 = Windows K, not a
+    // macOS virtual keycode) and is skipped with a report entry.
+    expect(report.importedKeys).toBe(9);
+    expect(report.skippedKeys).toHaveLength(1);
+    expect(report.skippedKeys[0]).toMatchObject({
+      keyIndex: 18,
+      uuid: "com.elgato.streamdeck.system.hotkey",
+    });
+    expect(report.skippedKeys[0].reason).toMatch(/no mappable macOS VKeyCode/);
+
+    // Persisted with a dense 32-key page; mute sits at (0,0) → keyIndex 0,
+    // notifs at (0,2) → keyIndex 16 (identity on the XL grid).
+    const profile = profileManager.getProfile(report.profileId!);
+    expect(profile!.pages[0].keys).toHaveLength(32);
+    const mute = profile!.pages[0].keys.find((k) => k.keyIndex === 0);
+    expect(mute?.action).toMatchObject({
+      type: "sdplugin",
+      pluginUUID: "com.elgato.discord",
+      actionUUID: "com.elgato.discord.mute",
+    });
     expect(
-      report.skippedKeys.filter((s) => s.reason.includes("unknown action UUID")),
-    ).toHaveLength(4);
+      profile!.pages[0].keys.find((k) => k.keyIndex === 16)?.action,
+    ).toMatchObject({
+      type: "sdplugin",
+      actionUUID: "com.elgato.discord.notifications",
+    });
+
+    // 5 multi-state warnings + 8 "not installed yet" notes + 1 unmappable
+    // (Windows-authored) hotkey keycode note.
+    expect(report.warnings).toHaveLength(14);
+    expect(report.warnings.join(" ")).toMatch(/2 states/);
+    expect(report.warnings.join(" ")).toMatch(/VKeyCode 75/);
+    expect(report.warnings.join(" ")).toMatch(
+      /imported as SD plugin action \(plugin 'com\.elgato\.discord' not installed yet\)/,
+    );
+
+    // Imported button art: 10 image layers, all resolving to real files.
+    const sources = profile!.pages[0].keys.flatMap((k) =>
+      (k.layers ?? []).filter((l) => l.type === "image").map((l) => l.source),
+    );
+    expect(sources).toHaveLength(10);
+    for (const source of sources) {
+      const stat = await fsp.stat(path.join(assetsDir, assetFileName(source)));
+      expect(stat.size).toBeGreaterThan(0);
+    }
+    expect(sources.some((s) => String(s).includes("elgato-dmute.png"))).toBe(true);
+
+    await fsp.rm(assetsDir, { recursive: true, force: true });
+  });
+
+  it("resolves the plugin boundary for dotted action UUIDs via the installed-plugin list", async () => {
+    // com.elgato.discord.pushto.talk would naive-split to
+    // com.elgato.discord.pushto; the installed manifest knows better.
+    const { report, profileManager } = await importFixture(
+      "Discord_XL.streamDeckProfile",
+      { installedSdPlugins: ["com.elgato.discord"] },
+    );
+
+    expect(report.ok).toBe(true);
+    const profile = profileManager.getProfile(report.profileId!)!;
+    const actions = profile.pages[0].keys.flatMap((k) => (k.action ? [k.action] : []))
+      .filter((a) => a.type === "sdplugin");
+    expect(actions).toHaveLength(8);
+    for (const action of actions) {
+      expect(action.pluginUUID).toBe("com.elgato.discord");
+    }
+    // Installed → no "not installed yet" notes; 5 multi-state + the hotkey
+    // keycode note.
+    expect(report.warnings).toHaveLength(6);
   });
 
   it("imports the Stream Deck (15-key) default profile: original layout, 14 text macros", async () => {

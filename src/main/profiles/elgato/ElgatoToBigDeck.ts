@@ -48,9 +48,24 @@
 //     references — unresolvable in a single-file import.
 //   - page.next / page.previous: relative page navigation; the v1 import
 //     produces a single page.
-//   - ANY unknown UUID (e.g. com.elgato.tutorial.*): DROPPED and reported —
-//     never converted to a passthrough, so imported profiles contain only
-//     actions BigDeck can actually execute.
+//   - ANY other known-shape UUID (e.g. com.elgato.discord.mute): converted
+//     to an SD-PLUGIN action ({ pluginUUID, actionUUID, settings }) so the
+//     key works the moment the user installs that plugin — the SD host
+//     already dispatches by UUID, and the imported image layers still show
+//     the button art. pluginUUID is the longest installed-plugin prefix of
+//     the UUID when the host knows one (action UUIDs may carry dots), else
+//     the UUID minus its last dot-segment. Only truly malformed UUIDs (no
+//     splittable plugin boundary) are dropped and reported.
+//
+// deviceType resolution order (convertElgatoProfile): explicit option →
+// profile NAME keyword ("Discord (XL)" → xl) → filled-extent match →
+// "original". The name check runs before the extent because sparse profiles
+// fill only part of their grid — a Discord XL profile with 10 keys spread
+// over columns 0-5 fills a 6x3 extent, which matches NO device footprint and
+// used to fall through to "original" (wrong key size, scrambled keyIndex
+// mapping). Coordinates are then CLAMPED onto the target grid (identity
+// when the grids match), so e.g. an XL-authored key at "7,3" still lands on
+// the bottom-right corner of a 5x3 device instead of overflowing it.
 // ============================================================================
 
 import fsp from "fs/promises";
@@ -121,6 +136,19 @@ const DEVICE_TYPE_INFERENCE_ORDER: DeviceType[] = [
   "original-v2", "xl-v2", "mini-mk2",
 ];
 
+/**
+ * Profile-name keyword → canonical DeviceType, in match-priority order.
+ * Checked against tokenized names (see inferDeviceTypeFromName).
+ */
+const NAME_DEVICE_KEYWORDS: Array<readonly [string, DeviceType]> = [
+  ["xl", "xl"],
+  ["mini", "mini"],
+  ["plus", "plus"],
+  ["neo", "neo"],
+  ["pedal", "pedal"],
+  ["mk2", "mk2"],
+];
+
 export interface ElgatoSkippedKey {
   keyIndex: number;
   uuid: string;
@@ -143,6 +171,13 @@ export interface ElgatoConvertOptions {
    * Elgato file doesn't carry one.
    */
   sourceName?: string;
+  /**
+   * Plugin UUIDs already installed in the SD-plugin host. Unknown-UUID
+   * conversions use it to find the real plugin boundary (action UUIDs may
+   * carry dots) and to keep the "not installed yet" report note off keys
+   * whose plugin IS installed.
+   */
+  installedSdPlugins?: string[];
   /**
    * Import a referenced PNG into BigDeck's asset store. Receives the absolute
    * path inside the extraction dir and a suggested file name; returns the
@@ -274,11 +309,14 @@ export function classifyOpenPath(
 
 /**
  * Build the BigDeck action for one placed Elgato action, or null when the
- * UUID is unsupported (reason returned for the report).
+ * UUID is unsupported (reason returned for the report). UUIDs with no
+ * built-in mapping become SD-plugin actions (see splitSdPluginUuid) so
+ * third-party keys work once the user installs that plugin.
  */
 export function convertElgatoAction(
   elgato: ElgatoAction,
   warnings: string[],
+  installedSdPlugins?: string[],
 ): { action: Action; reason?: undefined } | { action?: undefined; reason: string } {
   const uuid = elgato.UUID ?? "";
   const settings = elgato.Settings;
@@ -431,8 +469,25 @@ export function convertElgatoAction(
           "relative page navigation unsupported (import produces a single page)",
       };
 
-    default:
-      return { reason: `unknown action UUID "${uuid}"` };
+    default: {
+      // No built-in mapping — treat the UUID as an SD-plugin action (see the
+      // header comment): the SD host dispatches by UUID, so the key works
+      // the moment the user installs that plugin.
+      const pluginUUID = splitSdPluginUuid(uuid, installedSdPlugins);
+      if (!pluginUUID) {
+        return { reason: `unknown action UUID "${uuid}"` };
+      }
+      return {
+        action: {
+          type: "sdplugin",
+          id: elgato.ActionID ?? uuidv4(),
+          name: name || uuid,
+          pluginUUID,
+          actionUUID: uuid,
+          settings,
+        },
+      };
+    }
   }
 }
 
@@ -474,6 +529,74 @@ export function inferDeviceType(
   return null;
 }
 
+/**
+ * Infer the BigDeck deviceType from the profile NAME: a device keyword
+ * (xl, mini, plus, neo, pedal, mk2) beats footprint guessing, because a
+ * sparse profile fills only part of its grid and its filled extent matches
+ * no device (a Discord XL profile's 10 keys spread wide fill a 6x3 extent).
+ *
+ * Names are tokenized on non-alphanumerics AND camelCase transitions, with
+ * dots stripped first, so "Discord (XL)", "StreamDeckXL_macDefault" and
+ * "Stream Deck MK.2" all expose their keyword. When SEVERAL keywords match
+ * (the combined "StreamDeckPlusXL_macDefault" default profile), the source
+ * footprint breaks the tie; ties beyond that fall back to keyword priority.
+ * Returns null when no keyword is present (caller falls back to extent
+ * inference).
+ */
+export function inferDeviceTypeFromName(
+  name: string,
+  filledCols = 0,
+  filledRows = 0,
+): DeviceType | null {
+  if (!name) return null;
+  const tokens = name
+    .replace(/\./g, "") // "MK.2" → "MK2"
+    .split(/[^A-Za-z0-9]+/)
+    .flatMap((part) => part.split(/(?<=[a-z])(?=[A-Z])/))
+    .map((part) => part.toLowerCase());
+  const matched = NAME_DEVICE_KEYWORDS.filter(([keyword]) =>
+    tokens.includes(keyword),
+  ).map(([, type]) => type);
+  if (matched.length === 0) return null;
+  if (matched.length === 1) return matched[0];
+  const extentMatch = matched.find((type) => {
+    const spec = DEVICE_SPECS[type];
+    return spec.columns === filledCols && spec.rows === filledRows;
+  });
+  return extentMatch ?? matched[0];
+}
+
+// --- SD-plugin action mapping ---------------------------------------------------
+
+/**
+ * Split an unknown Elgato action UUID into its SD-plugin UUID. An installed
+ * plugin that prefixes the UUID wins (the longest match — action UUIDs may
+ * carry dots, e.g. com.elgato.discord.pushto.talk); with no install info the
+ * fallback is the UUID minus its last dot-segment. Returns null for
+ * malformed UUIDs with no splittable plugin boundary (caller skips them).
+ */
+export function splitSdPluginUuid(
+  uuid: string,
+  installedSdPlugins?: string[],
+): string | null {
+  let best: string | null = null;
+  for (const plugin of installedSdPlugins ?? []) {
+    if (
+      typeof plugin === "string" &&
+      plugin.length > 0 &&
+      uuid.startsWith(`${plugin}.`) &&
+      (best === null || plugin.length > best.length)
+    ) {
+      best = plugin;
+    }
+  }
+  if (best) return best;
+  const dot = uuid.lastIndexOf(".");
+  // Need a non-empty plugin part AND a non-empty action part.
+  if (dot <= 0 || dot === uuid.length - 1) return null;
+  return uuid.slice(0, dot);
+}
+
 // --- main entry ---------------------------------------------------------------
 
 /**
@@ -508,7 +631,8 @@ export async function convertElgatoProfile(
     throw new Error("profile has no Keypad actions to import");
   }
 
-  // Extent → deviceType (or caller override).
+  // Filled source extent (max col/row counts) — feeds inference and the
+  // name-keyword tie-break.
   let maxCol = 0;
   let maxRow = 0;
   for (const coord of Object.keys(keypad.Actions ?? {})) {
@@ -520,11 +644,22 @@ export async function convertElgatoProfile(
     maxCol = Math.max(maxCol, parsed.col + 1);
     maxRow = Math.max(maxRow, parsed.row + 1);
   }
+
+  // deviceType resolution: explicit option → profile-name keyword → filled
+  // extent → "original" (see the header comment for why the name check
+  // outranks the extent).
   const deviceType: DeviceType =
-    options.deviceType ?? inferDeviceType(maxCol, maxRow) ?? "original";
+    options.deviceType ??
+    inferDeviceTypeFromName(bundle.name || options.sourceName || "", maxCol, maxRow) ??
+    inferDeviceType(maxCol, maxRow) ??
+    "original";
   const specs = DEVICE_SPECS[deviceType];
 
-  // Placed actions, page order top-to-bottom / left-to-right.
+  // Placed actions, page order top-to-bottom / left-to-right. Source
+  // coordinates are CLAMPED onto the target grid: identity when the grids
+  // match (a sparse XL profile imported for an XL), proportional landing
+  // otherwise (an XL key at "7,3" ends on the bottom-right of a 5x3 device)
+  // instead of overflowing into phantom keyIndexes beyond the hardware.
   const placed: Array<{
     keyIndex: number;
     col: number;
@@ -537,24 +672,51 @@ export async function convertElgatoProfile(
       // Warning already emitted in the extent loop.
       continue;
     }
+    const col = Math.min(Math.max(parsed.col, 0), specs.columns - 1);
+    const row = Math.min(Math.max(parsed.row, 0), specs.rows - 1);
     placed.push({
-      keyIndex: parsed.row * specs.columns + parsed.col,
-      col: parsed.col,
-      row: parsed.row,
+      keyIndex: row * specs.columns + col,
+      col,
+      row,
       elgato,
     });
   }
-  placed.sort((a, b) => a.keyIndex - b.keyIndex);
+  placed.sort(
+    (a, b) => a.keyIndex - b.keyIndex || a.row - b.row || a.col - b.col,
+  );
+  // Clamping can collapse several source slots onto one target key (a wide
+  // XL row imported for a 5-column device): the first slot wins, later ones
+  // are reported as skips so the collision is never silent.
+  const claimed = new Set<number>();
+  const placedSlots: typeof placed = [];
+  for (const slot of placed) {
+    if (claimed.has(slot.keyIndex)) {
+      skippedKeys.push({
+        keyIndex: slot.keyIndex,
+        uuid: slot.elgato.UUID ?? "(missing)",
+        reason: `rescaled onto an occupied key (target grid ${specs.columns}x${specs.rows})`,
+      });
+      continue;
+    }
+    claimed.add(slot.keyIndex);
+    placedSlots.push(slot);
+  }
 
   const keys: KeyConfig[] = [];
-  for (const slot of placed) {
+  for (const slot of placedSlots) {
     const key: KeyConfig = {
       id: slot.elgato.ActionID ?? uuidv4(),
       keyIndex: slot.keyIndex,
     };
 
-    // 1. Action conversion (unknown/unsupported → report entry, no action).
-    const result = convertElgatoAction(slot.elgato, warnings);
+    // 1. Action conversion (unsupported → report entry, no action; unknown
+    //    UUID → SD-plugin action with an informational note when the plugin
+    //    isn't installed yet).
+    const result = convertElgatoAction(
+      slot.elgato,
+      warnings,
+      options.installedSdPlugins,
+    );
     if (result.reason !== undefined) {
       skippedKeys.push({
         keyIndex: slot.keyIndex,
@@ -563,6 +725,15 @@ export async function convertElgatoProfile(
       });
     } else {
       key.action = result.action;
+      if (
+        result.action.type === "sdplugin" &&
+        !(options.installedSdPlugins ?? []).includes(result.action.pluginUUID)
+      ) {
+        warnings.push(
+          `key ${slot.keyIndex} (${slot.elgato.UUID}): imported as SD plugin action ` +
+            `(plugin '${result.action.pluginUUID}' not installed yet)`,
+        );
+      }
     }
 
     // 2. Appearance: active state's image → image layer, title → text layer.

@@ -29,8 +29,14 @@ import { convertElgatoProfile, type ElgatoSkippedKey } from "./ElgatoToBigDeck";
 export interface ElgatoImportOptions {
   /** Managed asset directory; created if missing. */
   assetsDir: string;
-  /** Force a deviceType instead of footprint inference. */
+  /** Force a deviceType instead of footprint/name inference. */
   deviceType?: DeviceType;
+  /**
+   * Plugin UUIDs installed in the SD-plugin host — used to attribute
+   * unknown action UUIDs to their real plugin and to decide whether the
+   * "not installed yet" note is added for imported SD-plugin actions.
+   */
+  installedSdPlugins?: string[];
 }
 
 export interface ElgatoImportReport {
@@ -91,6 +97,7 @@ export class ElgatoProfileImporter {
       const converted = await convertElgatoProfile(bundle, {
         deviceType: options.deviceType,
         sourceName,
+        installedSdPlugins: options.installedSdPlugins,
         importImage: async (absolutePath, suggestedName) => {
           try {
             await fsp.mkdir(options.assetsDir, { recursive: true });

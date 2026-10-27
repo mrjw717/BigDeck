@@ -326,8 +326,30 @@ if (!gotTheLock) {
     ipcMain.handle(
       IPC_CHANNELS.PROFILE_IMPORT_ELGATO,
       async (_, zipPath: string): Promise<ElgatoImportReport> => {
+        // Pin the conversion to the ACTIVE device's grid: sparse Elgato
+        // files infer a wrong tiny footprint from their filled extent (a
+        // Discord XL profile with 10 keys spread wide fills a 6x3 extent
+        // that matches no device). Mirrors the renderer's active device
+        // (first connected); with no device at all, fall back to the
+        // active profile's type, else leave undefined = infer.
+        const activeDeviceType =
+          deviceManager.getDevices()[0]?.type ??
+          profileManager.getActiveProfile()?.deviceType;
+        // Installed SD-plugin UUIDs: unknown Elgato UUIDs are imported as
+        // SD-plugin actions, and this list is what splits the real plugin
+        // boundary (action UUIDs may carry dots) and silences the "not
+        // installed yet" note for plugins the user already has.
+        let installedSdPlugins: string[] = [];
+        if (sdPluginHost) {
+          if (!sdPluginHost.isRunning()) {
+            await sdPluginHost.loadPlugins();
+          }
+          installedSdPlugins = sdPluginHost.getPlugins().map((p) => p.uuid);
+        }
         return elgatoImporter.importFile(zipPath, {
           assetsDir: path.join(app.getPath("userData"), "assets"),
+          deviceType: activeDeviceType,
+          installedSdPlugins,
         });
       },
     );
