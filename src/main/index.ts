@@ -33,6 +33,10 @@ import {
 } from "./plugins/sd/ExamplePluginSeed";
 import { wireSdPlacements, wireSdProfileSwitching } from "./plugins/sd/SdBridge";
 import { IconPackManager } from "./assets/IconPack";
+import { LayoutStore } from "./layouts/LayoutStore";
+import { LayoutRenderer } from "./layouts/LayoutRenderer";
+import { renderLayoutPreview } from "./layouts/LayoutPreview";
+import type { LayoutImportReport, LayoutSummary } from "../shared/types";
 import { NetworkServer } from "./network/NetworkServer";
 import { SettingsManager } from "./utils/SettingsManager";
 import { Logger } from "./utils/Logger";
@@ -52,6 +56,8 @@ let actionEngine: ActionEngine;
 let hardwareSync: HardwareSync;
 let pluginManager: PluginManager;
 let iconPackManager: IconPackManager;
+let layoutStore: LayoutStore;
+let layoutRenderer: LayoutRenderer;
 let sdPluginHost: SDPluginHost | null = null;
 let networkServer: NetworkServer;
 let settingsManager: SettingsManager;
@@ -585,6 +591,54 @@ if (!gotTheLock) {
       },
     );
 
+    // Elgato .sdLayoutEx layout gallery (Settings). List re-discovers so
+    // packages added/removed outside the app show up without a restart.
+    ipcMain.handle(IPC_CHANNELS.LAYOUTS_LIST, async (): Promise<LayoutSummary[]> => {
+      await layoutStore.discover();
+      return layoutStore.list().map((entry) => ({
+        id: entry.id,
+        themeIds: entry.themeIds,
+        elementCount: entry.manifest.elements.length,
+      }));
+    });
+
+    // Gallery thumbnail: mock clock data + first theme → PNG data-URL
+    // (LayoutPreview's provider is the same shape the future SD+ device
+    // wiring will feed with real clock data).
+    ipcMain.handle(
+      IPC_CHANNELS.LAYOUTS_PREVIEW,
+      async (_, id: string): Promise<string | null> => {
+        const entry = layoutStore.get(id);
+        if (!entry) return null;
+        try {
+          const png = await renderLayoutPreview(entry, layoutRenderer);
+          return `data:image/png;base64,${png.toString("base64")}`;
+        } catch (err) {
+          logger.warn(`[layouts] preview render failed for ${id}:`, err);
+          return null;
+        }
+      },
+    );
+
+    // Gallery import: LayoutStore validates the package BEFORE copying and
+    // replaces an installed package of the same name in place.
+    ipcMain.handle(
+      IPC_CHANNELS.LAYOUTS_IMPORT,
+      async (_, sourceDir: string): Promise<LayoutImportReport> => {
+        const result = await layoutStore.importFrom(sourceDir);
+        if ("errors" in result) {
+          return { ok: false, id: null, themeIds: [], elementCount: 0, errors: result.errors };
+        }
+        return {
+          ok: true,
+          id: result.entry.id,
+          themeIds: result.entry.themeIds,
+          elementCount: result.entry.manifest.elements.length,
+          errors: [],
+        };
+      },
+    );
+
     // Window control handlers (frameless custom titlebar — TitleBar.tsx).
     ipcMain.handle(IPC_CHANNELS.WINDOW_MINIMIZE, () => {
       mainWindow?.minimize();
@@ -941,6 +995,17 @@ if (!gotTheLock) {
           "Icon pack seed dir not found (resources/iconpacks) — no built-in icon packs",
         );
       }
+
+      // Elgato .sdLayoutEx InfoBar layout library (Settings gallery). The
+      // store owns <userData>/layouts; the renderer paints gallery previews.
+      // Live SD+/Neo LCD writes arrive with dial support (LayoutRenderer's
+      // NEXT-PHASE note) — the gallery is groundwork, visibly so.
+      layoutStore = new LayoutStore({
+        logger,
+        layoutsDir: LayoutStore.defaultLayoutsDir(app.getPath("userData")),
+      });
+      await layoutStore.discover();
+      layoutRenderer = new LayoutRenderer(logger);
 
       networkServer = new NetworkServer(
         logger,

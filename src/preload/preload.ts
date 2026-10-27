@@ -16,6 +16,7 @@ import type {
 import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
 import type { ElgatoImportReport } from "../main/profiles/elgato/ElgatoProfileImporter";
 import type { SDPluginSummary } from "../main/plugins/sd/SDPluginHost";
+import type { LayoutSummary, LayoutImportReport } from "../shared/types";
 import type { KeyboardInjectionStatus } from "../main/actions/ActionExecutor";
 
 // Type-safe API exposed to renderer
@@ -248,6 +249,16 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.SD_INSTALL_FROM_FILE, filePath),
     setPluginEnabled: (uuid: string, enabled: boolean): Promise<void> =>
       ipcRenderer.invoke(IPC_CHANNELS.SD_SET_PLUGIN_ENABLED, uuid, enabled),
+  },
+
+  // Elgato .sdLayoutEx InfoBar layouts (Settings gallery)
+  layouts: {
+    list: (): Promise<LayoutSummary[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS_LIST),
+    preview: (id: string): Promise<string | null> =>
+      ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS_PREVIEW, id),
+    import: (sourceDir: string): Promise<LayoutImportReport> =>
+      ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS_IMPORT, sourceDir),
   },
 
   // Keyboard injection diagnostics (Linux)

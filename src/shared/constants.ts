@@ -227,6 +227,12 @@ export const IPC_CHANNELS = {
   SD_INSTALL_FROM_FILE: "sd.installFromFile",
   SD_SET_PLUGIN_ENABLED: "sd.setPluginEnabled",
 
+  // Elgato .sdLayoutEx InfoBar layouts (Settings gallery): list imported
+  // layout packages, render a preview PNG data-URL, import a package dir.
+  LAYOUTS_LIST: "layouts.list",
+  LAYOUTS_PREVIEW: "layouts.preview",
+  LAYOUTS_IMPORT: "layouts.import",
+
   // Keyboard injection diagnostics (Linux backends)
   KEYBIND_STATUS: "keybind.status",
   KEYBIND_TEST: "keybind.test",

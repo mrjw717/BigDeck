@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppSettings } from '../../shared/types';
+import type { AppSettings, LayoutSummary, LayoutImportReport } from '../../shared/types';
 import type { IconPackSummary, IconEntry, IconFile } from '../../main/assets/IconPack';
 import type { SDPluginSummary } from '../../main/plugins/sd/SDPluginHost';
 
@@ -123,6 +123,11 @@ declare global {
         listPlugins: () => Promise<SDPluginSummary[]>;
         installFromFile: (filePath: string) => Promise<SDPluginSummary>;
         setPluginEnabled: (uuid: string, enabled: boolean) => Promise<void>;
+      };
+      layouts: {
+        list: () => Promise<LayoutSummary[]>;
+        preview: (id: string) => Promise<string | null>;
+        import: (sourceDir: string) => Promise<LayoutImportReport>;
       };
       keybind: {
         status: () => Promise<any>;

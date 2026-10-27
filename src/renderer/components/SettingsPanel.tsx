@@ -12,9 +12,15 @@ import {
   Play,
   Copy,
   Check,
+  LayoutTemplate,
+  FolderOpen,
+  X,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { useAppStore } from "../stores/appStore";
 import type { KeyboardInjectionStatus } from "../../main/actions/ActionExecutor";
+import type { LayoutImportReport, LayoutSummary } from "../../shared/types";
 
 /** Copyable fix command for one unavailable injection backend. */
 const KEYBIND_FIXES: Record<
@@ -230,6 +236,210 @@ function KeyboardInjectionCard() {
   );
 }
 
+/** Settings card: imported .sdLayoutEx InfoBar layouts — gallery groundwork. */
+function LayoutsGalleryCard() {
+  const [layouts, setLayouts] = useState<LayoutSummary[]>([]);
+  const [previews, setPreviews] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isImporting, setIsImporting] = useState(false);
+  const [report, setReport] = useState<LayoutImportReport | null>(null);
+
+  const refresh = async () => {
+    try {
+      const list = (await window.bigdeck?.layouts.list()) ?? [];
+      setLayouts(list);
+      // Render thumbnails for layouts we don't have one for yet.
+      const missing = list.filter((layout) => !previews[layout.id]);
+      const rendered = await Promise.all(
+        missing.map(async (layout) => {
+          try {
+            return [layout.id, await window.bigdeck?.layouts.preview(layout.id)] as const;
+          } catch {
+            return [layout.id, null] as const;
+          }
+        }),
+      );
+      setPreviews((prev) => {
+        const next = { ...prev };
+        for (const [id, dataUrl] of rendered) {
+          if (dataUrl) next[id] = dataUrl;
+        }
+        return next;
+      });
+    } catch (error) {
+      console.error("Failed to load layouts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Import a `.sdLayoutEx` package directory: native folder dialog →
+   * main-process LayoutStore import (validates before copying) → report.
+   */
+  const handleImport = async () => {
+    let dirs: string[] | undefined;
+    try {
+      dirs = await window.bigdeck?.dialog.openDirectory({
+        title: "Import .sdLayoutEx Layout Package",
+      });
+    } catch (error) {
+      console.error("Layout import dialog failed:", error);
+      return;
+    }
+    if (!dirs || dirs.length === 0) return;
+
+    setIsImporting(true);
+    setReport(null);
+    try {
+      const result = await window.bigdeck?.layouts.import(dirs[0]);
+      if (result) {
+        setReport(result);
+        if (result.ok) await refresh();
+      }
+    } catch (error) {
+      setReport({
+        ok: false,
+        id: null,
+        themeIds: [],
+        elementCount: 0,
+        errors: [String(error)],
+      });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  return (
+    <section className="bg-card border border-border rounded-xl p-6">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <LayoutTemplate size={18} />
+            SD+ / Neo Layouts
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Elgato .sdLayoutEx InfoBar layout packages
+          </p>
+        </div>
+        <button
+          onClick={handleImport}
+          disabled={isImporting}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm disabled:opacity-50 flex-none"
+          title="Import a .sdLayoutEx layout package folder"
+        >
+          <FolderOpen size={14} />
+          {isImporting ? "Importing..." : "Import .sdLayoutEx"}
+        </button>
+      </div>
+
+      <p className="text-xs text-muted-foreground mb-4">
+        Rendering to SD+ hardware arrives with dial support — imported layouts
+        are listed and previewed here today.
+      </p>
+
+      {/* Import result card */}
+      {report && (
+        <div
+          className={`mb-4 bg-card border rounded-xl p-4 ${
+            report.ok ? "border-green-500/40" : "border-destructive/40"
+          }`}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {report.ok ? (
+                <CheckCircle2 size={18} className="text-green-500" />
+              ) : (
+                <AlertTriangle size={18} className="text-destructive" />
+              )}
+              <div>
+                <h3 className="font-semibold text-sm">
+                  {report.ok
+                    ? `Imported "${report.id}"`
+                    : "Layout import failed"}
+                </h3>
+                {report.ok && (
+                  <p className="text-xs text-muted-foreground">
+                    {report.themeIds.length} theme
+                    {report.themeIds.length !== 1 ? "s" : ""} •{" "}
+                    {report.elementCount} element
+                    {report.elementCount !== 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setReport(null)}
+              className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              aria-label="Dismiss layout import report"
+            >
+              <X size={14} />
+            </button>
+          </div>
+          {report.errors.length > 0 && (
+            <div className="mt-3 space-y-0.5">
+              {report.errors.map((error, i) => (
+                <div key={i} className="text-xs text-destructive">
+                  {error}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading layouts...</p>
+      ) : layouts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          No layouts imported yet. Import an Elgato{" "}
+          <code className="text-xs bg-muted px-1.5 py-0.5 rounded">.sdLayoutEx</code>{" "}
+          package folder (found in your Stream Deck installation under{" "}
+          <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+            Resources/InfobarLayouts
+          </code>
+          ) to see it here.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {layouts.map((layout) => (
+            <div
+              key={layout.id}
+              className="flex items-center gap-4 p-3 rounded-lg bg-muted/40 border border-border"
+            >
+              {previews[layout.id] ? (
+                <img
+                  src={previews[layout.id]}
+                  alt={`${layout.id} preview`}
+                  className="w-40 rounded border border-border flex-none"
+                />
+              ) : (
+                <div className="w-40 h-[26px] rounded border border-border bg-muted flex-none flex items-center justify-center">
+                  <span className="text-[10px] text-muted-foreground">no preview</span>
+                </div>
+              )}
+              <div className="min-w-0">
+                <div className="font-medium text-sm truncate">{layout.id}</div>
+                <div className="text-xs text-muted-foreground">
+                  {layout.themeIds.length} theme
+                  {layout.themeIds.length !== 1 ? "s" : ""} ({layout.themeIds.join(", ")}){" "}
+                  • {layout.elementCount} element
+                  {layout.elementCount !== 1 ? "s" : ""}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function SettingsPanel() {
   const { settings, theme, setTheme, updateSettings } = useAppStore();
 
@@ -335,6 +545,9 @@ export function SettingsPanel() {
 
         {/* Keyboard Shortcuts (Linux injection) */}
         <KeyboardInjectionCard />
+
+        {/* SD+ / Neo InfoBar layouts (gallery groundwork) */}
+        <LayoutsGalleryCard />
 
         {/* Startup */}
         <section className="bg-card border border-border rounded-xl p-6">

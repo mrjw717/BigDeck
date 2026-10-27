@@ -458,6 +458,33 @@ export interface NetworkAPIStatus {
   connections: number;
 }
 
+// ============================================================================
+// InfoBar layout gallery (Settings — "SD+ / Neo Layouts" card). Shapes
+// returned by the layouts.* IPC handlers over LayoutStore/LayoutRenderer.
+// ============================================================================
+
+/** One imported .sdLayoutEx package, summarized for the gallery. */
+export interface LayoutSummary {
+  /** Package id: the directory basename minus `.sdLayoutEx`. */
+  id: string;
+  /** Theme ids declared by the manifest, in declaration order. */
+  themeIds: string[];
+  /** Number of template elements (data slots) in the manifest. */
+  elementCount: number;
+}
+
+/** Result of a gallery import (a `.sdLayoutEx` package directory). */
+export interface LayoutImportReport {
+  ok: boolean;
+  /** Imported package id on success, null on failure. */
+  id: string | null;
+  /** Summary of the freshly imported package (success only). */
+  themeIds: string[];
+  elementCount: number;
+  /** Validation errors when ok is false. */
+  errors: string[];
+}
+
 export interface APIResponse<T = unknown> {
   success: boolean;
   data?: T;
