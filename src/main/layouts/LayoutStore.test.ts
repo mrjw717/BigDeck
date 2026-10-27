@@ -9,11 +9,10 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 import { LayoutStore, type LayoutEntry } from "./LayoutStore";
 import type { Logger } from "../utils/Logger";
 
-const FIXTURES_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "__fixtures__");
+const FIXTURES_DIR = path.join(__dirname, "__fixtures__");
 
 function makeLogger() {
   const records: Array<{ level: string; msg: string }> = [];

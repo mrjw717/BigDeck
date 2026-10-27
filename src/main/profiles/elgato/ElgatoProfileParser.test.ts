@@ -14,7 +14,6 @@ import { describe, expect, it } from "vitest";
 import fsp from "fs/promises";
 import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 import {
   ElgatoProfileParseError,
   cleanupElgatoBundle,
@@ -22,7 +21,7 @@ import {
   parseElgatoProfile,
 } from "./ElgatoProfileParser";
 
-const FIXTURES = fileURLToPath(new URL("./__fixtures__/", import.meta.url));
+const FIXTURES = path.join(__dirname, "__fixtures__");
 
 function fixture(name: string): string {
   return path.join(FIXTURES, name);

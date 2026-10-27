@@ -12,13 +12,12 @@ import fs from "fs/promises";
 import path from "path";
 import os from "os";
 import sharp from "sharp";
-import { fileURLToPath } from "url";
 import { parseLayoutEx } from "./LayoutSchema";
 import { LayoutRenderer, type LayoutDataProvider } from "./LayoutRenderer";
 import type { LayoutExManifest } from "../../shared/types";
 import type { Logger } from "../utils/Logger";
 
-const FIXTURES_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "__fixtures__");
+const FIXTURES_DIR = path.join(__dirname, "__fixtures__");
 
 const logger = {
   debug: () => undefined,

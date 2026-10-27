@@ -10,14 +10,13 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import {
   parseLayoutEx,
   parseLayoutExDetailed,
 } from "./LayoutSchema";
 import type { LayoutExManifest } from "../../shared/types";
 
-const FIXTURES_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "__fixtures__");
+const FIXTURES_DIR = path.join(__dirname, "__fixtures__");
 
 /** Original Elgato bundle — present only on RE machines; tests skip elsewhere. */
 const ELGATO_SOURCE_DIR =

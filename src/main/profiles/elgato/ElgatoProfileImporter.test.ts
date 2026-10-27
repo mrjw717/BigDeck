@@ -23,7 +23,6 @@ import { describe, expect, it, vi } from "vitest";
 import fsp from "fs/promises";
 import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 import type { Logger } from "../../utils/Logger";
 
 // Capture FakeStore instances so tests can read persisted state.
@@ -52,7 +51,7 @@ import { ProfileManager } from "../ProfileManager";
 import { ElgatoProfileImporter } from "./ElgatoProfileImporter";
 import type { MacroAction } from "../../../shared/types";
 
-const FIXTURES = fileURLToPath(new URL("./__fixtures__/", import.meta.url));
+const FIXTURES = path.join(__dirname, "__fixtures__");
 
 const silentLogger: Logger = {
   info: () => {},
