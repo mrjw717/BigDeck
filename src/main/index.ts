@@ -23,6 +23,7 @@ import {
   ElgatoProfileImporter,
   type ElgatoImportReport,
 } from "./profiles/elgato/ElgatoProfileImporter";
+import { FocusWatcher } from "./focus/FocusWatcher";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
@@ -334,6 +335,7 @@ if (!gotTheLock) {
     // through the shared channel constant; the preload exposes it as
     // profile.importElgato and the Profiles view drives it (import UI).
     const elgatoImporter = new ElgatoProfileImporter(profileManager, logger);
+
     ipcMain.handle(
       IPC_CHANNELS.PROFILE_IMPORT_ELGATO,
       async (_, zipPath: string): Promise<ElgatoImportReport> => {
@@ -1192,6 +1194,46 @@ if (!gotTheLock) {
 
       // Setup event handlers
       setupDeviceEvents();
+
+      // App-focus profile auto-switching: watch the focused window's class
+      // and activate any profile whose autoSwitchRules match (e.g. focus
+      // Chrome -> the Chrome profile). See
+      // ProfileManager.findProfileByAutoSwitch for the rule matcher.
+      const focusWatcher = new FocusWatcher(logger);
+      focusWatcher.on(
+        "focus",
+        async ({ appClass, title }: { appClass: string; title: string }) => {
+          try {
+            const profile = profileManager.findProfileByAutoSwitch(
+              appClass,
+              title,
+              appClass,
+            );
+            const active = profileManager.getActiveProfile();
+            if (!profile || (active && active.id === profile.id)) return;
+
+            const device = deviceManager.getDevices()[0];
+            if (!device) return;
+
+            const activated = profileManager.activateProfile(profile.id);
+            logger.info(
+              `Focus switch: ${appClass} -> profile "${activated.name}"`,
+            );
+            if (activated.deviceType === device.type) {
+              hardwareSync.applyProfileToDevice(device.id, activated);
+            }
+          } catch (error) {
+            logger.warn("Focus auto-switch failed:", error);
+          }
+        },
+      );
+
+      // Starts the KWin journal follower (KDE Wayland) or xdotool poll (X11).
+      void focusWatcher.start().then((source) => {
+        if (source !== "none") {
+          logger.info(`Focus watcher active via ${source}`);
+        }
+      });
 
       // Load plugins
       await pluginManager.loadPlugins();
