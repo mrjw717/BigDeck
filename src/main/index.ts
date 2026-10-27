@@ -18,6 +18,10 @@ import { pathToFileURL } from "url";
 import fs from "fs/promises";
 import { DeviceManager } from "./device/DeviceManager";
 import { ProfileManager } from "./profiles/ProfileManager";
+import {
+  ElgatoProfileImporter,
+  type ElgatoImportReport,
+} from "./profiles/elgato/ElgatoProfileImporter";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
@@ -291,6 +295,19 @@ if (!gotTheLock) {
     ipcMain.handle(IPC_CHANNELS.PROFILE_IMPORT, (_, profileJson: string) => {
       return profileManager.importProfile(profileJson);
     });
+
+    // Elgato .streamDeckProfile import (official profile files). No shared
+    // channel constant / preload binding yet — renderer wiring is a later
+    // phase, so this handler is only reachable over raw ipcRenderer.invoke.
+    const elgatoImporter = new ElgatoProfileImporter(profileManager, logger);
+    ipcMain.handle(
+      "profile.importElgato",
+      async (_, zipPath: string): Promise<ElgatoImportReport> => {
+        return elgatoImporter.importFile(zipPath, {
+          assetsDir: path.join(app.getPath("userData"), "assets"),
+        });
+      },
+    );
 
     // Action IPC handlers
     ipcMain.handle(IPC_CHANNELS.ACTION_EXECUTE, async (_, action: Action) => {
