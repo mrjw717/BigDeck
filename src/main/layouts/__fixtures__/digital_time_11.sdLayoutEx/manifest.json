@@ -1,0 +1,132 @@
+{
+    "themes": [
+        {
+            "id": "default",
+            "primaryColor": "#000000",
+            "secondaryColor": "",
+            "colors": {
+                "textColor": "#FFFFFF"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Montserrat",
+                    "size": 26,
+                    "weight": 600,
+                    "italic": false
+                },
+                "amFont": {
+                    "family": "Chivo",
+                    "size": 12,
+                    "weight": 600,
+                    "italic": false
+                },
+                "locationFont": {
+                    "family": "Chivo",
+                    "size": 18,
+                    "weight": 400,
+                    "italic": true
+                }
+            },
+            "images": {
+                "backgroundImage": "images/rainbow_background.png"
+            }
+        }
+    ],
+    "elements": [
+        {
+            "key": "hour1",
+            "type": "hours"
+        },
+        {
+            "key": "colon1",
+            "type": "colon",
+            "animated": false
+        },
+        {
+            "key": "min1",
+            "type": "minutes",
+            "show_zero": true
+        },
+        {
+            "key": "am_pm",
+            "type": "am/pm",
+            "capitalize": true
+        },
+        {
+            "key": "location1",
+            "type": "location"
+        }
+    ],
+    "template": {
+        "id": "digital_time_11",
+        "items": [
+            {
+                "key": "background",
+                "type": "pixmap",
+                "rect": [0, 0, 232, 50],
+                "value": "{{backgroundImage}}",
+                "zOrder": 0
+            },
+            {
+                "key": "hour1",
+                "type": "text",
+                "rect": [20, 0, 36, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 1
+            },
+            {
+                "key": "colon1",
+                "type": "text",
+                "rect": [56, 0, 6, 50],
+                "value": ":",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 2
+            },
+            {
+                "key": "min1",
+                "type": "text",
+                "rect": [62, 0, 36, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 3
+            },
+            {
+                "key": "am_pm",
+                "type": "text",
+                "rect": [96, 24, 28, 12],
+                "value": "",
+                "font": "{{amFont}}",
+                "color": "{{textColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 4
+            },
+            {
+                "key": "location1",
+                "type": "text",
+                "rect": [116, 9, 105, 32],
+                "value": "",
+                "font": "{{locationFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 5
+            }
+        ]
+    }
+}

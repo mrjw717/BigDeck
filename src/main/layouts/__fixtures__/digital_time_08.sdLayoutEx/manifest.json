@@ -1,0 +1,197 @@
+{
+    "themes": [
+        {
+            "id": "blue",
+            "primaryColor": "#BEEBE9",
+            "secondaryColor": "#FFB6B9",
+            "colors": {
+                "backgroundColor": "#BEEBE9",
+                "textColor": "#FFB6B9",
+                "outlineColor": "#B96767"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Alfa Slab One",
+                    "size": 30,
+                    "weight": 400,
+                    "italic": false
+                },
+                "timeFontSmall": {
+                    "family": "Alfa Slab One",
+                    "size": 12,
+                    "weight": 400,
+                    "italic": false
+                },
+                "dateFont": {
+                    "family": "Lobster",
+                    "size": 18,
+                    "weight": 400,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "green",
+            "primaryColor": "#89E044",
+            "secondaryColor": "#FFCE5C",
+            "colors": {
+                "backgroundColor": "#89E044",
+                "textColor": "#FFCE5C",
+                "outlineColor": "#2D9596"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Alfa Slab One",
+                    "size": 32,
+                    "weight": 400,
+                    "italic": false
+                },
+                "timeFontSmall": {
+                    "family": "Alfa Slab One",
+                    "size": 12,
+                    "weight": 400,
+                    "italic": false
+                },
+                "dateFont": {
+                    "family": "Lobster",
+                    "size": 18,
+                    "weight": 400,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "orange",
+            "primaryColor": "#FC6736",
+            "secondaryColor": "#0C2D57",
+            "colors": {
+                "backgroundColor": "#FC6736",
+                "textColor": "#0C2D57",
+                "outlineColor": "#FFFFFF"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Alfa Slab One",
+                    "size": 32,
+                    "weight": 400,
+                    "italic": false
+                },
+                "timeFontSmall": {
+                    "family": "Alfa Slab One",
+                    "size": 12,
+                    "weight": 400,
+                    "italic": false
+                },
+                "dateFont": {
+                    "family": "Lobster",
+                    "size": 18,
+                    "weight": 400,
+                    "italic": false
+                }
+            }
+        }
+    ],
+    "elements": [
+        {
+            "key": "hour1",
+            "type": "hours"
+        },
+        {
+            "key": "colon1",
+            "type": "colon",
+            "animated": false
+        },
+        {
+            "key": "min1",
+            "type": "minutes",
+            "show_zero": true
+        },
+        {
+            "key": "am_pm",
+            "type": "am/pm",
+            "capitalize": true
+        },
+        {
+            "key": "date1",
+            "type": "custom_date",
+            "dateFormat": "Weekday_Month_Day_Short"
+        }
+    ],
+    "template": {
+        "id": "digital_time_08",
+        "items": [
+            {
+                "key": "background",
+                "type": "pixmap",
+                "rect": [0, 0, 232, 50],
+                "background": "{{backgroundColor}}",
+                "zOrder": 0
+            },
+            {
+                "key": "hour1",
+                "type": "text",
+                "rect": [34, 4, 47, 46],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 4,
+                "outline_c": "{{outlineColor}}",
+                "zOrder": 1
+            },
+            {
+                "key": "colon1",
+                "type": "text",
+                "rect": [80, 4, 8, 40],
+                "value": ":",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 4,
+                "outline_c": "{{outlineColor}}",
+                "zOrder": 2
+            },
+            {
+                "key": "min1",
+                "type": "text",
+                "rect": [87, 4, 47, 46],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 4,
+                "outline_c": "{{outlineColor}}",
+                "zOrder": 3
+            },
+            {
+                "key": "am_pm",
+                "type": "text",
+                "rect": [6, 4, 28, 46],
+                "value": "",
+                "font": "{{timeFontSmall}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 3,
+                "outline_c": "{{outlineColor}}",
+                "zOrder": 4
+            },
+            {
+                "key": "date1",
+                "type": "text",
+                "rect": [134, 0, 98, 50],
+                "value": "",
+                "font": "{{dateFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 3,
+                "outline_c": "{{outlineColor}}",
+                "zOrder": 6
+            }
+        ]
+    }
+}

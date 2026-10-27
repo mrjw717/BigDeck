@@ -463,3 +463,198 @@ export interface APIResponse<T = unknown> {
   data?: T;
   error?: string;
 }
+
+// ============================================================================
+// InfoBar Layout Types (Elgato .sdLayoutEx manifests)
+//
+// Reverse-engineered from the layouts bundled with Stream Deck 7.x
+// (Resources/InfobarLayouts/{DigitalTime,Pagination}/*.sdLayoutEx) — see
+// src/main/layouts/LayoutSchema.ts for the full survey table. These types are
+// consumed by both main (parser/renderer/store) and (later) the renderer
+// process, so they live here.
+// ============================================================================
+
+/** A theme font token: {font} entries observed across all bundled layouts. */
+export interface LayoutExFontSpec {
+  family: string;
+  size: number;
+  weight: number;
+  italic: boolean;
+}
+
+/**
+ * A theme color value: either plain `#RRGGBB` or an Elgato gradient string
+ * like `h$0:#204CFE,1:#CE1F93` (horizontal) / `d1$0:#A,1:#B` (diagonal),
+ * stops formatted `offset:#hex`, comma-separated, multi-stop allowed.
+ */
+export type LayoutExColorSpec = string;
+
+/** Per-theme color/font/image token tables referenced via `{{token}}` in items. */
+export interface LayoutExTheme {
+  id: string;
+  primaryColor: string;
+  secondaryColor: string;
+  colors: Record<string, LayoutExColorSpec>;
+  fonts: Record<string, LayoutExFontSpec>;
+  /** Token → layout-relative image path (e.g. backgroundImage → images/night_background.png). */
+  images?: Record<string, string>;
+}
+
+/** All element `type` values observed across every bundled layout. */
+export type LayoutExElementType =
+  | "hours"
+  | "minutes"
+  | "colon"
+  | "am/pm"
+  | "day"
+  | "date"
+  | "custom_date"
+  | "location"
+  | "carousel_page"
+  | "show_on_am/pm"
+  | "show_on_clock_type";
+
+interface LayoutExElementBase {
+  key: string;
+  type: LayoutExElementType;
+}
+
+export interface LayoutExHoursElement extends LayoutExElementBase {
+  type: "hours";
+  /** Zero-pad single-digit values ("9" → "09"). Inferred: only minutes… */
+  show_zero?: boolean;
+}
+export interface LayoutExMinutesElement extends LayoutExElementBase {
+  type: "minutes";
+  show_zero?: boolean;
+}
+export interface LayoutExColonElement extends LayoutExElementBase {
+  type: "colon";
+  /** Blinking colon flag — only `false` observed in bundled layouts. */
+  animated?: boolean;
+}
+export interface LayoutExAmPmElement extends LayoutExElementBase {
+  type: "am/pm";
+  /** Uppercase the supplied value (only `true` observed). */
+  capitalize?: boolean;
+}
+export interface LayoutExDayElement extends LayoutExElementBase {
+  type: "day";
+  /** Observed: dateType "Text", dateFormat "Long". */
+  dateType?: string;
+  dateFormat?: string;
+}
+export interface LayoutExDateElement extends LayoutExElementBase {
+  type: "date";
+  /** Observed: "Short". */
+  dateFormat?: string;
+}
+export interface LayoutExCustomDateElement extends LayoutExElementBase {
+  type: "custom_date";
+  /** Observed: "Month_Day" | "Weekday_Month_Day" | "Weekday_Month_Day_Short". */
+  dateFormat?: string;
+}
+export interface LayoutExLocationElement extends LayoutExElementBase {
+  type: "location";
+}
+export interface LayoutExCarouselPageElement extends LayoutExElementBase {
+  type: "carousel_page";
+  /** Which page attribute this slot shows: only Icon | Name | Number observed. */
+  display?: "Icon" | "Name" | "Number";
+  /** Only "Unique" observed. */
+  wrap?: string;
+  /** Page offset relative to the current page (-1, 0, 1, 2, 3 observed). */
+  offset?: number;
+  /** [number, number] pair (0..1, 0..3) — purpose unconfirmed; preserved as-is. */
+  extend?: [number, number];
+}
+export interface LayoutExShowOnAmPmElement extends LayoutExElementBase {
+  type: "show_on_am/pm";
+  /** Visibility gate: show only in the given clock period. */
+  periode?: "AM" | "PM";
+}
+export interface LayoutExShowOnClockTypeElement extends LayoutExElementBase {
+  type: "show_on_clock_type";
+  /** Visibility gate: show only in the given clock mode. */
+  format?: "Hour12" | "Hour24";
+}
+
+export type LayoutExElement =
+  | LayoutExHoursElement
+  | LayoutExMinutesElement
+  | LayoutExColonElement
+  | LayoutExAmPmElement
+  | LayoutExDayElement
+  | LayoutExDateElement
+  | LayoutExCustomDateElement
+  | LayoutExLocationElement
+  | LayoutExCarouselPageElement
+  | LayoutExShowOnAmPmElement
+  | LayoutExShowOnClockTypeElement;
+
+/** [x, y, width, height] in the 232×50 logical layout canvas. */
+export type LayoutExRect = [number, number, number, number];
+
+interface LayoutExItemBase {
+  key: string;
+  type: "pixmap" | "text";
+  rect: LayoutExRect;
+  /** Paint order; items are drawn ascending (observed 0..8). */
+  zOrder?: number;
+  /** Rounded-corner radius in layout units (observed 3..25). */
+  border_radius?: number;
+}
+
+/** Solid/gradient/image rectangle (backgrounds, chips, icon slots). */
+export interface LayoutExPixmapItem extends LayoutExItemBase {
+  type: "pixmap";
+  /** Fill for the chip/rect itself (color token or literal spec). */
+  background?: string;
+  /** Icon glyph fill inside `padding` (carousel page icons). */
+  fill_c?: string;
+  /** `{{imageToken}}` → theme.images token for a PNG to draw. */
+  value?: string;
+  /** [l, t, r, b] inset applied to the icon content (observed symmetric). */
+  padding?: [number, number, number, number];
+}
+
+/** Text run (clock digits, colon, AM/PM, page names/numbers). */
+export interface LayoutExTextItem extends LayoutExItemBase {
+  type: "text";
+  /** Literal text, placeholder ("0", ":"), or replaced by element data. */
+  value?: string;
+  /** `{{fontToken}}` → theme font. */
+  font?: string;
+  /** Text fill (color token or literal spec). */
+  color?: string;
+  /** Optional fill behind the text (color token or literal spec). */
+  background?: string;
+  alignment?: "left" | "center" | "right";
+  /** Only "clip" observed; item SVG bounds clip naturally. */
+  "text-overflow"?: string;
+  outline_w?: number;
+  outline_c?: string;
+  /** Draw stroke only (digital_time_01 digits). */
+  outline_only?: boolean;
+}
+
+export type LayoutExTemplateItem = LayoutExPixmapItem | LayoutExTextItem;
+
+export interface LayoutExTemplate {
+  id: string;
+  items: LayoutExTemplateItem[];
+}
+
+/** A parsed, validated .sdLayoutEx manifest. */
+export interface LayoutExManifest {
+  themes: LayoutExTheme[];
+  elements: LayoutExElement[];
+  template: LayoutExTemplate;
+}
+
+/** House-style parse result: every problem collected, not fail-fast. */
+export interface LayoutExParseResult {
+  ok: boolean;
+  manifest: LayoutExManifest | null;
+  errors: string[];
+}

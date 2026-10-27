@@ -1,0 +1,166 @@
+{
+    "themes": [
+        {
+            "id": "black",
+            "primaryColor": "#000000",
+            "secondaryColor": "#FFFFFF",
+            "colors": {
+                "backgroundColor": "#000000",
+                "textColor": "#FFFFFF"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Roboto Condensed",
+                    "size": 37,
+                    "weight": 700,
+                    "italic": false
+                },
+                "smallFont": {
+                    "family": "Roboto Condensed",
+                    "size": 16,
+                    "weight": 700,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "white",
+            "primaryColor": "#FFFFFF",
+            "secondaryColor": "#000000",
+            "colors": {
+                "backgroundColor": "#FFFFFF",
+                "textColor": "#000000"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Roboto Condensed",
+                    "size": 37,
+                    "weight": 700,
+                    "italic": false
+                },
+                "smallFont": {
+                    "family": "Roboto Condensed",
+                    "size": 16,
+                    "weight": 700,
+                    "italic": false
+                }
+            }
+        }
+    ],
+    "elements": [
+        {
+            "key": "hour1",
+            "type": "hours"
+        },
+        {
+            "key": "colon1",
+            "type": "colon",
+            "animated": false
+        },
+        {
+            "key": "min1",
+            "type": "minutes",
+            "show_zero": true
+        },
+        {
+            "key": "am_pm",
+            "type": "am/pm",
+            "capitalize": true
+        },
+        {
+            "key": "weekday",
+            "type": "day",
+            "dateType": "Text",
+            "dateFormat": "Long"
+        },
+        {
+            "key": "date1",
+            "type": "date",
+            "dateFormat": "Short"
+        }
+    ],
+    "template": {
+        "id": "digital_time_17",
+        "items": [
+            {
+                "key": "background",
+                "type": "pixmap",
+                "rect": [0, 0, 232, 50],
+                "background": "{{backgroundColor}}",
+                "zOrder": 0
+            },
+            {
+                "key": "hour1",
+                "type": "text",
+                "rect": [39, 0, 38, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 1
+            },
+            {
+                "key": "colon1",
+                "type": "text",
+                "rect": [77, 0, 8, 50],
+                "value": ":",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 2
+            },
+            {
+                "key": "min1",
+                "type": "text",
+                "rect": [85, 0, 38, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{textColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 3
+            },
+            {
+                "key": "am_pm",
+                "type": "text",
+                "rect": [8, 16, 28, 20],
+                "value": "0",
+                "font": "{{smallFont}}",
+                "color": "{{textColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 3
+            },
+            {
+                "key": "weekday",
+                "type": "text",
+                "rect": [138, 8, 94, 20],
+                "value": "0",
+                "font": "{{smallFont}}",
+                "color": "{{textColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 4
+            },
+            {
+                "key": "date1",
+                "type": "text",
+                "rect": [138, 23, 94, 20],
+                "value": "0",
+                "font": "{{smallFont}}",
+                "color": "{{textColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 5
+            }
+        ]
+    }
+}

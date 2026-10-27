@@ -1,0 +1,170 @@
+{
+    "themes": [
+        {
+            "id": "green",
+            "primaryColor": "#64C835",
+            "secondaryColor": "",
+            "colors": {
+                "backgroundColor": "#000000",
+                "textColor": "#FFFFFF",
+                "gradient1": "h$0:#2DB19A,1:#64C835",
+                "gradient2": "h$0:#64C835,1:#063823",
+                "imageBkColor1": "#FFFFFF",
+                "imageBkColor2": "#D9D9D9",
+                "imageColor1": "#64C835",
+                "imageColor2": "#64C835"
+            },
+            "fonts": {
+                "textFont": {
+                    "family": "Poppins",
+                    "size": 20,
+                    "weight": 700,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "blue",
+            "primaryColor": "#4643E7",
+            "secondaryColor": "",
+            "colors": {
+                "backgroundColor": "#000000",
+                "textColor": "#FFFFFF",
+                "gradient1": "h$0:#204CFE,1:#CE1F93",
+                "gradient2": "h$0:#204CFE,1:#020022",
+                "imageBkColor1": "#FFFFFF",
+                "imageBkColor2": "#D9D9D9",
+                "imageColor1": "#4643E7",
+                "imageColor2": "#4643E7"
+            },
+            "fonts": {
+                "textFont": {
+                    "family": "Poppins",
+                    "size": 20,
+                    "weight": 700,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "orange",
+            "primaryColor": "#FC9D0E",
+            "secondaryColor": "",
+            "colors": {
+                "backgroundColor": "#000000",
+                "textColor": "#FFFFFF",
+                "gradient1": "h$0:#FC9D0E,1:#CE1F1F",
+                "gradient2": "h$0:#FC9D0E,1:#9B1D1D",
+                "imageBkColor1": "#FFFFFF",
+                "imageBkColor2": "#D9D9D9",
+                "imageColor1": "#FC9D0E",
+                "imageColor2": "#FC9D0E"
+            },
+            "fonts": {
+                "textFont": {
+                    "family": "Poppins",
+                    "size": 20,
+                    "weight": 700,
+                    "italic": false
+                }
+            }
+        }
+    ],
+    "elements": [
+        {
+            "key": "current_page_icon",
+            "type": "carousel_page",
+            "display": "Icon",
+            "wrap": "Unique",
+            "offset": 0,
+            "extend": [0, 1]
+        },
+        {
+            "key": "current_page_name",
+            "type": "carousel_page",
+            "display": "Name",
+            "wrap": "Unique",
+            "offset": 0,
+            "extend": [0, 0]
+        },
+        {
+            "key": "next_page_icon",
+            "type": "carousel_page",
+            "display": "Icon",
+            "wrap": "Unique",
+            "offset": 1,
+            "extend": [0, 1]
+        }
+    ],
+    "template": {
+        "id": "pagination_09",
+        "items": [
+            {
+                "key": "background",
+                "type": "pixmap",
+                "rect": [0, 0, 232, 50],
+                "background": "{{backgroundColor}}",
+                "zOrder": 0
+            },
+            {
+                "key": "frame1",
+                "type": "pixmap",
+                "rect": [4, 0, 224, 50],
+                "background": "{{gradient2}}",
+                "border_radius": 25,
+                "zOrder": 1
+            },
+            {
+                "key": "frame2",
+                "type": "pixmap",
+                "rect": [89, 0, 139, 50],
+                "background": "{{gradient1}}",
+                "border_radius": 25,
+                "zOrder": 2
+            },
+            {
+                "key": "next_page_bk",
+                "type": "pixmap",
+                "rect": [47, 10, 30, 30],
+                "background": "{{imageBkColor2}}",
+                "border_radius": 15,
+                "zOrder": 3
+            },
+            {
+                "key": "next_page_icon",
+                "type": "pixmap",
+                "rect": [50, 13, 24, 24],
+                "fill_c": "{{imageColor2}}",
+                "border_radius": 12,
+                "zOrder": 4
+            },
+            {
+                "key": "current_page_bk",
+                "type": "pixmap",
+                "rect": [6, 2, 46, 46],
+                "background": "{{imageBkColor1}}",
+                "border_radius": 23,
+                "zOrder": 5
+            },
+            {
+                "key": "current_page_icon",
+                "type": "pixmap",
+                "rect": [11, 7, 36, 36],
+                "fill_c": "{{imageColor1}}",
+                "border_radius": 23,
+                "zOrder": 6
+            },
+            {
+                "key": "current_page_name",
+                "type": "text",
+                "rect": [98, 10, 126, 30],
+                "font": "{{textFont}}",
+                "color": "{{textColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 7
+            }
+        ]
+    }
+}

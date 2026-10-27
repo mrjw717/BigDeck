@@ -1,0 +1,230 @@
+{
+    "themes": [
+        {
+            "id": "brown",
+            "primaryColor": "#DC5233",
+            "secondaryColor": "#DBC7B5",
+            "colors": {
+                "backgroundColor": "#DBC7B5",
+                "frameColor": "#DC5233",
+                "timeColor": "#000000",
+                "textColor": "#000000"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Kode Mono",
+                    "size": 30,
+                    "weight": 500,
+                    "italic": false
+                },
+                "staticFont": {
+                    "family": "Arial",
+                    "size": 14,
+                    "weight": 550,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "red",
+            "primaryColor": "#F81E47",
+            "secondaryColor": "#6A283D",
+            "colors": {
+                "backgroundColor": "#000000",
+                "frameColor": "#6A283D",
+                "timeColor": "#F81E47",
+                "textColor": "#999999"
+
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Kode Mono",
+                    "size": 30,
+                    "weight": 500,
+                    "italic": false
+                },
+                "staticFont": {
+                    "family": "Arial",
+                    "size": 14,
+                    "weight": 550,
+                    "italic": false
+                }
+            }
+        },
+        {
+            "id": "blue",
+            "primaryColor": "#39DBBE",
+            "secondaryColor": "#415558",
+            "colors": {
+                "backgroundColor": "#000000",
+                "frameColor": "#415558",
+                "timeColor": "#39DBBE",
+                "textColor": "#FFFFFF"
+            },
+            "fonts": {
+                "timeFont": {
+                    "family": "Kode Mono",
+                    "size": 30,
+                    "weight": 500,
+                    "italic": false
+                },
+                "staticFont": {
+                    "family": "Arial",
+                    "size": 14,
+                    "weight": 550,
+                    "italic": false
+                }
+            }
+        }
+    ],
+    "elements": [
+        {
+            "key": "hour1",
+            "type": "hours"
+        },
+        {
+            "key": "colon1",
+            "type": "colon",
+            "animated": false
+        },
+        {
+            "key": "min1",
+            "type": "minutes",
+            "show_zero": true
+        },
+        {
+            "key": "am_indicator",
+            "type": "show_on_am/pm",
+            "periode": "AM"
+        },
+        {
+            "key": "pm_indicator",
+            "type": "show_on_am/pm",
+            "periode": "PM"
+        },
+        {
+            "key": "static_am",
+            "type": "show_on_clock_type",
+            "format": "Hour12"
+        },
+        {
+            "key": "static_pm",
+            "type": "show_on_clock_type",
+            "format": "Hour12"
+        },
+        {
+            "key": "frame_overlay",
+            "type": "show_on_clock_type",
+            "format": "Hour24"
+        }
+    ],
+    "template": {
+        "id": "digital_time_04",
+        "items": [
+            {
+                "key": "background",
+                "type": "pixmap",
+                "rect": [0, 0, 232, 50],
+                "background": "{{backgroundColor}}",
+                "zOrder": 0
+            },
+            {
+                "key": "frame",
+                "type": "pixmap",
+                "rect": [39, 7, 182, 36],
+                "background": "{{frameColor}}",
+                "border_radius": 4,
+                "zOrder": 1
+            },
+            {
+                "key": "dot",
+                "type": "pixmap",
+                "rect": [209, 30, 5, 5],
+                "background": "{{timeColor}}",
+                "zOrder": 2
+            },
+            {
+                "key": "hour1",
+                "type": "text",
+                "rect": [116, 0, 36, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{timeColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 3
+            },
+            {
+                "key": "colon1",
+                "type": "text",
+                "rect": [152, 0, 16, 50],
+                "value": ":",
+                "font": "{{timeFont}}",
+                "color": "{{timeColor}}",
+                "alignment": "center",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 4
+            },
+            {
+                "key": "min1",
+                "type": "text",
+                "rect": [168, 0, 36, 50],
+                "value": "0",
+                "font": "{{timeFont}}",
+                "color": "{{timeColor}}",
+                "alignment": "left",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 5
+            },
+            {
+                "key": "static_pm",
+                "type": "text",
+                "rect": [10, 9, 24, 16],
+                "value": "PM",
+                "font": "{{staticFont}}",
+                "color": "{{textColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 6
+            },
+            {
+                "key": "static_am",
+                "type": "text",
+                "rect": [10, 25, 24, 16],
+                "value": "AM",
+                "font": "{{staticFont}}",
+                "color": "{{textColor}}",
+                "alignment": "right",
+                "text-overflow": "clip",
+                "outline_w": 0,
+                "zOrder": 7
+            },
+            {
+                "key": "pm_indicator",
+                "type": "pixmap",
+                "rect": [45, 14, 6, 6],
+                "background": "{{timeColor}}",
+                "zOrder": 8
+            },
+            {
+                "key": "am_indicator",
+                "type": "pixmap",
+                "rect": [45, 30, 6, 6],
+                "background": "{{timeColor}}",
+                "zOrder": 9
+            },
+            {
+                "key": "frame_overlay",
+                "type": "pixmap",
+                "rect": [11, 7, 100, 36],
+                "background": "{{frameColor}}",
+                "border_radius": 4,
+                "zOrder": 10
+            }
+        ]
+    }
+}
