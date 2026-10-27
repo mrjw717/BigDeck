@@ -44,17 +44,6 @@ const DEFAULT_FRAME_DELAY_MS = 100;
 /** Max entries in the layer frame cache (LRU-ish, insertion order eviction). */
 const FRAME_CACHE_LIMIT = 40;
 
-/**
- * Icon layers render as a centered BADGE sized to this fraction of the key —
- * the hardware half of the shared contract with the LayerStack preview
- * (LayerStack.tsx renders icon layers as a fixed `w-10 h-10 object-contain`
- * badge, ≈ half of a square preview cell). Rendering icons full-bleed made
- * them ~2x the previewed size, and an icon layered above text/image layers
- * buried them on hardware while the preview showed everything coexisting —
- * reported as "text and icon layers don't respect the layer stack".
- */
-const ICON_LAYER_SIZE_FRACTION = 0.5;
-
 export interface RenderedKey {
   image: Buffer | Buffer[];
   /** Per-frame delays in ms when `image` is an animation; aligned 1:1 with frames. */
@@ -611,44 +600,12 @@ export class KeyRenderer {
         if (!layerImage) return null;
         const fit = layer.fit || "contain";
 
-        if (layer.type === "icon") {
-          // Icon layers are centered BADGES (ICON_LAYER_SIZE_FRACTION of the
-          // key), NOT full-bleed — the LayerStack preview shows icon layers
-          // as a fixed `w-10 h-10 object-contain` badge (~half the square
-          // preview cell). Full-bleed hardware icons were ~2x the previewed
-          // size and buried the text/image layers beneath them. The badge is
-          // placed on a full-key transparent canvas so z-compositing is
-          // unchanged; `fit` applies within the badge box (the preview
-          // hardcodes contain, which is also the layer default).
-          const badgeW = Math.max(1, Math.floor(width * ICON_LAYER_SIZE_FRACTION));
-          const badgeH = Math.max(1, Math.floor(height * ICON_LAYER_SIZE_FRACTION));
-          const badge = await layerImage
-            .resize(badgeW, badgeH, {
-              fit,
-              background: { r: 0, g: 0, b: 0, alpha: 0 },
-            })
-            .png()
-            .toBuffer();
-          const buf = await sharp({
-            create: {
-              width,
-              height,
-              channels: 4,
-              background: { r: 0, g: 0, b: 0, alpha: 0 },
-            },
-          })
-            .composite([
-              {
-                input: badge,
-                top: Math.floor((height - badgeH) / 2),
-                left: Math.floor((width - badgeW) / 2),
-              },
-            ])
-            .png()
-            .toBuffer();
-          return await this.applyOpacity(buf, normalizeLayerOpacity(layer.opacity));
-        }
-
+        // Icon layers are FIRST-CLASS full-canvas layers, identical to image
+        // layers: resized to the key honoring `fit` (contain default). The
+        // earlier half-size "badge" treatment made icons render at 50% on
+        // hardware and contradicted the layer model — z-order, not size
+        // hacks, is how layers coexist (pack icons are transparent SVGs).
+        // LayerStack.tsx mirrors this with fit-aware object-fit classes.
         const buf = await layerImage
           .resize(width, height, {
             fit,

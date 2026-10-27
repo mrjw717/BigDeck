@@ -89,11 +89,9 @@ export function LayerStack({ layers }: { layers: KeyLayer[] }) {
           >
             <KeyImage
               src={l.source}
-              className={
-                l.type === "icon"
-                  ? "w-10 h-10 object-contain drop-shadow-md"
-                  : `w-full h-full ${fitClass}`
-              }
+              // Icon layers are full-tile now too (hardware parity: KeyRenderer
+              // renders icons full-canvas honoring fit — badge treatment removed).
+              className={`w-full h-full ${fitClass}`}
             />
           </div>
         );
