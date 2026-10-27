@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Keyboard,
   AppWindow,
@@ -12,8 +12,14 @@ import {
   XCircle,
   Search,
   Zap,
+  Puzzle,
 } from "lucide-react";
 import { ActionType, KeyLayer } from "../../shared/types";
+import {
+  fetchSdActionEntries,
+  makeSdPluginAction,
+  type SdActionEntry,
+} from "../utils/sdPlugins";
 
 interface ActionTemplate {
   id: string;
@@ -24,6 +30,49 @@ interface ActionTemplate {
   payload: any;
   appearance: {
     layers: KeyLayer[];
+  };
+  /** True for discovered Elgato .sdPlugin actions (gets the SD badge). */
+  sdPlugin?: boolean;
+}
+
+/**
+ * Minimal appearance for a dropped SD action: dark gradient + the action
+ * name snippet — without layers a dropped template leaves the key blank
+ * until the plugin draws its first setImage.
+ */
+function sdActionTemplate(entry: SdActionEntry): ActionTemplate {
+  return {
+    id: `sdplugin:${entry.pluginUUID}:${entry.actionUUID}`,
+    type: "sdplugin",
+    label: entry.name,
+    icon: <Puzzle size={18} />,
+    description: entry.pluginName,
+    payload: makeSdPluginAction(entry),
+    sdPlugin: true,
+    appearance: {
+      layers: [
+        {
+          id: "bg-sdplugin",
+          type: "background",
+          order: 0,
+          visible: true,
+          opacity: 1,
+          backgroundGradientStart: "#2a1a3e",
+          backgroundGradientEnd: "#140f1e",
+          backgroundGradientDirection: 135,
+        },
+        {
+          id: "text-sdplugin",
+          type: "text",
+          order: 1,
+          visible: true,
+          text: entry.name.slice(0, 14),
+          fontSize: 11,
+          textColor: "#c084fc",
+          opacity: 1,
+        },
+      ],
+    },
   };
 }
 
@@ -176,8 +225,22 @@ interface ActionLibraryProps {
 
 export function ActionLibrary({ side = "right" }: ActionLibraryProps) {
   const [search, setSearch] = useState("");
+  // Discovered Elgato .sdPlugin actions, appended below the built-ins.
+  const [sdTemplates, setSdTemplates] = useState<ActionTemplate[]>([]);
 
-  const filtered = TEMPLATES.filter(
+  useEffect(() => {
+    let disposed = false;
+    fetchSdActionEntries().then((entries) => {
+      if (!disposed) setSdTemplates(entries.map(sdActionTemplate));
+    });
+    return () => {
+      disposed = true;
+    };
+  }, []);
+
+  const templates = [...TEMPLATES, ...sdTemplates];
+
+  const filtered = templates.filter(
     (t) =>
       t.label.toLowerCase().includes(search.toLowerCase()) ||
       t.description.toLowerCase().includes(search.toLowerCase()),
@@ -257,6 +320,13 @@ export function ActionLibrary({ side = "right" }: ActionLibraryProps) {
                 <div className="text-[8px] text-muted-foreground font-medium truncate uppercase tracking-tighter opacity-70">
                   {item.description}
                 </div>
+                {item.sdPlugin && (
+                  <div className="mt-0.5 flex justify-center">
+                    <span className="text-[7px] px-1 py-px rounded-full bg-purple-500/20 text-purple-400 uppercase font-black tracking-widest">
+                      SD Plugin
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           ))}

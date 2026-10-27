@@ -15,6 +15,7 @@ import type {
 } from "../shared/types";
 import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
 import type { ElgatoImportReport } from "../main/profiles/elgato/ElgatoProfileImporter";
+import type { SDPluginSummary } from "../main/plugins/sd/SDPluginHost";
 
 // Type-safe API exposed to renderer
 const api = {
@@ -236,6 +237,12 @@ const api = {
       return () =>
         ipcRenderer.removeListener(IPC_CHANNELS.WINDOW_MAXIMIZED_CHANGED, handler);
     },
+  },
+
+  // Elgato .sdPlugin host (localized plugin/action summaries)
+  sd: {
+    listPlugins: (): Promise<SDPluginSummary[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.SD_LIST_PLUGINS),
   },
 
   // Error handler

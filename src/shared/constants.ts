@@ -217,6 +217,14 @@ export const IPC_CHANNELS = {
   ASSETS_LIST_ICONS: "assets.listIcons",
   ASSETS_GET_ICON: "assets.getIcon",
 
+  // Elgato .sdPlugin host — localized plugin/action summaries for the
+  // renderer action catalog (KeyEditor picker + ActionLibrary).
+  SD_LIST_PLUGINS: "sd.listPlugins",
+
+  // Keyboard injection diagnostics (Linux backends)
+  KEYBIND_STATUS: "keybind.status",
+  KEYBIND_TEST: "keybind.test",
+
   // General
   ERROR: "error",
 } as const;

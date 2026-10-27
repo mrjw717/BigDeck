@@ -19,6 +19,7 @@ import {
   Music,
   Palette,
   Play,
+  Puzzle,
   Repeat,
   Square,
   Sun,
@@ -46,6 +47,20 @@ import { AssetImage } from "./AssetImage";
 import { LayerStack } from "./LayerStack";
 import { LayerEditor } from "./LayerEditor";
 import { MediaControlEditor } from "./MediaControlEditor";
+import {
+  fetchSdActionEntries,
+  makeSdPluginAction,
+  type SdActionEntry,
+} from "../utils/sdPlugins";
+
+/** Small provenance badge for Elgato .sdPlugin actions in the catalogs. */
+function SdPluginBadge() {
+  return (
+    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 uppercase font-black tracking-widest whitespace-nowrap">
+      SD Plugin
+    </span>
+  );
+}
 
 interface KeyEditorProps {
   keyIndex: number;
@@ -175,6 +190,9 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
   const [isRecordingMacro, setIsRecordingMacro] = useState(false);
   const [showActionPicker, setShowActionPicker] = useState(false);
   const [isEditingPressed, setIsEditingPressed] = useState(false);
+  // Discovered Elgato .sdPlugin actions, merged into the assignable list
+  // below the built-in action types.
+  const [sdActions, setSdActions] = useState<SdActionEntry[]>([]);
 
   // Get live keyConfig from store, not from stale profile prop
   const currentPage = useMemo(
@@ -191,6 +209,18 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
       loadAssets();
     }
   }, [activeTab]);
+
+  // SD plugin actions for the catalog. Fetched once per editor mount; an
+  // empty/failed host (nothing installed) contributes no entries.
+  useEffect(() => {
+    let disposed = false;
+    fetchSdActionEntries().then((entries) => {
+      if (!disposed) setSdActions(entries);
+    });
+    return () => {
+      disposed = true;
+    };
+  }, []);
 
   // Script source mode for run-script actions: "file" points at a script on
   // disk, "inline" pastes code. Explicit UI state — deriving the view from
@@ -324,6 +354,15 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
     setShowActionPicker(false);
   };
 
+  /** Assign a discovered Elgato .sdPlugin action to this key. */
+  const handleSdActionSelect = async (entry: SdActionEntry) => {
+    await setKeyAction(
+      keyIndex,
+      makeSdPluginAction(entry) as Action,
+    );
+    setShowActionPicker(false);
+  };
+
   const handleClearAction = async () => {
     await setKeyAction(keyIndex, undefined);
   };
@@ -438,6 +477,50 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
           <ChevronRight size={14} className="text-muted-foreground/60" />
         </button>
       ))}
+
+      {/* Discovered Elgato .sdPlugin actions (localized names). */}
+      {sdActions.length > 0 && (
+        <>
+          <div className="col-span-full flex items-center gap-2 pt-1">
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              SD Plugin Actions
+            </span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+          {sdActions.map((entry) => {
+            const isAssigned =
+              keyConfig.action?.type === "sdplugin" &&
+              (keyConfig.action as any).actionUUID === entry.actionUUID &&
+              (keyConfig.action as any).pluginUUID === entry.pluginUUID;
+            return (
+              <button
+                key={`${entry.pluginUUID}:${entry.actionUUID}`}
+                onClick={() => void handleSdActionSelect(entry)}
+                title={entry.tooltip || entry.name}
+                className={`flex items-center gap-3 px-3 py-2 rounded-xl border transition-colors ${
+                  isAssigned
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-transparent hover:border-border hover:bg-muted/40"
+                }`}
+              >
+                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
+                  <Puzzle size={18} />
+                </div>
+                <div className="flex-1 text-left min-w-0">
+                  <div className="text-sm font-semibold truncate">
+                    {entry.name}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground truncate">
+                    {entry.pluginName}
+                  </div>
+                </div>
+                <SdPluginBadge />
+                <ChevronRight size={14} className="text-muted-foreground/60" />
+              </button>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 
@@ -488,10 +571,10 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Configure{" "}
-            {
-              ACTION_OPTIONS.find((o) => o.type === keyConfig.action?.type)
-                ?.label
-            }
+            {keyConfig.action.type === "sdplugin"
+              ? "SD Plugin Action"
+              : ACTION_OPTIONS.find((o) => o.type === keyConfig.action?.type)
+                  ?.label}
           </div>
           <div className="flex gap-2">
             <button
@@ -512,6 +595,33 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
         {showActionPicker && renderActionPicker()}
 
         <div className="p-5 rounded-2xl border border-border/60 bg-muted/10 space-y-5">
+          {keyConfig.action.type === "sdplugin" && (
+            <div className="space-y-3">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Puzzle size={14} className="text-primary" />
+                SD Plugin Action
+              </label>
+              <div className="text-xs space-y-1">
+                <div className="text-muted-foreground">
+                  Plugin:{" "}
+                  <span className="text-foreground font-mono break-all">
+                    {(keyConfig.action as any).pluginUUID}
+                  </span>
+                </div>
+                <div className="text-muted-foreground">
+                  Action:{" "}
+                  <span className="text-foreground font-mono break-all">
+                    {(keyConfig.action as any).actionUUID}
+                  </span>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Presses are dispatched to the plugin (keyDown/keyUp over the
+                local SD host); the instance starts with empty settings.
+              </p>
+            </div>
+          )}
+
           {keyConfig.action.type === "keyboard-shortcut" && (
             <ShortcutRecorder
               keys={(keyConfig.action as any).keys || []}

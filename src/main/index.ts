@@ -508,6 +508,19 @@ if (!gotTheLock) {
       },
     );
 
+    // Elgato .sdPlugin host summaries for the renderer action catalog. When
+    // the host is DOWN (no sdplugins dir at boot / no sdplugin actions yet)
+    // the plugin map is empty — a manifest-only rescan (loadPlugins does not
+    // touch the WS server) fills it, so installed plugins are still
+    // assignable even though their processes never started.
+    ipcMain.handle(IPC_CHANNELS.SD_LIST_PLUGINS, async () => {
+      if (!sdPluginHost) return [];
+      if (!sdPluginHost.isRunning()) {
+        await sdPluginHost.loadPlugins();
+      }
+      return sdPluginHost.getPlugins();
+    });
+
     // Window control handlers (frameless custom titlebar — TitleBar.tsx).
     ipcMain.handle(IPC_CHANNELS.WINDOW_MINIMIZE, () => {
       mainWindow?.minimize();

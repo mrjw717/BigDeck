@@ -118,6 +118,9 @@ declare global {
         listIcons: (packId: string) => Promise<IconEntry[]>;
         getIcon: (packId: string, iconId: string) => Promise<IconFile | null>;
       };
+      sd: {
+        listPlugins: () => Promise<any[]>;
+      };
       settings: {
         get: () => Promise<any>;
         update: (settings: any) => Promise<any>;
