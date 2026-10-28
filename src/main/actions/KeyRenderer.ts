@@ -34,6 +34,7 @@ import {
 } from "../../shared/color";
 import type { Logger } from "../utils/Logger";
 import { applyTextTokens } from "./textTokens";
+import { splitLabelWords } from "../../shared/labelSplit";
 
 /** Hard cap on animation frames sent to a device (time is preserved via delay scaling). */
 const MAX_ANIMATION_FRAMES = 60;
@@ -1149,7 +1150,7 @@ export class KeyRenderer {
    */
   private async renderLabelOverlay(
     label: string,
-    position: "top" | "center" | "bottom",
+    position: "top" | "center" | "bottom" | "split",
     color: string,
     width: number,
     height: number,
@@ -1159,6 +1160,30 @@ export class KeyRenderer {
     const lineH = Math.ceil(fontSize * 1.1);
     const lines = this.wordWrapText(label, Math.max(8, width - 2 * pad), fontSize).slice(0, 2);
     const stripH = Math.min(height, lines.length * lineH + 2 * pad);
+
+    // SPLIT: word-wrap fills the TOP strip greedily (space-separated, never
+    // mid-word); overflow words drop to the BOTTOM strip — nothing cropped.
+    // Shared splitter (src/shared/labelSplit.ts) keeps preview + hardware
+    // identical. Single-line labels render on the top strip only.
+    if (position === "split") {
+      const maxChars = Math.max(8, Math.floor(width / (fontSize * 0.65)));
+      const { top, bottom } = splitLabelWords(label, maxChars);
+      const stripH = Math.min(Math.floor(height / 2), lineH + 2 * pad);
+      const letterSp = (fontSize * -0.05).toFixed(2);
+      const strip = (y: number, textLine: string, fadeFrom: "0" | "100") =>
+        `<defs><linearGradient id="scrim${y}" gradientUnits="userSpaceOnUse" x1="0" y1="${y}" x2="0" y2="${y + stripH}">` +
+        `<stop offset="0%" stop-color="#000000" stop-opacity="${fadeFrom}"/>` +
+        `<stop offset="100%" stop-color="#000000" stop-opacity="${fadeFrom === "0" ? "0.6" : "0"}"/>` +
+        `</linearGradient></defs>` +
+        `<rect x="0" y="${y}" width="${width}" height="${stripH}" fill="url(#scrim${y})"/>` +
+        `<text x="50%" y="${y + pad + lineH / 2}" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="900" letter-spacing="${letterSp}" fill="${color}" text-anchor="middle" dominant-baseline="central">${this.escapeXml(textLine)}</text>`;
+
+      let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+      if (top) svg += strip(0, top, "0");
+      if (bottom) svg += strip(height - stripH, bottom, "100");
+      svg += `</svg>`;
+      return sharp(Buffer.from(svg)).ensureAlpha().png().toBuffer();
+    }
 
     let stripTop: number;
     if (position === "top") stripTop = 0;

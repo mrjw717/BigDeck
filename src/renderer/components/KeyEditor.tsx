@@ -1433,12 +1433,13 @@ export function KeyEditor({ keyIndex, profile, onClose }: KeyEditorProps) {
                   value={keyConfig.labelPosition || "bottom"}
                   onChange={(e) => {
                     updateKeyConfig(keyIndex, {
-                      labelPosition: e.target.value as "top" | "center" | "bottom",
+                      labelPosition: e.target.value as "top" | "center" | "bottom" | "split",
                     });
                   }}
                   className="w-full h-9 px-3 bg-muted/40 border-2 border-border rounded-lg text-sm outline-none"
                 >
                   <option value="bottom">Bottom</option>
+                  <option value="split">Split (Top + Bottom)</option>
                   <option value="center">Center</option>
                   <option value="top">Top</option>
                 </select>

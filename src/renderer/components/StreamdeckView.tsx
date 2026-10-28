@@ -239,19 +239,52 @@ const DeckKey = React.memo(function DeckKey({
         )}
 
         {/* Label Overlay - 2 line support */}
-        {config?.label && (
-          <div
-            className={`
-              absolute left-0 right-0 text-[10px] font-black tracking-tighter text-center px-1 py-1 leading-[1.1]
-              ${config.labelPosition === "top" ? "top-0 bg-gradient-to-b from-black/60 to-transparent" : ""}
-              ${config.labelPosition === "center" ? "top-1/2 -translate-y-1/2" : ""}
-              ${config.labelPosition === "bottom" || !config.labelPosition ? "bottom-0 bg-gradient-to-t from-black/60 to-transparent" : ""}
-            `}
-            style={{ color: config.labelColor || "#ffffff" }}
-          >
-            <div className="line-clamp-2 break-words">{config.label}</div>
-          </div>
-        )}
+        {config?.label && (() => {
+          const labelPos = config.labelPosition || "bottom";
+          if (labelPos === "split") {
+            // Parity with KeyRenderer renderLabelOverlay "split": greedy
+            // word fill — first words in the TOP scrim strip, remainder in
+            // the BOTTOM strip (shared splitting rules, no cropping).
+            const maxChars = 8;
+            const words = config.label.trim().split(/\s+/).filter(Boolean);
+            const top: string[] = [];
+            let i = 0;
+            for (; i < words.length; i++) {
+              const cand = top.length ? `${top.join(" ")} ${words[i]}` : words[i];
+              if (cand.length > maxChars && top.length > 0) break;
+              top.push(words[i]);
+            }
+            const bottom = words.slice(i).join(" ");
+            return (
+              <>
+                {top.length > 0 && (
+                  <div className="absolute inset-x-0 top-0 z-10 px-1 py-0.5 bg-gradient-to-b from-black/60 to-transparent text-center">
+                    <div className="line-clamp-1 break-words">{top.join(" ")}</div>
+                  </div>
+                )}
+                {bottom && (
+                  <div className="absolute inset-x-0 bottom-0 z-10 px-1 py-0.5 bg-gradient-to-t from-black/60 to-transparent text-center">
+                    <div className="line-clamp-1 break-words">{bottom}</div>
+                  </div>
+                )}
+              </>
+            );
+          }
+          return (
+            <div
+              className={`absolute inset-x-0 z-10 ${
+                labelPos === "top" ? "top-0 bg-gradient-to-b from-black/60 to-transparent" : ""
+              } ${
+                labelPos === "center" ? "top-1/2 -translate-y-1/2" : ""
+              } ${
+                labelPos === "bottom" || !labelPos ? "bottom-0 bg-gradient-to-t from-black/60 to-transparent" : ""
+              }`}
+              style={{ color: config.labelColor || "#ffffff" }}
+            >
+              <div className="line-clamp-2 break-words">{config.label}</div>
+            </div>
+          );
+        })()}
 
         {/* Drop Zone Indicator */}
         {isDropTarget && (

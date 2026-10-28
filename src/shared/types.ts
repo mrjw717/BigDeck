@@ -406,7 +406,7 @@ export interface KeyConfig {
   image?: KeyImage;
 
   label?: string;
-  labelPosition?: "top" | "center" | "bottom";
+  labelPosition?: "top" | "center" | "bottom" | "split";
   labelColor?: string;
   pressed?: boolean;
 
