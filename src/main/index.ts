@@ -803,6 +803,21 @@ if (!gotTheLock) {
       // dispatch" outcome is logged with its reason — a press that silently
       // produces no action line is impossible to diagnose from the log alone.
       const info = profileManager.getActiveKeyConfig(keyIndex);
+
+      // Push-to-talk: HOLD semantics — press unmutes the mic (release is
+      // handled by the key:up handler below). Bypasses normal execution so
+      // executeMultimedia's one-shot path never fires for ptt-mic.
+      const pttAction =
+        info?.keyConfig?.action?.type === "multimedia" &&
+        (info.keyConfig.action as { mediaCommand?: string }).mediaCommand ===
+          "ptt-mic"
+          ? (info.keyConfig.action as { mediaCommand: string })
+          : null;
+      if (pttAction) {
+        void actionExecutor.pressPtt(keyIndex);
+        return;
+      }
+
       if (info?.keyConfig?.action) {
         logger.info(
           `Triggering action: ${info!.keyConfig.action.type} for key ${keyIndex}`,
@@ -836,6 +851,16 @@ if (!gotTheLock) {
       });
 
       heldKeys.delete(keyId);
+
+      // Push-to-talk: release the held mic on key up (ptt-mic actions).
+      const upInfo = profileManager.getActiveKeyConfig(keyIndex);
+      const upAction = upInfo?.keyConfig?.action;
+      if (
+        upAction?.type === "multimedia" &&
+        (upAction as { mediaCommand?: string }).mediaCommand === "ptt-mic"
+      ) {
+        void actionExecutor.releasePtt(keyIndex);
+      }
 
       // Instantly apply cached idle image (no render delay)
       const cached = hardwareSync.getCachedImages(deviceId, keyIndex);

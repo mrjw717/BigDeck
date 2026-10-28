@@ -953,6 +953,14 @@ export class ActionExecutor {
     if (mediaCommand === "mute-mic" || mediaCommand === "mute-output") {
       return this.tryPactlMute(mediaCommand);
     }
+    // ptt-mic is HOLD semantics: press handled by pressPtt() (unmute),
+    // release on key:up via releasePtt() — wired in index.ts key handlers.
+    if (mediaCommand === "ptt-mic") {
+      this.logger.warn(
+        "ptt-mic reached executeMultimedia without hold wiring — dropped.",
+      );
+      return false;
+    }
 
     if (await this.tryVolumeControl(mediaCommand)) return true;
     if (await this.tryPlayerctl(mediaCommand)) return true;
@@ -974,6 +982,48 @@ export class ActionExecutor {
    * the resulting state truthfully — this is what Discord mute/deafen keys
    * should map to on Linux: it works no matter which app is focused.
    */
+  /** Keys with a held PTT mic (keyIndex -> true while held). */
+  private heldPtt = new Set<number>();
+
+  /**
+   * Push-to-talk PRESS: unmute the system microphone. Paired with
+   * releasePtt(keyIndex) on key up — hold the deck key to talk.
+   */
+  async pressPtt(keyIndex: number): Promise<boolean> {
+    if (this.heldPtt.has(keyIndex)) return true; // already held — no re-trigger
+    if (!(await this.isToolAvailable("pactl"))) {
+      this.logger.error("PTT: pactl is not installed.");
+      return false;
+    }
+    try {
+      await execFileAsync("pactl", ["set-source-mute", "@DEFAULT_SOURCE@", "0"]);
+      this.heldPtt.add(keyIndex);
+      this.logger.info(`PTT: microphone LIVE (key ${keyIndex} held).`);
+      return true;
+    } catch (error) {
+      this.logger.error("PTT press failed:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Push-to-talk RELEASE: mute the system microphone. Called from the
+   * key-up path; safe to call when nothing is held.
+   */
+  async releasePtt(keyIndex: number): Promise<boolean> {
+    if (!this.heldPtt.has(keyIndex)) return true;
+    this.heldPtt.delete(keyIndex);
+    if (!(await this.isToolAvailable("pactl"))) return false;
+    try {
+      await execFileAsync("pactl", ["set-source-mute", "@DEFAULT_SOURCE@", "1"]);
+      this.logger.info(`PTT: microphone muted (key ${keyIndex} released).`);
+      return true;
+    } catch (error) {
+      this.logger.error("PTT release failed:", error);
+      return false;
+    }
+  }
+
   private async tryPactlMute(mediaCommand: string): Promise<boolean> {
     if (!(await this.isToolAvailable("pactl"))) {
       this.logger.error(

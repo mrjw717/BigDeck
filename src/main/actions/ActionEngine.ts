@@ -92,6 +92,18 @@ export class ActionEngine {
     return this.executor.executeAction(action, origin);
   }
 
+  /**
+   * Push-to-talk HOLD: press (unmute system mic). Paired with releasePtt
+   * on key up. Delegates to the executor's pactl press/release.
+   */
+  async pressPtt(keyIndex: number): Promise<boolean> {
+    return this.executor.pressPtt(keyIndex);
+  }
+
+  async releasePtt(keyIndex: number): Promise<boolean> {
+    return this.executor.releasePtt(keyIndex);
+  }
+
   async renderKeyImage(
     keyConfig: KeyConfig,
     deviceType: DeviceType = "original",
