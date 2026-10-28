@@ -10,7 +10,6 @@ import type {
   Profile,
   Action,
   AppSettings,
-  PluginInfo,
   KeyConfig,
   AutoSwitchRule,
   DesktopApp,
@@ -224,16 +223,6 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET),
     update: (settings: Partial<AppSettings>): Promise<AppSettings> =>
       ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_UPDATE, settings),
-  },
-
-  // Plugin APIs
-  plugin: {
-    list: (): Promise<PluginInfo[]> =>
-      ipcRenderer.invoke(IPC_CHANNELS.PLUGIN_LIST),
-    enable: (pluginId: string): Promise<void> =>
-      ipcRenderer.invoke(IPC_CHANNELS.PLUGIN_ENABLE, pluginId),
-    disable: (pluginId: string): Promise<void> =>
-      ipcRenderer.invoke(IPC_CHANNELS.PLUGIN_DISABLE, pluginId),
   },
 
   // Icon pack APIs (Elgato .sdIconPack libraries)

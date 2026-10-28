@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Puzzle,
   Power,
-  Settings,
-  ExternalLink,
   Search,
   FileUp,
   X,
@@ -11,14 +9,14 @@ import {
   CheckCircle2,
   ShieldAlert,
 } from "lucide-react";
-import type { PluginInfo } from "../../shared/types";
 import type { SDPluginSummary, SDPluginStatus } from "../../main/plugins/sd/SDPluginHost";
 
 // ---------------------------------------------------------------------------
 // Elgato SD plugins (SDPluginHost) — installed .sdPlugin packages hosted by
-// BigDeck's Stream Deck compatibility layer. Data comes from the host's
-// localized summaries (sd.listPlugins); installs and enable/disable go
-// through sd.installFromFile / sd.setPluginEnabled.
+// BigDeck's Stream Deck compatibility layer. This is the ONLY plugin system:
+// the legacy V1 (BigDeck native) PluginManager was removed. Data comes from
+// the host's localized summaries (sd.listPlugins); installs and
+// enable/disable go through sd.installFromFile / sd.setPluginEnabled.
 // ---------------------------------------------------------------------------
 
 /** Result of an "Install plugin" run — mirrors the profile import report. */
@@ -33,20 +31,14 @@ interface SdInstallReport {
 const EMPTY_SD_REPORT: SdInstallReport = { ok: false, errors: [] };
 
 export function PluginsPanel() {
-  // SD host plugins
   const [sdPlugins, setSdPlugins] = useState<SDPluginSummary[]>([]);
   const [sdLoading, setSdLoading] = useState(true);
   const [installing, setInstalling] = useState(false);
   const [installReport, setInstallReport] = useState<SdInstallReport | null>(null);
-
-  // Legacy (BigDeck native) plugins
-  const [plugins, setPlugins] = useState<PluginInfo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     loadSdPlugins();
-    loadLegacyPlugins();
   }, []);
 
   const loadSdPlugins = async () => {
@@ -60,37 +52,12 @@ export function PluginsPanel() {
     }
   };
 
-  const loadLegacyPlugins = async () => {
-    setIsLoading(true);
-    try {
-      const list = (await window.bigdeck?.plugin.list()) || [];
-      setPlugins(list);
-    } catch (error) {
-      console.error("Failed to load plugins:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const toggleSdPlugin = async (uuid: string, enabled: boolean) => {
     try {
       await window.bigdeck?.sd.setPluginEnabled(uuid, enabled);
       await loadSdPlugins();
     } catch (error) {
       console.error("Failed to toggle SD plugin:", error);
-    }
-  };
-
-  const toggleLegacyPlugin = async (pluginId: string, enabled: boolean) => {
-    try {
-      if (enabled) {
-        await window.bigdeck?.plugin.enable(pluginId);
-      } else {
-        await window.bigdeck?.plugin.disable(pluginId);
-      }
-      await loadLegacyPlugins();
-    } catch (error) {
-      console.error("Failed to toggle plugin:", error);
     }
   };
 
@@ -147,12 +114,6 @@ export function PluginsPanel() {
       plugin.uuid.toLowerCase().includes(query) ||
       plugin.actions.some((action) => action.name.toLowerCase().includes(query)),
   );
-  const filteredLegacyPlugins = plugins.filter(
-    (plugin) =>
-      !query ||
-      plugin.name.toLowerCase().includes(query) ||
-      plugin.description.toLowerCase().includes(query),
-  );
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -160,7 +121,9 @@ export function PluginsPanel() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Plugins</h1>
-          <p className="text-muted-foreground">Extend BigDeck with additional features</p>
+          <p className="text-muted-foreground">
+            Elgato Stream Deck SDK plugins, hosted by BigDeck
+          </p>
         </div>
       </div>
 
@@ -176,119 +139,43 @@ export function PluginsPanel() {
         />
       </div>
 
-      {/* ============ Elgato SD plugins (compatibility host) ============ */}
-      <section className="mb-10">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <h2 className="text-lg font-semibold">Elgato SD Plugins</h2>
-            <p className="text-sm text-muted-foreground">
-              Stream Deck SDK v2 plugins hosted by BigDeck&apos;s compatibility layer
-            </p>
-          </div>
-          <button
-            onClick={handleInstallSd}
-            disabled={installing}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 flex-none"
-            title="Install a .streamDeckPlugin distributable"
-          >
-            <FileUp size={18} />
-            {installing ? "Installing..." : "Install plugin"}
-          </button>
+      {installReport && (
+        <SdInstallResultCard
+          report={installReport}
+          onDismiss={() => setInstallReport(null)}
+        />
+      )}
+
+      {sdLoading ? (
+        <div className="text-center py-8">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Loading plugins...</p>
         </div>
-
-        {/* Install result card */}
-        {installReport && (
-          <SdInstallResultCard
-            report={installReport}
-            onDismiss={() => setInstallReport(null)}
-          />
-        )}
-
-        {sdLoading ? (
-          <div className="text-center py-8">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">Loading SD plugins...</p>
+      ) : filteredSdPlugins.length === 0 ? (
+        <div className="text-center py-8 bg-card border border-border rounded-xl">
+          <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-muted flex items-center justify-center">
+            <Puzzle size={28} className="text-muted-foreground" />
           </div>
-        ) : filteredSdPlugins.length === 0 ? (
-          <div className="text-center py-8 bg-card border border-border rounded-xl">
-            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-muted flex items-center justify-center">
-              <Puzzle size={28} className="text-muted-foreground" />
-            </div>
-            <h3 className="font-medium mb-1">
-              {query ? "No matching SD plugins" : "No SD plugins installed"}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {query
-                ? "Try a different search term"
-                : "Install a .streamDeckPlugin package, or drop an .sdPlugin folder into the plugins directory"}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredSdPlugins.map((plugin) => (
-              <SdPluginCard
-                key={plugin.uuid}
-                plugin={plugin}
-                onToggle={(enabled) => toggleSdPlugin(plugin.uuid, enabled)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ============ Legacy (BigDeck native) plugins ============ */}
-      <section>
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold">Legacy (BigDeck native) plugins</h2>
+          <h3 className="font-medium mb-1">
+            {query ? "No matching plugins" : "No plugins installed"}
+          </h3>
           <p className="text-sm text-muted-foreground">
-            BigDeck&apos;s original built-in plugin system
+            {query
+              ? "Try a different search term"
+              : "Install a .streamDeckPlugin package to extend BigDeck with Stream Deck SDK actions"}
           </p>
         </div>
-
-        {isLoading ? (
-          <div className="text-center py-8">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">Loading plugins...</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredLegacyPlugins.map((plugin) => (
-              <PluginCard
-                key={plugin.id}
-                plugin={plugin}
-                onToggle={(enabled) => toggleLegacyPlugin(plugin.id, enabled)}
-              />
-            ))}
-
-            {filteredLegacyPlugins.length === 0 && (
-              <div className="text-center py-8 bg-card border border-border rounded-xl">
-                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-muted flex items-center justify-center">
-                  <Puzzle size={28} className="text-muted-foreground" />
-                </div>
-                <h3 className="font-medium mb-1">
-                  {query ? "No matching plugins" : "No Plugins Found"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {query
-                    ? "Try a different search term"
-                    : "Install plugins to extend functionality"}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Info Section */}
-        <div className="mt-8 p-4 bg-muted/50 rounded-xl">
-          <h3 className="font-medium mb-2">Installing Plugins</h3>
-          <p className="text-sm text-muted-foreground mb-3">
-            Plugins can be installed by placing them in the plugins directory:
-          </p>
-          <code className="text-xs bg-muted px-2 py-1 rounded">
-            ~/.config/bigdeck/plugins/
-          </code>
+      ) : (
+        <div className="space-y-4">
+          {filteredSdPlugins.map((plugin) => (
+            <SdPluginCard
+              key={plugin.uuid}
+              plugin={plugin}
+              onToggle={(enabled) => toggleSdPlugin(plugin.uuid, enabled)}
+            />
+          ))}
         </div>
-      </section>
+      )}
     </div>
   );
 }
@@ -439,70 +326,6 @@ function SdPluginCard({ plugin, onToggle }: SdPluginCardProps) {
           {plugin.enabled ? "Enabled" : "Disabled"}
         </button>
       </div>
-    </div>
-  );
-}
-
-interface PluginCardProps {
-  plugin: PluginInfo;
-  onToggle: (enabled: boolean) => void;
-}
-
-function PluginCard({ plugin, onToggle }: PluginCardProps) {
-  return (
-    <div className="bg-card border border-border rounded-xl p-4">
-      <div className="flex items-start gap-4">
-        {/* Icon */}
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
-          <Puzzle size={24} className="text-primary" />
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold">{plugin.name}</h3>
-            <span className="text-xs text-muted-foreground">v{plugin.version}</span>
-          </div>
-          <p className="text-sm text-muted-foreground mb-2">{plugin.description}</p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>by {plugin.author}</span>
-            <span>{plugin.actions.length} actions</span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onToggle(!plugin.enabled)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              plugin.enabled
-                ? 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
-                : 'bg-muted hover:bg-accent'
-            }`}
-          >
-            <Power size={14} />
-            {plugin.enabled ? 'Enabled' : 'Disabled'}
-          </button>
-        </div>
-      </div>
-
-      {/* Actions List */}
-      {plugin.enabled && plugin.actions.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-border">
-          <h4 className="text-sm font-medium mb-2">Available Actions</h4>
-          <div className="flex flex-wrap gap-2">
-            {plugin.actions.map((action) => (
-              <span
-                key={action.id}
-                className="px-2 py-1 text-xs bg-muted rounded-md"
-                title={action.description}
-              >
-                {action.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

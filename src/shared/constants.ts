@@ -215,11 +215,6 @@ export const IPC_CHANNELS = {
   SETTINGS_GET: "settings:get",
   SETTINGS_UPDATE: "settings:update",
 
-  // Plugin
-  PLUGIN_LIST: "plugin:list",
-  PLUGIN_ENABLE: "plugin:enable",
-  PLUGIN_DISABLE: "plugin:disable",
-
   // Icon packs (Elgato .sdIconPack libraries) — new "assets" namespace
   ASSETS_LIST_ICON_PACKS: "assets.listIconPacks",
   ASSETS_LIST_ICONS: "assets.listIcons",

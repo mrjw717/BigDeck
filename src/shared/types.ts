@@ -51,7 +51,6 @@ export type ActionType =
   | "toggle-folder"
   | "obs-action"
   | "system-command"
-  | "plugin"
   | "sdplugin"
   | "soundboard"
   | "soundboard.stop"
@@ -280,13 +279,6 @@ export interface KeyBrightnessAction extends BaseAction {
   brightness: number;
 }
 
-export interface PluginAction extends BaseAction {
-  type: "plugin";
-  pluginId: string;
-  pluginAction: string;
-  pluginConfig?: Record<string, unknown>;
-}
-
 /**
  * Where an executed action came from when the caller knows it (hardware key
  * press). Lets the SD plugin host resolve/mint the right action-instance
@@ -325,7 +317,6 @@ export type Action =
   | SystemSleepAction
   | CloseAppAction
   | KeyBrightnessAction
-  | PluginAction
   | SdPluginAction
   | SoundboardAction
   | SoundboardStopAction
@@ -548,11 +539,6 @@ export type IPCChannels = {
   // App picker channels
   "apps:list-desktop-apps": () => DesktopApp[];
   "apps:list-cli-tools": () => CliTool[];
-
-  // Plugin channels
-  "plugin:list": () => PluginInfo[];
-  "plugin:enable": (pluginId: string) => void;
-  "plugin:disable": (pluginId: string) => void;
 };
 
 // Events from main to renderer
@@ -583,23 +569,9 @@ export type IPCEvents = {
 };
 
 // Plugin Types
-export interface PluginInfo {
-  id: string;
-  name: string;
-  version: string;
-  author: string;
-  description: string;
-  enabled: boolean;
-  actions: PluginActionDefinition[];
-}
-
-export interface PluginActionDefinition {
-  id: string;
-  name: string;
-  description: string;
-  icon?: string;
-  configSchema?: Record<string, unknown>;
-}
+// (removed: the legacy V1 PluginManager types — PluginInfo /
+// PluginActionDefinition — were deleted with the system. The Elgato SD
+// plugin host uses SDPluginSummary, see src/main/plugins/sd/SDPluginHost.ts.)
 
 // Network API Types
 export interface NetworkAPIStatus {

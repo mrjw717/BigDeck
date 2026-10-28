@@ -331,7 +331,12 @@ export class ActionExecutor {
           break;
         }
         default:
-          this.logger.warn(`Unknown action type: ${action.type}`);
+          // Static unreachable (the cases above cover every ActionType
+          // member) but kept as the runtime safety net for malformed actions
+          // from persisted profiles or the network API.
+          this.logger.warn(
+            `Unknown action type: ${(action as Action).type}`,
+          );
       }
     } catch (error) {
       this.logger.error(`Error executing action ${action.type}:`, error);

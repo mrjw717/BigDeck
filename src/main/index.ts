@@ -28,7 +28,6 @@ import { resolveFocusProfile } from "./focus/resolveFocusProfile";
 import { AppScanner } from "./apps/AppScanner";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
-import { PluginManager } from "./plugins/PluginManager";
 import { SDPluginHost, type SDPluginSummary } from "./plugins/sd/SDPluginHost";
 import {
   seedExamplePlugin,
@@ -63,7 +62,6 @@ let deviceManager: DeviceManager;
 let profileManager: ProfileManager;
 let actionEngine: ActionEngine;
 let hardwareSync: HardwareSync;
-let pluginManager: PluginManager;
 let iconPackManager: IconPackManager;
 let layoutStore: LayoutStore;
 let layoutRenderer: LayoutRenderer;
@@ -462,19 +460,6 @@ if (!gotTheLock) {
         return settingsManager.updateSettings(settings);
       },
     );
-
-    // Plugin IPC handlers
-    ipcMain.handle(IPC_CHANNELS.PLUGIN_LIST, () => {
-      return pluginManager.getPlugins();
-    });
-
-    ipcMain.handle(IPC_CHANNELS.PLUGIN_ENABLE, (_, pluginId: string) => {
-      return pluginManager.enablePlugin(pluginId);
-    });
-
-    ipcMain.handle(IPC_CHANNELS.PLUGIN_DISABLE, (_, pluginId: string) => {
-      return pluginManager.disablePlugin(pluginId);
-    });
 
     // Icon pack IPC handlers (Elgato .sdIconPack libraries)
     ipcMain.handle(IPC_CHANNELS.ASSETS_LIST_ICON_PACKS, () => {
@@ -1112,7 +1097,8 @@ if (!gotTheLock) {
         return applied > 0;
       });
 
-      pluginManager = new PluginManager(logger);
+      // The SD plugin host is the ONLY plugin system: the legacy V1
+      // PluginManager was removed (it was broken and unused).
 
       // Icon pack library (Elgato .sdIconPack). Packs are imported into
       // <userData>/iconpacks; at startup we seed it from the bundled pack
@@ -1157,8 +1143,8 @@ if (!gotTheLock) {
       );
 
       // Elgato .sdPlugin compatibility host (backend phase — docs/
-      // SDPLUGIN-COMPAT.md). Lives ALONGSIDE the legacy PluginManager above,
-      // which is untouched.
+      // SDPLUGIN-COMPAT.md). This is the only plugin system: the legacy V1
+      // PluginManager was removed.
       //
       // The host must start (and therefore register its DeviceManager
       // listeners) BEFORE setupDeviceEvents() below: on a physical press the
@@ -1306,9 +1292,6 @@ if (!gotTheLock) {
           logger.info(`Focus watcher active via ${source}`);
         }
       });
-
-      // Load plugins
-      await pluginManager.loadPlugins();
 
       // Start device detection
       await deviceManager.startDetection();

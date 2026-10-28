@@ -156,11 +156,6 @@ declare global {
         get: () => Promise<any>;
         update: (settings: any) => Promise<any>;
       };
-      plugin: {
-        list: () => Promise<any[]>;
-        enable: (pluginId: string) => Promise<void>;
-        disable: (pluginId: string) => Promise<void>;
-      };
       onError: (callback: (error: { message: string; code: string }) => void) => () => void;
     };
   }
