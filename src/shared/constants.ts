@@ -167,6 +167,7 @@ export const IPC_CHANNELS = {
   PROFILE_ACTIVATE: "profile:activate",
   PROFILE_EXPORT: "profile:export",
   PROFILE_IMPORT: "profile:import",
+  PROFILE_SET_DEFAULT: "profile.setDefault",
   PROFILE_IMPORT_ELGATO: "profile.importElgato",
   PROFILE_CHANGED: "profile:changed",
   PROFILE_PAGE_CHANGED: "profile:page-changed",

@@ -13,6 +13,7 @@ import {
   X,
   AlertTriangle,
   CheckCircle2,
+  Star,
 } from "lucide-react";
 import { useProfileStore } from "../stores/profileStore";
 import { DEVICE_SPECS } from "../../shared/constants";
@@ -83,6 +84,20 @@ export function ProfileManager() {
       }
     };
     input.click();
+  };
+
+  /**
+   * Designate this profile as THE default (star action). The flip happens in
+   * main (ProfileManager.setDefaultProfile — one default at a time), so the
+   * full list is re-fetched afterwards to refresh every card's chip state.
+   */
+  const handleSetDefault = async (profileId: string) => {
+    try {
+      await window.bigdeck?.profile.setDefault(profileId);
+      await initialize();
+    } catch (error) {
+      console.error("Failed to set default profile:", error);
+    }
   };
 
   /**
@@ -245,6 +260,7 @@ export function ProfileManager() {
             onActivate={() => activateProfile(profile.id)}
             onDelete={() => deleteProfile(profile.id)}
             onExport={() => handleExport(profile.id)}
+            onSetDefault={() => handleSetDefault(profile.id)}
           />
         ))}
 
@@ -384,6 +400,7 @@ interface ProfileCardProps {
   onActivate: () => void;
   onDelete: () => void;
   onExport: () => void;
+  onSetDefault: () => void;
 }
 
 function ProfileCard({
@@ -392,6 +409,7 @@ function ProfileCard({
   onActivate,
   onDelete,
   onExport,
+  onSetDefault,
 }: ProfileCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const specs = DEVICE_SPECS[profile.deviceType];
@@ -418,11 +436,20 @@ function ProfileCard({
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-semibold flex items-center gap-2">
+            <h3 className="font-semibold flex items-center gap-2 flex-wrap">
               {profile.name}
               {isActive && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary">
                   Active
+                </span>
+              )}
+              {profile.isDefault && (
+                <span
+                  className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-500"
+                  title="The profile the deck returns to when no auto-switch rule matches the focused app"
+                >
+                  <Star size={10} />
+                  DEFAULT
                 </span>
               )}
             </h3>
@@ -458,6 +485,22 @@ function ProfileCard({
                   >
                     <Download size={14} />
                     Export
+                  </button>
+                  <button
+                    onClick={() => {
+                      onSetDefault();
+                      setShowMenu(false);
+                    }}
+                    disabled={Boolean(profile.isDefault)}
+                    title={
+                      profile.isDefault
+                        ? "Already the default profile"
+                        : "The deck returns to this profile when no auto-switch rule matches"
+                    }
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                  >
+                    <Star size={14} className={profile.isDefault ? "text-yellow-500" : ""} />
+                    {profile.isDefault ? "Default" : "Set as Default"}
                   </button>
                   <button
                     onClick={() => {

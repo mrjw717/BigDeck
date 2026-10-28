@@ -24,6 +24,7 @@ import {
   type ElgatoImportReport,
 } from "./profiles/elgato/ElgatoProfileImporter";
 import { FocusWatcher } from "./focus/FocusWatcher";
+import { resolveFocusProfile } from "./focus/resolveFocusProfile";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
@@ -329,6 +330,10 @@ if (!gotTheLock) {
 
     ipcMain.handle(IPC_CHANNELS.PROFILE_IMPORT, (_, profileJson: string) => {
       return profileManager.importProfile(profileJson);
+    });
+
+    ipcMain.handle(IPC_CHANNELS.PROFILE_SET_DEFAULT, (_, profileId: string) => {
+      return profileManager.setDefaultProfile(profileId);
     });
 
     // Elgato .streamDeckProfile import (official profile files). Registered
@@ -1222,20 +1227,27 @@ if (!gotTheLock) {
 
       // App-focus profile auto-switching: watch the focused window's class
       // and activate any profile whose autoSwitchRules match (e.g. focus
-      // Chrome -> the Chrome profile). See
+      // Chrome -> the Chrome profile). When no rule matches, the deck homes
+      // to the designated default profile. The match/fallback decision lives
+      // in resolveFocusProfile (pure, unit-tested); deviceType is honored at
+      // hardware-apply time below — activation is global state, the pixels
+      // only go to devices of the profile's type. See
       // ProfileManager.findProfileByAutoSwitch for the rule matcher.
       const focusWatcher = new FocusWatcher(logger);
       focusWatcher.on(
         "focus",
         async ({ appClass, title }: { appClass: string; title: string }) => {
           try {
-            const profile = profileManager.findProfileByAutoSwitch(
-              appClass,
-              title,
-              appClass,
+            const profile = resolveFocusProfile(
+              profileManager.findProfileByAutoSwitch(
+                appClass,
+                title,
+                appClass,
+              ),
+              profileManager.getActiveProfile(),
+              () => profileManager.getDefaultProfile(),
             );
-            const active = profileManager.getActiveProfile();
-            if (!profile || (active && active.id === profile.id)) return;
+            if (!profile) return;
 
             const device = deviceManager.getDevices()[0];
             if (!device) return;

@@ -90,6 +90,7 @@ declare global {
         activate: (profileId: string) => Promise<void>;
         export: (profileId: string) => Promise<string>;
         import: (profileJson: string) => Promise<any>;
+        setDefault: (profileId: string) => Promise<any>;
         importElgato: (filePath: string) => Promise<any>;
         onChanged: (callback: (profile: any) => void) => () => void;
         onPageChanged: (callback: (data: { profileId: string; pageIndex: number }) => void) => () => void;

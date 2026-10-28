@@ -256,3 +256,85 @@ describe("ProfileManager.getActiveKeyConfig", () => {
     expect(manager.getActiveKeyConfig(31)).toBeNull();
   });
 });
+
+// ============================================================================
+// Default-profile designation — the focus auto-switch fallback target
+//
+// Exactly one profile carries isDefault at a time (setDefaultProfile clears
+// the rest); getDefaultProfile resolves the fallback target lazily so the
+// focus handler in index.ts only consults it on a rule miss.
+// ============================================================================
+
+describe("ProfileManager default-profile designation", () => {
+  let manager: ProfileManager;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    manager = new ProfileManager(silentLogger);
+  });
+
+  afterEach(() => {
+    manager.flush();
+    vi.useRealTimers();
+  });
+
+  it("setDefaultProfile marks the chosen profile and clears every other", () => {
+    const a = manager.createProfile(makeProfileInput("Alpha"));
+    const b = manager.createProfile(makeProfileInput("Beta"));
+    manager.setDefaultProfile(a.id);
+
+    expect(manager.getProfile(a.id)?.isDefault).toBe(true);
+    expect(manager.getProfile(b.id)?.isDefault).toBe(false);
+  });
+
+  it("moves the designation: the previous default loses isDefault", () => {
+    const a = manager.createProfile(makeProfileInput("Alpha"));
+    const b = manager.createProfile(makeProfileInput("Beta"));
+    manager.setDefaultProfile(a.id);
+    manager.setDefaultProfile(b.id);
+
+    expect(manager.getProfile(a.id)?.isDefault).toBe(false);
+    expect(manager.getProfile(b.id)?.isDefault).toBe(true);
+  });
+
+  it("persists the designation and emits profile:default-changed", () => {
+    const created = manager.createProfile(makeProfileInput("Alpha"));
+    const events: Profile[] = [];
+    manager.on("profile:default-changed", (p: Profile) => events.push(p));
+
+    const settledWrites = profileWrites().length;
+    manager.setDefaultProfile(created.id);
+    manager.flush();
+
+    expect(events).toHaveLength(1);
+    expect(events[0].id).toBe(created.id);
+    expect(profileWrites().length).toBe(settledWrites + 1);
+    const persisted = profileWrites().at(-1)?.value as Profile[];
+    expect(persisted.find((p) => p.id === created.id)?.isDefault).toBe(true);
+  });
+
+  it("throws for a non-existent profile", () => {
+    expect(() => manager.setDefaultProfile("does-not-exist")).toThrow(
+      "Profile not found: does-not-exist",
+    );
+  });
+
+  it("getDefaultProfile returns the isDefault profile", () => {
+    manager.createProfile(makeProfileInput("Alpha"));
+    const b = manager.createProfile(makeProfileInput("Beta"));
+    manager.setDefaultProfile(b.id);
+
+    expect(manager.getDefaultProfile()?.id).toBe(b.id);
+  });
+
+  it("getDefaultProfile falls back to the first profile when none is designated", () => {
+    const a = manager.createProfile(makeProfileInput("Alpha"));
+    manager.createProfile(makeProfileInput("Beta"));
+
+    expect(manager.getDefaultProfile()?.id).toBe(a.id);
+  });
+
+  it("getDefaultProfile returns null when there are no profiles", () => {
+    expect(manager.getDefaultProfile()).toBeNull();
+  });
+});

@@ -114,6 +114,8 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_EXPORT, profileId),
     import: (profileJson: string): Promise<Profile> =>
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT, profileJson),
+    setDefault: (profileId: string): Promise<Profile> =>
+      ipcRenderer.invoke(IPC_CHANNELS.PROFILE_SET_DEFAULT, profileId),
     importElgato: (filePath: string): Promise<ElgatoImportReport> =>
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT_ELGATO, filePath),
 

@@ -498,6 +498,7 @@ export type IPCChannels = {
   "profile:update": (profile: Profile) => Profile;
   "profile:delete": (profileId: string) => void;
   "profile:activate": (profileId: string) => void;
+  "profile:set-default": (profileId: string) => Profile;
   "profile:export": (profileId: string) => string;
   "profile:import": (profileJson: string) => Profile;
 

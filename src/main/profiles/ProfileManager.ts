@@ -220,6 +220,42 @@ export class ProfileManager extends EventEmitter {
   }
 
   /**
+   * Designate THE default profile: `isDefault` flips to true on this profile
+   * and false on every other (exactly one default at a time). Persisted with
+   * the usual debounced write and announced through the dedicated
+   * 'profile:default-changed' event — deliberately NOT 'profile:updated' per
+   * profile, since an isDefault flip changes no key appearance and would
+   * only churn the hardware diff listeners.
+   */
+  setDefaultProfile(profileId: string): Profile {
+    const profile = this.getProfile(profileId);
+
+    if (!profile) {
+      throw new Error(`Profile not found: ${profileId}`);
+    }
+
+    for (const p of this.profiles) {
+      p.isDefault = p.id === profileId;
+    }
+    profile.updatedAt = new Date().toISOString();
+    this.schedulePersist();
+
+    this.emit('profile:default-changed', profile);
+    this.logger.info(`Default profile set: ${profile.name}`);
+    return profile;
+  }
+
+  /**
+   * The designated default profile — the focus auto-switch fallback target
+   * when a focused app matches no rule. Falls back to the first profile (a
+   * fresh install ships one via createDefaultProfile) and null only when no
+   * profiles exist at all.
+   */
+  getDefaultProfile(): Profile | null {
+    return this.profiles.find((p) => p.isDefault) || this.profiles[0] || null;
+  }
+
+  /**
    * Set the active page for a profile
    */
   setActivePage(profileId: string, pageIndex: number): Profile {
