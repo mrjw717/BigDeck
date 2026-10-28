@@ -814,7 +814,7 @@ if (!gotTheLock) {
           ? (info.keyConfig.action as { mediaCommand: string })
           : null;
       if (pttAction) {
-        void actionExecutor.pressPtt(keyIndex);
+        void actionEngine.pressPtt(keyIndex);
         return;
       }
 
@@ -859,7 +859,7 @@ if (!gotTheLock) {
         upAction?.type === "multimedia" &&
         (upAction as { mediaCommand?: string }).mediaCommand === "ptt-mic"
       ) {
-        void actionExecutor.releasePtt(keyIndex);
+        void actionEngine.releasePtt(keyIndex);
       }
 
       // Instantly apply cached idle image (no render delay)
