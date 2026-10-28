@@ -1,6 +1,9 @@
 # BigDeck
 
-> A fully customizable Linux Stream Deck controller with drag-and-drop editing, live device sync, and plugin support.
+> A Linux Stream Deck controller — drag-and-drop keys, live device sync,
+> app-focus profile switching, Elgato `.sdPlugin` compatibility, and
+> system-level audio/keyboard control. Built for KDE and every other
+> Linux desktop.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Linux-green.svg)
@@ -14,227 +17,229 @@
 2. [Supported Hardware](#supported-hardware)
 3. [Requirements](#requirements)
 4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Customization Highlights](#customization-highlights)
-7. [Network + Plugins](#network--plugins)
-8. [Scripts & Automation](#scripts--automation)
-9. [Troubleshooting](#troubleshooting)
-10. [Project Structure](#project-structure)
-11. [Contributing](#contributing)
-12. [License](#license)
+5. [Development](#development)
+6. [Usage](#usage)
+7. [Profiles & App-Focus Switching](#profiles--app-focus-switching)
+8. [Elgato Profile Import](#elgato-profile-import)
+9. [Plugins](#plugins)
+10. [Actions](#actions)
+11. [Docs](#docs)
+12. [Known Limitations](#known-limitations)
+13. [Troubleshooting](#troubleshooting)
+14. [Project Structure](#project-structure)
+15. [License](#license)
 
 ---
 
 ## Features
 
-- **Live Deck Sync** – Active profile/page is rendered to hardware instantly (screensaver suppression included).
-- **Drag & Drop Editor** – Drop actions onto keys, reorder pages, and rename/duplicate directly from the UI.
-- **Multi-Page Profiles** – Unlimited pages per profile with per-page labels and ordering.
-- **Appearance Designer** – Upload custom images/GIFs, set gradients, text overlays, and labels per key.
-- **Action Catalog** – Keyboard shortcuts, app launchers, media controls, URLs, scripts, macros, plus plugin actions.
-- **Profile Intelligence** – Auto-switch rules, per-device profiles, import/export, and JSON backups.
-- **Network Control** – REST + WebSocket server for remote automation (optional).
-- **System Integration** – udev rules (no root), systemd unit, `.deb` packaging, and rebuild script for rapid iteration.
+**Deck**
+- Live hardware sync — every edit renders to the deck instantly
+- Drag-and-drop actions with **grid-snapping drop targets** (release
+  anywhere on the deck; the nearest key wins)
+- Multi-page profiles, drag reorder, per-key layer editor
+  (background/image/icon/text layers, opacity, fit, gradients,
+  chroma-key knockout), pressed states, animated GIFs
+- Custom frameless titlebar (minimize / maximize / close built into the UI)
+- Light / dark / system theme
+
+**Profiles**
+- App-focus auto-switching: bind an installed app (picked from your
+  `.desktop` files — no paths) or a CLI command to a profile; focusing that
+  app activates it, unbound apps fall back to your **default profile**
+- Elgato **`.streamDeckProfile` import** with a full conversion report
+- Profiles are the shareable unit — JSON in/out
+
+**Actions** (17 drag-ready templates, all wired end-to-end)
+- Keyboard shortcuts (uinput-native — works on KDE/GNOME Wayland)
+- Launch app · Open URL · Open folder
+- Media control · **Mute Mic / Mute Speakers** (system-level via pactl)
+- **Soundboard** (paplay/pw-play/ffplay) · Run script (**file mode** —
+  bash/python/node) · Macro (key/text/delay steps)
+- Sleep · Close app · Key brightness · Switch profile/page
+- SD-plugin passthroughs for installed Elgato plugins
+
+**System integration**
+- **Native keyboard injection** via kernel uinput — no ydotool, no wtype,
+  no daemons, no group membership; one sudo udev install covers deck + keys
+- udev rules for the deck, keyboard injection, and global-shortcut devices
+- systemd unit for background operation, `.deb` packaging
+
+**Elgato compatibility**
+- `.sdPlugin` **plugin host** — official WebSocket protocol (spawn argv,
+  registration handshake, per-context settings), install from
+  `.streamDeckPlugin`, locale-aware action names
+- **`.sdIconPack` import** — 1,900+ Elgato SVG icons
+- **`.sdLayoutEx` groundwork** — full schema parser + PNG renderer for
+  SD+/Neo InfoBar layouts (device wiring next phase)
 
 ---
 
 ## Supported Hardware
 
-All official Elgato Stream Deck models:
-
-| Model | Keys | Notes |
-| --- | --- | --- |
-| Original / MK.2 | 15 | Fully supported |
-| Mini / Mini MK.2 | 6 | Fully supported |
-| XL / XL V2 | 32 | Fully supported |
-| Stream Deck + | 8 keys + dials | Keys supported (dials in progress) |
-| Pedal | 3 | Supported actions/triggers |
-
----
+| Model | Status |
+| --- | --- |
+| Stream Deck XL (incl. 2022 `006c`) | Fully supported (primary test device) |
+| Original / MK.2 | Supported |
+| Mini / Mini MK.2 | Supported |
+| Stream Deck + | Keys supported; dials/LCD via layouts groundwork |
+| Pedal | Supported actions/triggers |
 
 ## Requirements
 
-- **Linux** (Ubuntu 22.04+, Debian 12+, Fedora 39+, Arch latest)
-- **Node.js 18+** (development only)
-- **System packages**:
-  - `libusb-1.0-0`, `libudev1` (auto-installed via `.deb`)
-  - **Vulkan ICD** for GPU acceleration. At least one `*.json` driver definition must exist in `/usr/share/vulkan/icd.d/`.
-    - Detect available drivers: `ubuntu-drivers list`
-    - Install recommended NVIDIA driver: `sudo ubuntu-drivers install nvidia-driver-<version>`
-    - AMD/Intel (Mesa): `sudo apt install mesa-vulkan-drivers mesa-vulkan-drivers:i386`
-    - Software fallback: `sudo apt install mesa-vulkan-drivers` then launch with `LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.json bigdeck --disable-gpu --disable-software-rasterizer`
-- **udev permissions**: installed automatically; replug the deck after install.
-
----
+- Linux (Ubuntu 22.04+ / Debian 12+ / Fedora / Arch)
+- Node.js 18+ (development only)
+- `libusb-1.0-0`, `libudev1` (auto-installed via `.deb`)
+- A Vulkan ICD for Electron GPU acceleration
+  (`sudo apt install mesa-vulkan-drappers` equivalent — see Troubleshooting)
+- **udev rules** (one sudo command — installs deck access *and* keyboard
+  injection): `npm run udev:install`
 
 ## Installation
 
-### Option 1: Official `.deb`
+### Option 1: Development build
 
 ```bash
-wget https://github.com/bigdeck/bigdeck/releases/latest/download/bigdeck_<version>_amd64.deb
-sudo dpkg -i bigdeck_<version>_amd64.deb
-sudo apt-get install -f   # resolve missing system deps if prompted
-```
-
-Launch via your desktop menu or `bigdeck` from a terminal.
-
-### Option 2: Development Build
-
-```bash
-git clone https://github.com/bigdeck/bigdeck.git
-cd bigdeck
+git clone https://github.com/mrjw717/BigDeck.git
+cd BigDeck
 npm install
-npm run dev          # runs Electron + Vite in watch mode
+npm run udev:install        # one sudo: deck USB + keyboard injection rules
+npm run dev                 # starts TS/preload/renderer watchers
+npm run start:dev           # launches the app (separate terminal)
 ```
 
-### Option 3: Manual Packaging
+`npm run start:dev` sets `ELECTRON_OZONE_PLATFORM_HINT=auto` (native
+Wayland, X11 fallback) — correct sizing on scaled screens.
+
+### Option 2: Package
 
 ```bash
-npm run build        # build main, preload, renderer
-npm run package:deb  # produces release/bigdeck_<version>_amd64.deb
+npm run build
+npm run package:deb         # release/bigdeck_<version>_amd64.deb
 ```
 
----
+## Development
+
+Two processes make up dev mode:
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Watchers: main TS, preload, renderer (vite) |
+| `npm run start:dev` | Launches the Electron app against the watched build |
+
+DevTools are opt-in: `BIGDECK_DEVTOOLS=1 npm run start:dev`.
+
+Gates: `npm run typecheck` · `npm test` · `npm run build:main` ·
+`npm run build:renderer` — all must pass before pushing.
 
 ## Usage
 
-1. **Connect your Stream Deck** – confirm the device shows up under Devices in the sidebar.
-2. **Activate or create a profile** – the header shows the active profile & page.
-3. **Drag actions** from the side palette onto keys, or click a key to open the Key Editor.
-4. **Customize appearance** – upload images/GIFs, set colors, add labels.
-5. **Manage pages** – add/rename/duplicate/reorder, and switch using the header tabs.
-6. **Sync to hardware** – the deck reflects every change instantly.
-7. **Save/Export** – export JSON backups or import shared profiles from the Profile Manager.
+1. Connect your Stream Deck — it appears under Devices (hot-plug safe)
+2. Activate a profile or edit the default — hardware syncs live
+3. Drag actions from the library onto keys (drop anywhere on the deck;
+   the nearest key snaps)
+4. **Key Editor** → Action (assign) and Appearance (layers, label, fit)
+5. Settings → Keyboard diagnostics verify the injection chain
 
-Configuration files live at `~/.config/bigdeck/`:
+Config lives at `~/.config/bigdeck/`.
 
-```
-~/.config/bigdeck/
-├── bigdeck/
-│   ├── logs/          # bigdeck.log, error.log
-│   ├── plugins/       # user-provided plugins
-│   └── profiles.json  # persisted profiles
-├── profiles.json      # legacy export
-└── settings.json
-```
+## Profiles & App-Focus Switching
 
----
+- **Default profile**: star it in the Profiles view. Unbound apps fall
+  back to it.
+- **Auto-switch rules**: Settings → App Focus Switching → pick an
+  installed app (or type a CLI command) → bind a profile. Focusing that
+  app activates the profile; the KWin journal follower does the tracking
+  on KDE Wayland (no extra software), xdotool on X11.
+- **Import**: Profiles view → Import Elgato Profile (`.streamDeckProfile`).
+  Titles become labels, hotkeys convert from macOS keycodes, images come
+  along, and every skip is reported honestly.
 
-## Customization Highlights
+## Plugins
 
-- **Drag + Drop** – Drop any action tile onto a key, or reorder keys by dragging between slots.
-- **Image Uploads** – Use custom PNG/GIF/WebP files. Assets are imported into `~/.config/bigdeck/images`.
-- **Text/Icon overlays** – Choose typography, alignment, colors, and background gradients.
-- **Macros** – Record sequences (keystrokes + delays) and assign them to keys.
-- **Plugins** – Extend the action catalog. Drop a plugin folder into `~/.config/bigdeck/plugins/<your-plugin>` and restart.
-- **Pages** – Add unlimited pages per profile, duplicate complex layouts, and treat each page as a “scene.”
+BigDeck hosts **official Elgato `.sdPlugin` plugins** (WebSocket protocol,
+spawn + registration, per-context settings, locale-aware names):
 
----
+- Plugins view → Elgato SD Plugins: install from `.streamDeckPlugin`,
+  enable/disable, localized action names, Linux-compatibility badge
+- BigDeck Examples plugin ships installed (working Node sample)
 
-## Network + Plugins
+Known limit: official Elgato plugins ship mac/win binaries — actions
+import and display, and execute only when the plugin has a Linux-capable
+codepath. The legacy built-in stub plugin system was removed in favor of
+this host.
 
-Enable **Network Control** in **Settings → Network**.
+## Actions
 
-### REST Examples
+See the **Actions** section above for the catalog, and
+[`docs/PLUGIN-ACTIONS-MATRIX.md`](docs/PLUGIN-ACTIONS-MATRIX.md) for the
+Elgato-parity matrix (34 built-in actions audited).
 
-```bash
-# List profiles
-curl http://localhost:8080/api/profiles
+## Docs
 
-# Activate profile
-curl -X POST http://localhost:8080/api/profiles/activate \
-  -H "Content-Type: application/json" \
-  -d '{"profileId":"<id>"}'
-```
-
-### WebSocket Snippet
-
-```js
-const ws = new WebSocket('ws://localhost:8080');
-ws.onmessage = (event) => console.log(JSON.parse(event.data));
-ws.onopen = () => ws.send(JSON.stringify({ type: 'subscribe', events: ['key-down'] }));
-```
-
-### Plugin Skeleton
-
-```js
-// ~/.config/bigdeck/plugins/my-plugin/index.js
-module.exports = {
-  id: 'my-plugin',
-  name: 'My Plugin',
-  actions: [
-    {
-      id: 'my-action',
-      name: 'Say hello',
-      execute: async (params, api) => {
-        await api.notifications.show('Hello from plugin!');
-      },
-    },
-  ],
-};
-```
-
----
-
-## Scripts & Automation
-
-| Script | Description |
+| Doc | Contents |
 | --- | --- |
-| `scripts/rebuild.sh` | Bump patch version, run all builds, create `.deb`, uninstall previous build, install new build. Run this after every code change you want to test locally. |
-| `npm run build:*` | Individual build targets (main, preload, renderer). |
-| `npm run udev:install` | Install udev rules manually if needed. |
-| `systemd/` | Contains `bigdeck.service` for optional background mode. |
+| [`docs/AUDIT-2026-10-25.md`](docs/AUDIT-2026-10-25.md) | Architecture audit, Elgato RE findings, device-layer bug autopsy |
+| [`docs/SDPLUGIN-COMPAT.md`](docs/SDPLUGIN-COMPAT.md) | The full Elgato plugin-hosting contract |
+| [`docs/PLUGIN-ACTIONS-MATRIX.md`](docs/PLUGIN-ACTIONS-MATRIX.md) | 34 Elgato built-ins audited vs BigDeck |
+| [`docs/WIRING-AUDIT-2026-10-25.md`](docs/WIRING-AUDIT-2026-10-25.md) | IPC/store/event wiring audit |
+| [`docs/ICON-PACKS.md`](docs/ICON-PACKS.md) | Icon pack formats |
+| [`docs/iCUE-INTEGRATION.md`](docs/iCUE-INTEGRATION.md) | Corsair iCUE/OpenRGB design |
+| [`docs/adr/`](docs/adr/) | ADR-0001 Flow Creator · ADR-0002 Screensaver profiles · ADR-0003 Shader engine |
+| [`docs/DEVLOG-2026-10-27.md`](docs/DEVLOG-2026-10-27.md) | Session dev log — RE findings, hardware-test fixes |
 
----
+## Known Limitations
+
+- **Official Elgato plugin actions** (Discord mute, camera, …) need the
+  plugin's mac/win binary — keys import with art but execute only with a
+  Linux-capable codepath. System-level equivalents (mic/speaker mute) are
+  built in and recommended.
+- **Wayland injection scope**: uinput keystrokes follow OS focus; apps
+  using X11 global grabs see them when an XWayland window is focused.
+  System mutes (pactl) are unaffected.
+- **Stream Deck + dials/LCD**: layout schema + renderer groundwork done;
+  device writes land with the dial phase.
+- **Electron 28**: correct Wayland sizing today; fully crisp fractional
+  scaling wants an Electron ≥30 bump.
 
 ## Troubleshooting
 
 | Issue | Fix |
 | --- | --- |
-| **Deck shows “No Device”** | Ensure `udev/70-streamdeck.rules` is installed (`npm run udev:install`), replug the deck, and confirm user is in the plugdev group (if applicable). |
-| **App closes immediately with `vkCreateInstance` error** | Install a Vulkan ICD (see [Requirements](#requirements)). If you cannot install a GPU driver, launch with `LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.json bigdeck --disable-gpu --disable-software-rasterizer`. |
-| **Black squares on hardware keys** | Verify the profile contains images/actions for the active page. Blank keys are expected to render as black to avoid the Stream Deck screensaver. |
-| **Logs** | Check `~/.config/bigdeck/bigdeck/logs/bigdeck.log` and `error.log`. Share these when filing issues. |
-| **Uninstall** | `sudo apt remove bigdeck` plus `rm -rf ~/.config/bigdeck` if you want a clean slate. |
-
----
+| Deck shows "No Device" | `npm run udev:install` (sudo), then replug the deck |
+| Keyboard shortcut keys do nothing | Settings → Keyboard Shortcuts → run the diagnostics; on KDE Wayland the built-in uinput path needs the udev rules installed |
+| Window wrong size on scaled Wayland | Fixed via native Wayland; report if it regresses |
+| Black squares on keys | The active page has no image for those keys — assign something |
+| Logs | `~/.config/bigdeck/bigdeck/logs/bigdeck.log` (+ `error.log`) |
+| App closes immediately (`vkCreateInstance`) | Install a Vulkan ICD, or launch with `LIBGL_ALWAYS_SOFTWARE=1 … --disable-gpu` |
 
 ## Project Structure
 
 ```
 BigDeck/
 ├── src/
-│   ├── main/         # Electron main process (device, actions, profiles, plugins, network)
-│   ├── preload/      # Secure IPC bridge
-│   ├── renderer/     # React + Tailwind UI (StreamdeckView, KeyEditor, ProfileManager, etc.)
-│   └── shared/       # Types, constants, IPC definitions
-├── assets/           # Icons + branding (SVG + PNG)
-├── scripts/          # Rebuild + tooling scripts
-├── systemd/          # Background service files
-├── udev/             # Stream Deck udev rules
-└── release/          # Build artifacts (.deb, AppImage)
+│   ├── main/
+│   │   ├── device/        # DeviceManager (dual-lane write pump, uinput)
+│   │   ├── actions/       # ActionEngine, ActionExecutor, KeyRenderer,
+│   │   │                  # HardwareSync, ActionTickService
+│   │   ├── profiles/      # ProfileManager + Elgato profile importer
+│   │   ├── plugins/sd/    # Elgato .sdPlugin host (WS, spawn, contexts)
+│   │   ├── layouts/       # .sdLayoutEx schema + renderer (SD+ groundwork)
+│   │   ├── apps/          # Installed-app scanner (desktop files)
+│   │   ├── focus/         # FocusWatcher (KWin journal / xdotool)
+│   │   ├── network/       # REST + WebSocket control
+│   │   └── utils/
+│   ├── preload/           # Secure IPC bridge
+│   ├── renderer/          # React + Tailwind UI
+│   └── shared/            # Types, constants, IPC definitions
+├── docs/                  # Audits, compat specs, ADRs, dev logs
+├── resources/             # Example SD plugin, icon packs (seeded)
+├── test-assets/           # Scripts/images/sounds for hand-testing
+├── udev/                  # Deck USB + uinput keyboard-injection rules
+├── systemd/               # Background service
+└── scripts/               # Rebuild + packaging helpers
 ```
-
-For a deeper dive into architecture, state management, and build workflows see [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
-
----
-
-## Contributing
-
-1. Fork the repo and create a feature branch.
-2. Run `npm run lint && npm test` before pushing.
-3. Use `scripts/rebuild.sh` to verify the packaged build installs cleanly.
-4. Open a PR with screenshots/logs for major UI or device changes.
-
-Please read our forthcoming CONTRIBUTING guide for coding standards and review policies.
-
----
 
 ## License
 
-MIT © BigDeck Team. See [LICENSE](LICENSE) for full text.
-
----
-
-Made with ❤️ for the Linux automation community.
+MIT © BigDeck Team. See [LICENSE](LICENSE).
