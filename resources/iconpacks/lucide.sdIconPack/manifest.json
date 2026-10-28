@@ -1,0 +1,9 @@
+{
+  "Name": "Lucide",
+  "Version": "1.63.0",
+  "Description": "Lucide icon library — 2,000+ clean SVG icons (ISC license, shipped white for dark keys)",
+  "Author": "Lucide Contributors",
+  "URL": "https://lucide.dev",
+  "Icon": "icon.svg",
+  "License": "ISC"
+}
