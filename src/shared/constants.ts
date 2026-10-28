@@ -168,6 +168,8 @@ export const IPC_CHANNELS = {
   PROFILE_EXPORT: "profile:export",
   PROFILE_IMPORT: "profile:import",
   PROFILE_SET_DEFAULT: "profile.setDefault",
+  PROFILE_ADD_AUTO_SWITCH_RULE: "profile.addAutoSwitchRule",
+  PROFILE_REMOVE_AUTO_SWITCH_RULE: "profile.removeAutoSwitchRule",
   PROFILE_IMPORT_ELGATO: "profile.importElgato",
   PROFILE_CHANGED: "profile:changed",
   PROFILE_PAGE_CHANGED: "profile:page-changed",
@@ -182,6 +184,11 @@ export const IPC_CHANNELS = {
 
   // Shortcut recorder
   SHORTCUT_RECORD_MODE: "shortcut:record-mode",
+
+  // App picker (Settings "App Focus Switching" card): freedesktop .desktop
+  // inventory + PATH executables for binding profiles to APPS (never paths).
+  APPS_LIST_DESKTOP_APPS: "apps.listDesktopApps",
+  APPS_LIST_CLI_TOOLS: "apps.listCliTools",
 
   // Window controls (frameless custom titlebar; renderer → main invoke).
   // `WINDOW_MAXIMIZED_CHANGED` is the main → renderer push that keeps the

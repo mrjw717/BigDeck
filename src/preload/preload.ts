@@ -12,6 +12,9 @@ import type {
   AppSettings,
   PluginInfo,
   KeyConfig,
+  AutoSwitchRule,
+  DesktopApp,
+  CliTool,
 } from "../shared/types";
 import type { IconPackSummary, IconEntry, IconFile } from "../main/assets/IconPack";
 import type { ElgatoImportReport } from "../main/profiles/elgato/ElgatoProfileImporter";
@@ -116,6 +119,24 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT, profileJson),
     setDefault: (profileId: string): Promise<Profile> =>
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_SET_DEFAULT, profileId),
+    addAutoSwitchRule: (
+      profileId: string,
+      rule: Omit<AutoSwitchRule, "id">,
+    ): Promise<Profile> =>
+      ipcRenderer.invoke(
+        IPC_CHANNELS.PROFILE_ADD_AUTO_SWITCH_RULE,
+        profileId,
+        rule,
+      ),
+    removeAutoSwitchRule: (
+      profileId: string,
+      ruleId: string,
+    ): Promise<Profile> =>
+      ipcRenderer.invoke(
+        IPC_CHANNELS.PROFILE_REMOVE_AUTO_SWITCH_RULE,
+        profileId,
+        ruleId,
+      ),
     importElgato: (filePath: string): Promise<ElgatoImportReport> =>
       ipcRenderer.invoke(IPC_CHANNELS.PROFILE_IMPORT_ELGATO, filePath),
 
@@ -223,6 +244,14 @@ const api = {
       ipcRenderer.invoke(IPC_CHANNELS.ASSETS_LIST_ICONS, packId),
     getIcon: (packId: string, iconId: string): Promise<IconFile | null> =>
       ipcRenderer.invoke(IPC_CHANNELS.ASSETS_GET_ICON, packId, iconId),
+  },
+
+  // App picker (auto-switch binding)
+  apps: {
+    listDesktopApps: (): Promise<DesktopApp[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.APPS_LIST_DESKTOP_APPS),
+    listCliTools: (): Promise<CliTool[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.APPS_LIST_CLI_TOOLS),
   },
 
   // Window controls (frameless custom titlebar)

@@ -456,6 +456,32 @@ export interface AutoSwitchRule {
   isRegex?: boolean;
 }
 
+// ============================================================================
+// App picker (Settings "App Focus Switching" card) — shapes returned by the
+// apps.* IPC handlers over src/main/apps/AppScanner.ts. Users bind profiles
+// to APPS, never to hand-typed paths.
+// ============================================================================
+
+/** One parsed .desktop launcher, summarized for the app picker. */
+export interface DesktopApp {
+  /** File name incl. extension, e.g. "org.mozilla.firefox.desktop". */
+  desktopFileId: string;
+  /** Display name (the Name= key); falls back to the id without extension. */
+  name: string;
+  /** Icon= value — an icon-theme name or an absolute path, passed through. */
+  icon?: string;
+  /** Exec= line with %f-style field codes left intact. */
+  exec?: string;
+  /** StartupWMClass= — the window-class matcher target, when declared. */
+  startupWMClass?: string;
+}
+
+/** One executable found on PATH (apps.listCliTools). */
+export interface CliTool {
+  name: string;
+  path: string;
+}
+
 // Settings
 export interface AppSettings {
   theme: "light" | "dark" | "system";
@@ -499,6 +525,14 @@ export type IPCChannels = {
   "profile:delete": (profileId: string) => void;
   "profile:activate": (profileId: string) => void;
   "profile:set-default": (profileId: string) => Profile;
+  "profile:add-auto-switch-rule": (
+    profileId: string,
+    rule: Omit<AutoSwitchRule, "id">,
+  ) => Profile;
+  "profile:remove-auto-switch-rule": (
+    profileId: string,
+    ruleId: string,
+  ) => Profile;
   "profile:export": (profileId: string) => string;
   "profile:import": (profileJson: string) => Profile;
 
@@ -510,6 +544,10 @@ export type IPCChannels = {
   // Settings channels
   "settings:get": () => AppSettings;
   "settings:update": (settings: Partial<AppSettings>) => AppSettings;
+
+  // App picker channels
+  "apps:list-desktop-apps": () => DesktopApp[];
+  "apps:list-cli-tools": () => CliTool[];
 
   // Plugin channels
   "plugin:list": () => PluginInfo[];

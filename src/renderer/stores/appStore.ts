@@ -1,5 +1,11 @@
 import { create } from 'zustand';
-import type { AppSettings, LayoutSummary, LayoutImportReport } from '../../shared/types';
+import type {
+  AppSettings,
+  LayoutSummary,
+  LayoutImportReport,
+  DesktopApp,
+  CliTool,
+} from '../../shared/types';
 import type { IconPackSummary, IconEntry, IconFile } from '../../main/assets/IconPack';
 import type { SDPluginSummary } from '../../main/plugins/sd/SDPluginHost';
 
@@ -92,6 +98,14 @@ declare global {
         import: (profileJson: string) => Promise<any>;
         setDefault: (profileId: string) => Promise<any>;
         importElgato: (filePath: string) => Promise<any>;
+        addAutoSwitchRule: (
+          profileId: string,
+          rule: { type: string; pattern: string; isRegex?: boolean },
+        ) => Promise<any>;
+        removeAutoSwitchRule: (
+          profileId: string,
+          ruleId: string,
+        ) => Promise<any>;
         onChanged: (callback: (profile: any) => void) => () => void;
         onPageChanged: (callback: (data: { profileId: string; pageIndex: number }) => void) => () => void;
       };
@@ -103,6 +117,10 @@ declare global {
       shortcut: {
         /** Ignore/restore application-menu shortcuts while recording. */
         setRecordMode: (active: boolean) => Promise<void>;
+      };
+      apps: {
+        listDesktopApps: () => Promise<DesktopApp[]>;
+        listCliTools: () => Promise<CliTool[]>;
       };
       window: {
         minimize: () => Promise<void>;

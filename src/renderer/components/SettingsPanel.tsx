@@ -17,10 +17,21 @@ import {
   X,
   AlertTriangle,
   CheckCircle2,
+  AppWindow,
+  Terminal,
+  Search,
+  Link2,
 } from "lucide-react";
 import { useAppStore } from "../stores/appStore";
 import type { KeyboardInjectionStatus } from "../../main/actions/ActionExecutor";
-import type { LayoutImportReport, LayoutSummary } from "../../shared/types";
+import type {
+  AutoSwitchRule,
+  CliTool,
+  DesktopApp,
+  LayoutImportReport,
+  LayoutSummary,
+  Profile,
+} from "../../shared/types";
 
 /** Copyable fix command for one unavailable injection backend. */
 const KEYBIND_FIXES: Record<
@@ -440,6 +451,349 @@ function LayoutsGalleryCard() {
   );
 }
 
+/**
+ * The window-class pattern a DesktopApp binds to: StartupWMClass when the
+ * entry declares it, else the desktopFileId minus its .desktop suffix,
+ * lowercased — a GUESS (see AppScanner header). Surfaces the effective
+ * pattern in the UI so the fallback is never silent.
+ */
+export function desktopAppPattern(app: DesktopApp): string {
+  return (app.startupWMClass || app.desktopFileId.replace(/\.desktop$/i, "")).toLowerCase();
+}
+
+/** Settings card: bind profiles to apps/CLI commands for focus switching. */
+function AppFocusSwitchingCard() {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profileId, setProfileId] = useState<string>("");
+  const [tab, setTab] = useState<"apps" | "cli">("apps");
+  const [apps, setApps] = useState<DesktopApp[]>([]);
+  const [cliTools, setCliTools] = useState<CliTool[]>([]);
+  const [appQuery, setAppQuery] = useState("");
+  const [cliName, setCliName] = useState("");
+  const [selectedApp, setSelectedApp] = useState<DesktopApp | null>(null);
+  const [binding, setBinding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = async () => {
+    try {
+      const [profileList, desktopApps, cliList] = await Promise.all([
+        window.bigdeck?.profile.list() ?? Promise.resolve([]),
+        window.bigdeck?.apps.listDesktopApps() ?? Promise.resolve([]),
+        window.bigdeck?.apps.listCliTools() ?? Promise.resolve([]),
+      ]);
+      setProfiles(profileList as Profile[]);
+      setProfileId((current) =>
+        current && (profileList as Profile[]).some((p) => p.id === current)
+          ? current
+          : (profileList[0]?.id ?? ""),
+      );
+      setApps(desktopApps);
+      setCliTools(cliList);
+    } catch (err) {
+      console.error("Failed to load app-focus data:", err);
+    }
+  };
+
+  useEffect(() => {
+    void refresh();
+  }, []);
+
+  const selectedProfile = profiles.find((p) => p.id === profileId) ?? null;
+  const rules: AutoSwitchRule[] = selectedProfile?.autoSwitchRules ?? [];
+
+  const query = appQuery.trim().toLowerCase();
+  const filteredApps = query
+    ? apps.filter((app) => app.name.toLowerCase().includes(query))
+    : apps;
+  const cliSuggestions = cliTools
+    .filter(
+      (tool) =>
+        cliName.trim() !== "" &&
+        tool.name.toLowerCase().includes(cliName.trim().toLowerCase()),
+    )
+    .slice(0, 8);
+
+  const effectiveCliPattern = cliName.trim().toLowerCase();
+  const appAlreadyBound =
+    selectedApp &&
+    rules.some(
+      (r) =>
+        r.type === "window-class" &&
+        r.pattern.toLowerCase() === desktopAppPattern(selectedApp),
+    );
+  const cliAlreadyBound =
+    effectiveCliPattern !== "" &&
+    rules.some(
+      (r) =>
+        r.type === "window-title" &&
+        r.pattern.toLowerCase() === effectiveCliPattern,
+    );
+
+  const bindApp = async () => {
+    if (!profileId || !selectedApp || appAlreadyBound) return;
+    setBinding(true);
+    setError(null);
+    try {
+      await window.bigdeck?.profile.addAutoSwitchRule(profileId, {
+        type: "window-class",
+        pattern: desktopAppPattern(selectedApp),
+      });
+      setSelectedApp(null);
+      await refresh();
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setBinding(false);
+    }
+  };
+
+  const bindCli = async () => {
+    if (!profileId || effectiveCliPattern === "" || cliAlreadyBound) return;
+    setBinding(true);
+    setError(null);
+    try {
+      await window.bigdeck?.profile.addAutoSwitchRule(profileId, {
+        type: "window-title",
+        pattern: effectiveCliPattern,
+      });
+      setCliName("");
+      await refresh();
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setBinding(false);
+    }
+  };
+
+  const removeRule = async (ruleId: string) => {
+    if (!profileId) return;
+    try {
+      await window.bigdeck?.profile.removeAutoSwitchRule(profileId, ruleId);
+      await refresh();
+    } catch (err) {
+      setError(String(err));
+    }
+  };
+
+  return (
+    <section className="bg-card border border-border rounded-xl p-6">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold flex items-center gap-2">
+          <AppWindow size={18} />
+          App Focus Switching
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Focus an app and its profile activates. Falls back to your default
+          profile.
+        </p>
+      </div>
+
+      {profiles.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          Create a profile first — then bind it to an app here.
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {/* Profile selector: which profile the picked app should activate */}
+          <div>
+            <label className="text-sm font-medium block mb-1.5">
+              Bind apps to profile
+            </label>
+            <select
+              value={profileId}
+              onChange={(e) => setProfileId(e.target.value)}
+              className="w-full px-3 py-2 bg-muted border-2 border-border rounded-lg text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none cursor-pointer font-medium"
+            >
+              {profiles.map((profile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.name}
+                  {profile.isDefault ? " (default)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Tab switcher: apps vs CLI commands */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setTab("apps")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                tab === "apps"
+                  ? "bg-primary/20 text-primary"
+                  : "bg-muted hover:bg-accent"
+              }`}
+            >
+              <AppWindow size={14} />
+              Apps
+            </button>
+            <button
+              onClick={() => setTab("cli")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                tab === "cli"
+                  ? "bg-primary/20 text-primary"
+                  : "bg-muted hover:bg-accent"
+              }`}
+            >
+              <Terminal size={14} />
+              CLI command
+            </button>
+          </div>
+
+          {tab === "apps" ? (
+            <div className="space-y-2">
+              {/* App search */}
+              <div className="relative">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="text"
+                  value={appQuery}
+                  onChange={(e) => setAppQuery(e.target.value)}
+                  placeholder="Search installed apps..."
+                  className="w-full pl-9 pr-4 py-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                />
+              </div>
+
+              {/* App list */}
+              <div className="max-h-52 overflow-y-auto rounded-lg border border-border divide-y divide-border">
+                {filteredApps.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-3">
+                    No matching apps found.
+                  </p>
+                ) : (
+                  filteredApps.map((app) => (
+                    <button
+                      key={app.desktopFileId}
+                      onClick={() => setSelectedApp(app)}
+                      className={`w-full flex items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors ${
+                        selectedApp?.desktopFileId === app.desktopFileId
+                          ? "bg-primary/10 text-primary"
+                          : "hover:bg-accent"
+                      }`}
+                    >
+                      <span className="truncate">{app.name}</span>
+                      <span className="text-[11px] font-mono text-muted-foreground truncate flex-none">
+                        {desktopAppPattern(app)}
+                      </span>
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs text-muted-foreground">
+                  {selectedApp
+                    ? `Matches window class: ${desktopAppPattern(selectedApp)}`
+                    : "Pick an app to bind it to the selected profile"}
+                </p>
+                <button
+                  onClick={bindApp}
+                  disabled={!selectedApp || appAlreadyBound || binding}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm disabled:opacity-50 flex-none"
+                >
+                  <Link2 size={14} />
+                  {binding
+                    ? "Binding..."
+                    : appAlreadyBound
+                      ? "Already bound"
+                      : "Bind profile"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <label className="text-sm font-medium block mb-1.5">
+                CLI command name
+              </label>
+              <input
+                type="text"
+                value={cliName}
+                onChange={(e) => setCliName(e.target.value)}
+                placeholder="e.g. codex"
+                className="w-full px-3 py-2 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm font-mono"
+              />
+              {cliSuggestions.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {cliSuggestions.map((tool) => (
+                    <button
+                      key={tool.path}
+                      onClick={() => setCliName(tool.name)}
+                      className="px-2 py-1 text-xs font-mono bg-muted rounded-md hover:bg-accent transition-colors"
+                      title={tool.path}
+                    >
+                      {tool.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs text-muted-foreground">
+                  Matches window titles containing “{effectiveCliPattern || "…"}”
+                  (e.g. a terminal tab running the command)
+                </p>
+                <button
+                  onClick={bindCli}
+                  disabled={effectiveCliPattern === "" || cliAlreadyBound || binding}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm disabled:opacity-50 flex-none"
+                >
+                  <Link2 size={14} />
+                  {binding
+                    ? "Binding..."
+                    : cliAlreadyBound
+                      ? "Already bound"
+                      : "Bind profile"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Bound rules for the selected profile */}
+          <div className="pt-3 border-t border-border">
+            <h3 className="text-sm font-medium mb-2">
+              Bound rules{selectedProfile ? ` — ${selectedProfile.name}` : ""}
+            </h3>
+            {rules.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Nothing bound yet for this profile.
+              </p>
+            ) : (
+              <div className="space-y-1">
+                {rules.map((rule) => (
+                  <div
+                    key={rule.id}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-muted/40 border border-border text-sm"
+                  >
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground flex-none">
+                      {rule.type}
+                    </span>
+                    <span className="font-mono text-xs truncate flex-1">
+                      {rule.pattern}
+                      {rule.isRegex ? " (regex)" : ""}
+                    </span>
+                    <button
+                      onClick={() => void removeRule(rule.id)}
+                      className="p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-accent transition-colors flex-none"
+                      aria-label="Remove rule"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {error && (
+            <p className="text-xs text-destructive">{error}</p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function SettingsPanel() {
   const { settings, theme, setTheme, updateSettings } = useAppStore();
 
@@ -548,6 +902,9 @@ export function SettingsPanel() {
 
         {/* SD+ / Neo InfoBar layouts (gallery groundwork) */}
         <LayoutsGalleryCard />
+
+        {/* App Focus Switching (auto-switch rule picker) */}
+        <AppFocusSwitchingCard />
 
         {/* Startup */}
         <section className="bg-card border border-border rounded-xl p-6">

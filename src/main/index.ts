@@ -25,6 +25,7 @@ import {
 } from "./profiles/elgato/ElgatoProfileImporter";
 import { FocusWatcher } from "./focus/FocusWatcher";
 import { resolveFocusProfile } from "./focus/resolveFocusProfile";
+import { AppScanner } from "./apps/AppScanner";
 import { ActionEngine } from "./actions/ActionEngine";
 import { HardwareSync } from "./actions/HardwareSync";
 import { PluginManager } from "./plugins/PluginManager";
@@ -47,7 +48,13 @@ import {
   IPC_CHANNELS,
   DEFAULT_SETTINGS,
 } from "../shared/constants";
-import type { Action, AppSettings, Profile, KeyConfig } from "../shared/types";
+import type {
+  Action,
+  AppSettings,
+  Profile,
+  KeyConfig,
+  AutoSwitchRule,
+} from "../shared/types";
 
 // Globals
 let mainWindow: BrowserWindow | null = null;
@@ -336,6 +343,23 @@ if (!gotTheLock) {
       return profileManager.setDefaultProfile(profileId);
     });
 
+    // Auto-switch rule management (Settings "App Focus Switching" card).
+    // Wraps ProfileManager's rule engine; rules ride inside the profile
+    // (persisted + emitted through the normal updateProfile path).
+    ipcMain.handle(
+      IPC_CHANNELS.PROFILE_ADD_AUTO_SWITCH_RULE,
+      (_, profileId: string, rule: Omit<AutoSwitchRule, "id">) => {
+        return profileManager.addAutoSwitchRule(profileId, rule);
+      },
+    );
+
+    ipcMain.handle(
+      IPC_CHANNELS.PROFILE_REMOVE_AUTO_SWITCH_RULE,
+      (_, profileId: string, ruleId: string) => {
+        return profileManager.removeAutoSwitchRule(profileId, ruleId);
+      },
+    );
+
     // Elgato .streamDeckProfile import (official profile files). Registered
     // through the shared channel constant; the preload exposes it as
     // profile.importElgato and the Profiles view drives it (import UI).
@@ -415,6 +439,17 @@ if (!gotTheLock) {
         event.sender.setIgnoreMenuShortcuts(Boolean(active));
       },
     );
+
+    // App picker (auto-switch binding): freedesktop .desktop inventory and
+    // PATH executables. One shared scanner instance; every call re-scans so
+    // freshly installed apps/tools show up without an app restart.
+    const appScanner = new AppScanner();
+    ipcMain.handle(IPC_CHANNELS.APPS_LIST_DESKTOP_APPS, () => {
+      return appScanner.listDesktopApps();
+    });
+    ipcMain.handle(IPC_CHANNELS.APPS_LIST_CLI_TOOLS, () => {
+      return appScanner.listCliTools();
+    });
 
     // Settings IPC handlers
     ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, () => {

@@ -338,3 +338,96 @@ describe("ProfileManager default-profile designation", () => {
     expect(manager.getDefaultProfile()).toBeNull();
   });
 });
+
+// ============================================================================
+// Auto-switch rules — the rule engine the app picker (Settings "App Focus
+// Switching") drives through profile.addAutoSwitchRule /
+// profile.removeAutoSwitchRule IPC. Rules ride inside the profile and the
+// matcher (findProfileByAutoSwitch) is what the focus handler feeds
+// resolveFocusProfile with.
+// ============================================================================
+
+describe("ProfileManager auto-switch rules", () => {
+  let manager: ProfileManager;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    manager = new ProfileManager(silentLogger);
+  });
+
+  afterEach(() => {
+    manager.flush();
+    vi.useRealTimers();
+  });
+
+  it("addAutoSwitchRule assigns an id, attaches to the profile, and persists", () => {
+    const created = manager.createProfile(makeProfileInput("Chrome"));
+    const settledWrites = profileWrites().length;
+
+    const updated = manager.addAutoSwitchRule(created.id, {
+      type: "window-class",
+      pattern: "google-chrome",
+    });
+    manager.flush();
+
+    expect(updated.autoSwitchRules).toHaveLength(1);
+    expect(updated.autoSwitchRules![0].pattern).toBe("google-chrome");
+    expect(updated.autoSwitchRules![0].id).toBeTruthy();
+    expect(profileWrites().length).toBe(settledWrites + 1);
+  });
+
+  it("addAutoSwitchRule throws for a non-existent profile", () => {
+    expect(() =>
+      manager.addAutoSwitchRule("does-not-exist", {
+        type: "window-class",
+        pattern: "x",
+      }),
+    ).toThrow("Profile not found: does-not-exist");
+  });
+
+  it("removeAutoSwitchRule removes exactly the targeted rule", () => {
+    const created = manager.createProfile(makeProfileInput("Chrome"));
+    const kept = manager.addAutoSwitchRule(created.id, {
+      type: "window-class",
+      pattern: "google-chrome",
+    });
+    const dropped = manager.addAutoSwitchRule(created.id, {
+      type: "window-title",
+      pattern: "Docs",
+    });
+
+    const updated = manager.removeAutoSwitchRule(created.id, dropped.autoSwitchRules![1].id);
+
+    expect(updated.autoSwitchRules).toHaveLength(1);
+    expect(updated.autoSwitchRules![0].id).toBe(kept.autoSwitchRules![0].id);
+  });
+
+  it("findProfileByAutoSwitch matches substring rules case-insensitively", () => {
+    const created = manager.createProfile(makeProfileInput("Chrome"));
+    manager.addAutoSwitchRule(created.id, {
+      type: "window-class",
+      pattern: "Google-Chrome",
+    });
+
+    expect(
+      manager.findProfileByAutoSwitch("google-chrome", "", "google-chrome"),
+    ).not.toBeNull();
+    expect(manager.findProfileByAutoSwitch("firefox", "", "firefox")).toBeNull();
+  });
+
+  it("findProfileByAutoSwitch honors regex rules and the rule type", () => {
+    const created = manager.createProfile(makeProfileInput("Terminal"));
+    manager.addAutoSwitchRule(created.id, {
+      type: "window-title",
+      pattern: "^codex",
+      isRegex: true,
+    });
+
+    expect(
+      manager.findProfileByAutoSwitch("kitty", "codex — zsh", "kitty"),
+    ).not.toBeNull();
+    expect(
+      manager.findProfileByAutoSwitch("kitty", "user@host: ~", "kitty"),
+    ).toBeNull();
+  });
+});
